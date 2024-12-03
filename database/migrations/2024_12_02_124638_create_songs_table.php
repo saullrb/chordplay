@@ -15,6 +15,7 @@ return new class extends Migration
         Schema::create('songs', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->string('slug')->unique();
             $table->foreignId('artist_id')->constrained();
             $table->enum('key', array_column(SongKeyEnum::cases(), 'name'))->nullable();
             $table->timestamps();
