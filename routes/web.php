@@ -1,7 +1,8 @@
 <?php
 
+use App\Http\Controllers\ArtistController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
+use App\Http\Controllers\SongController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -10,7 +11,8 @@ Route::get('/', function () {
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
     ]);
-});
+})->name('home');
+
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -23,3 +25,8 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__ . '/auth.php';
+
+Route::get('/artists/{artist:slug}', [ArtistController::class, 'show'])->name('artists.show');
+Route::get('/artists', [ArtistController::class, 'index'])->name('artists.index');
+
+Route::get('/artists/{artist:slug}/{song:slug}', [SongController::class, 'show'])->name('artists.songs.show');

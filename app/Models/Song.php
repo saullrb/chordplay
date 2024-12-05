@@ -12,7 +12,7 @@ class Song extends Model
     use HasFactory;
 
     protected $fillable = [
-        "title",
+        "name",
         "slug",
         "artist_id",
         "key"
@@ -27,7 +27,7 @@ class Song extends Model
         });
 
         static::updating(function (Song $song) {
-            if ($song->isDirty('title')) {
+            if ($song->isDirty('name')) {
                 $song->slug = static::generateSlug($song);
             }
         });
@@ -35,10 +35,10 @@ class Song extends Model
 
     private static function generateSlug(Song $song): String
     {
-        $baseSlug = Str::slug($song->title);
+        $baseSlug = Str::slug($song->name);
         $slug = $baseSlug;
 
-        $count = Song::whereArtistId($song->artist_id)->whereTitle($song->title)->count();
+        $count = Song::whereArtistId($song->artist_id)->whereName($song->name)->count();
 
         if ($count > 0) {
             $slug = $baseSlug . "-" . $count;

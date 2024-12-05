@@ -17,6 +17,8 @@ namespace App\Models{
  *
  * @property int $id
  * @property string $name
+ * @property string $slug
+ * @property int $views
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Song> $songs
@@ -28,7 +30,9 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Artist whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Artist whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Artist whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Artist whereSlug($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Artist whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Artist whereViews($value)
  */
 	class Artist extends \Eloquent {}
 }
@@ -37,12 +41,22 @@ namespace App\Models{
 /**
  * 
  *
+ * @property int $id
+ * @property string $name
+ * @property int|null $simplified_chord_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ChordShape> $shapes
  * @property-read int|null $shapes_count
  * @property-read Chord|null $simplifiedChord
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chord newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chord newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chord query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chord whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chord whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chord whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chord whereSimplifiedChordId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chord whereUpdatedAt($value)
  */
 	class Chord extends \Eloquent {}
 }
@@ -51,10 +65,20 @@ namespace App\Models{
 /**
  * 
  *
- * @property-read \App\Models\Chord|null $chord
+ * @property int $id
+ * @property int $chord_id
+ * @property string $frets
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Chord $chord
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ChordShape newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ChordShape newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ChordShape query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChordShape whereChordId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChordShape whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChordShape whereFrets($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChordShape whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChordShape whereUpdatedAt($value)
  */
 	class ChordShape extends \Eloquent {}
 }
@@ -64,9 +88,11 @@ namespace App\Models{
  * 
  *
  * @property int $id
- * @property string $title
+ * @property string $name
+ * @property string $slug
  * @property int $artist_id
  * @property string|null $key
+ * @property int $views
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Database\Factories\SongFactory factory($count = null, $state = [])
@@ -77,8 +103,10 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Song whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Song whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Song whereKey($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Song whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Song whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Song whereSlug($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Song whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Song whereViews($value)
  */
 	class Song extends \Eloquent {}
 }

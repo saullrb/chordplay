@@ -14,11 +14,14 @@ return new class extends Migration
     {
         Schema::create('songs', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('slug')->unique();
+            $table->string('name');
+            $table->string('slug');
             $table->foreignId('artist_id')->constrained();
             $table->enum('key', array_column(SongKeyEnum::cases(), 'name'))->nullable();
+            $table->unsignedBigInteger('views')->default(0);
             $table->timestamps();
+
+            $table->unique(['artist_id', 'slug']);
         });
     }
     /**
@@ -27,7 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-
         Schema::dropIfExists('songs');
     }
 };

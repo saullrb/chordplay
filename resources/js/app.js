@@ -1,10 +1,11 @@
 import '../css/app.css';
 import './bootstrap';
 
-import { createInertiaApp } from '@inertiajs/vue3';
+import { createInertiaApp, Head } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+import { setThemeOnLoad } from './theme';
 
 const appName = import.meta.env.VITE_APP_NAME || 'ChordPlay';
 
@@ -19,9 +20,13 @@ createInertiaApp({
     return createApp({ render: () => h(App, props) })
       .use(plugin)
       .use(ZiggyVue)
+      .component('Head', Head)
       .mount(el);
   },
   progress: {
     color: '#4B5563',
+    showSpinner: true,
   },
 });
+
+setThemeOnLoad();

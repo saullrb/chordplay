@@ -15,6 +15,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        Artist::factory(10)->has(Song::factory(3))->create();
+        Artist::factory(30)->has(Song::factory(20))->create();
     }
 }
