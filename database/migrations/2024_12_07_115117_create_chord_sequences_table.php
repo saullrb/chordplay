@@ -1,6 +1,7 @@
 <?php
 
-use App\Models\Song;
+use App\Models\Chord;
+use App\Models\SongSection;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,11 +13,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('song_sections', function (Blueprint $table) {
+        Schema::create('chord_sequences', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Song::class)->constrained();
-            $table->boolean('is_lyrical')->default(true);
-            $table->integer('order')->default(1);
+            $table->foreignIdFor(SongSection::class)->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(Chord::class)->constrained();
+            $table->integer('order');
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('song_sections');
+        Schema::dropIfExists('chord_sequences');
     }
 };

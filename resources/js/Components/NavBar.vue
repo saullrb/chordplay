@@ -69,7 +69,7 @@ const showDropdown = ref(false);
           <div class="flex shrink-0 items-center">
             <Link
               :href="route('home')"
-              class="text-md rounded-lg px-2 font-semibold text-yellow-600 dark:text-yellow-600"
+              class="text-md rounded-lg px-2 font-semibold text-yellow-600"
             >
               <div class="flex items-center gap-2">
                 <i class="fa-solid fa-music fa-lg"></i>

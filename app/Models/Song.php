@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Str;
 
 class Song extends Model
@@ -17,6 +18,11 @@ class Song extends Model
         "artist_id",
         "key"
     ];
+
+    public function sections(): HasMany
+    {
+        return $this->hasMany(SongSection::class);
+    }
 
     protected static function boot()
     {

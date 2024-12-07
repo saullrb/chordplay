@@ -9,7 +9,7 @@ defineProps({
 </script>
 
 <template>
-  <ul role="list" class="mb-6 divide-y divide-gray-400">
+  <ul role="list" class="my-6 divide-y divide-gray-400">
     <li v-for="item in items" class="flex justify-between gap-x-6 px-2 py-5">
       <Link
         :href="route(showRouteName, parent ? [parent, item] : item)"

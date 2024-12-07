@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\SongSection>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ChordSequence>
  */
-class SongSectionFactory extends Factory
+class ChordSequenceFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,8 +17,7 @@ class SongSectionFactory extends Factory
     public function definition(): array
     {
         return [
-            'is_lyrical' => fake()->boolean(80),
-            'order' => 1,
+            'order' => 1
         ];
     }
 }

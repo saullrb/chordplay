@@ -10,7 +10,7 @@ import { setThemeOnLoad } from './theme';
 const appName = import.meta.env.VITE_APP_NAME || 'ChordPlay';
 
 createInertiaApp({
-  title: (title) => `${appName} - ${title}`,
+  title: (title) => `${title} | ${appName}`,
   resolve: (name) =>
     resolvePageComponent(
       `./Pages/${name}.vue`,
