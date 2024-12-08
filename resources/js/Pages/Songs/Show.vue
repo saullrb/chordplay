@@ -3,11 +3,14 @@ import Container from '@/Components/Container.vue';
 import NavBar from '@/Components/NavBar.vue';
 import PageHeader from '@/Components/PageHeader.vue';
 import TextLink from '@/Components/TextLink.vue';
+import { ref } from 'vue';
 
 defineProps({
     song: Object,
     artist: Object,
 });
+
+const isDualColumn = ref(false);
 
 function formatChordLine(lineLength, chords) {
     const chordLine = Array(lineLength).fill(' ');
@@ -21,35 +24,54 @@ function formatChordLine(lineLength, chords) {
 </script>
 
 <template>
+    <Head :title="`${song.name} - ${artist.name}`" />
     <NavBar />
 
-    <Head :title="`${song.name} - ${artist.name}`" />
     <Container>
-        <PageHeader :title="song.name" />
-        <TextLink :href="route('artists.show', artist)">
-            {{ artist.name }}
-        </TextLink>
-
-        {{ console.log(song) }}
-        <section class="mt-6 dark:text-white">
-            <p class="mb-6 flex items-center gap-1 text-sm">
+        <header>
+            <PageHeader :title="song.name" />
+            <TextLink :href="route('artists.show', artist)">
+                {{ artist.name }}
+            </TextLink>
+            <div class="my-6 flex items-center gap-1 text-sm dark:text-white">
                 <span>Key: </span>
                 <span class="text-yellow-600">
                     {{ song.key }}
                 </span>
-            </p>
-
-            <div
-                v-for="section in song.sections"
-                class="leading-5"
-                :key="section.id"
+            </div>
+            <button
+                @click="isDualColumn = !isDualColumn"
+                class="rounded-md border border-gray-300 bg-transparent px-3 py-1.5 text-sm text-gray-700 transition-colors duration-200 hover:bg-gray-300 hover:text-gray-900 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white"
+                :class="{
+                    'border-gray-400 bg-gray-300 text-yellow-600 dark:border-gray-600 dark:bg-gray-800 dark:text-yellow-600':
+                        isDualColumn,
+                }"
             >
-                <div class="" v-if="section.is_lyrical">
-                    <div v-for="line in section.content" :key="line.id">
-                        <span class="whitespace-pre font-mono text-yellow-600">
+                <i class="fa-solid fa-table-columns mr-1"></i>
+                Dual Column
+            </button>
+        </header>
+        <main
+            class="mt-6 dark:text-white"
+            :class="{
+                'columns-2 gap-8': isDualColumn,
+            }"
+        >
+            <section
+                v-for="section in song.sections"
+                :key="section.id"
+                class="mb-4 font-mono text-sm leading-5 tracking-tighter"
+            >
+                <div v-if="section.is_lyrical">
+                    <div
+                        class="break-inside-avoid"
+                        v-for="line in section.content"
+                        :key="line.id"
+                    >
+                        <span class="whitespace-pre text-yellow-600">
                             {{ formatChordLine(line.text.length, line.chords) }}
                         </span>
-                        <p class="font-mono">
+                        <p class="whitespace-nowrap">
                             {{ line.text }}
                         </p>
                     </div>
@@ -57,14 +79,14 @@ function formatChordLine(lineLength, chords) {
                 <div class="leading-3" v-else>
                     <span
                         v-for="chord in section.content"
-                        class="mr-2 font-mono text-yellow-600"
+                        class="mr-2 text-yellow-600"
                         :key="chord.id"
                     >
                         {{ chord.name }}
                     </span>
                 </div>
                 <br />
-            </div>
-        </section>
+            </section>
+        </main>
     </Container>
 </template>
