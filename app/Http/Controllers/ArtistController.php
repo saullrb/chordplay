@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Artist;
-use App\Models\Song;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -38,5 +37,21 @@ class ArtistController extends Controller
         return Inertia::render("Artists/Show", [
             "artist" => $artist,
         ]);
+    }
+
+    public function create()
+    {
+        return Inertia::render('Artists/Create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required'
+        ]);
+
+        $artist = Artist::create($validated);
+
+        return redirect()->route('artists.show', $artist);
     }
 }

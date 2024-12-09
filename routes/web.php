@@ -26,7 +26,9 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__ . '/auth.php';
 
+Route::get('/artists/create', [ArtistController::class, 'create'])->name('artists.create');
 Route::get('/artists/{artist:slug}', [ArtistController::class, 'show'])->name('artists.show');
 Route::get('/artists', [ArtistController::class, 'index'])->name('artists.index');
+Route::post('/artists', [ArtistController::class, 'store'])->name('artists.store');
 
 Route::get('/artists/{artist:slug}/{song:slug}', [SongController::class, 'show'])->name('artists.songs.show');

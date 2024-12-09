@@ -100,7 +100,7 @@ const showDropdown = ref(false);
                 >
                     <button
                         @click="switchTheme"
-                        class="grid size-8 place-items-center rounded-full outline-1 outline-black hover:bg-gray-300 hover:outline dark:text-white dark:outline-white dark:hover:bg-gray-800"
+                        class="flex size-8 items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-gray-300 dark:text-white dark:hover:bg-gray-800"
                     >
                         <i class="fa-solid fa-circle-half-stroke"></i>
                     </button>
