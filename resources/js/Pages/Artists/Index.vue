@@ -1,11 +1,11 @@
 <script setup>
 import Container from '@/Components/Container.vue';
+import IconLink from '@/Components/IconLink.vue';
 import ItemList from '@/Components/ItemList.vue';
 import LoadMoreButton from '@/Components/LoadMoreButton.vue';
 import NavBar from '@/Components/NavBar.vue';
 import PageHeader from '@/Components/PageHeader.vue';
 import { ref } from 'vue';
-import { Link } from '@inertiajs/vue3';
 
 const props = defineProps({
     artists: Object,
@@ -23,8 +23,9 @@ const loadMoreArtists = async () => {
     axios.get(next_url.value).then(({ data }) => {
         next_url.value = data.next_page_url;
         artists.value.push(...data.data);
-        loading.value = false;
     });
+
+    loading.value = false;
 };
 </script>
 
@@ -32,15 +33,13 @@ const loadMoreArtists = async () => {
     <Head title="Artists" />
     <NavBar />
 
-    <main>
+    <main class="mt-6">
         <Container>
             <div class="flex justify-between">
                 <PageHeader title="All Artists" />
-                <Link
-                    class="flex size-8 items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-gray-300 dark:text-white dark:hover:bg-gray-800"
-                    :href="route('artists.create')"
-                    ><i class="fa-solid fa-plus"></i
-                ></Link>
+                <IconLink :href="route('artists.create')"
+                    ><i class="fa-solid fa-plus"></i>
+                </IconLink>
             </div>
 
             <ItemList showRouteName="artists.show" :items="artists" />

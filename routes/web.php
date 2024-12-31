@@ -31,4 +31,6 @@ Route::get('/artists/{artist:slug}', [ArtistController::class, 'show'])->name('a
 Route::get('/artists', [ArtistController::class, 'index'])->name('artists.index');
 Route::post('/artists', [ArtistController::class, 'store'])->name('artists.store');
 
+Route::get('/artists/{artist:slug}/songs/create', [SongController::class, 'create'])->name('artists.songs.create');
+Route::post('/artists/{artist:slug}/songs', [SongController::class, 'store'])->name('artists.songs.store');
 Route::get('/artists/{artist:slug}/{song:slug}', [SongController::class, 'show'])->name('artists.songs.show');

@@ -17,15 +17,15 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug');
             $table->foreignId('artist_id')->constrained();
-            $table->enum('key', array_column(SongKeyEnum::cases(), 'name'))->nullable();
+            $table->enum('key', array_column(SongKeyEnum::cases(), 'value'))->nullable();
             $table->unsignedBigInteger('views')->default(0);
             $table->timestamps();
 
             $table->unique(['artist_id', 'slug']);
         });
     }
-    /**
 
+    /**
      * Reverse the migrations.
      */
     public function down(): void

@@ -18,9 +18,9 @@ class SongFactory extends Factory
     public function definition(): array
     {
         return [
-            "name" => fake()->word() . ' ' . fake()->word,
-            "key" => fake()->randomElement(array_column(SongKeyEnum::cases(), 'name')),
-            "views" => fake()->randomNumber(2)
+            'name' => fake()->word().' '.fake()->word,
+            'key' => fake()->randomElement(array_column(SongKeyEnum::cases(), 'value')),
+            'views' => fake()->randomNumber(2),
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\SongKeyEnum;
 use App\Models\Artist;
 use App\Models\ChordPlacement;
 use App\Models\ChordSequence;
@@ -9,6 +10,7 @@ use App\Models\LyricLine;
 use App\Models\Song;
 use App\Models\SongSection;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection as SupportCollection;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -18,10 +20,10 @@ class SongController extends Controller
     public function show(Artist $artist, Song $song): Response
     {
         $song->load([
-            'sections' => fn($query) => $query->orderBy('order'),
-            'sections.lyricLines' => fn($query) => $query->orderBy('order'),
+            'sections' => fn ($query) => $query->orderBy('order'),
+            'sections.lyricLines' => fn ($query) => $query->orderBy('order'),
             'sections.lyricLines.chordPlacements.chord',
-            'sections.chordSequence' => fn($query) => $query->orderBy('order'),
+            'sections.chordSequence' => fn ($query) => $query->orderBy('order'),
             'sections.chordSequence.chord',
         ]);
 
@@ -29,7 +31,30 @@ class SongController extends Controller
 
         return Inertia::render('Songs/Show', [
             'song' => $this->formatSong($song),
-            'artist' => $artist
+            'artist' => $artist,
+        ]);
+    }
+
+    public function create(Artist $artist)
+    {
+        return Inertia::render('Songs/Create', [
+            'song_keys' => array_map(fn ($key) => $key->value, SongKeyEnum::cases()),
+            'artist' => $artist,
+        ]);
+    }
+
+    public function store(Request $request, Artist $artist)
+    {
+        $validated = $request->validate([
+            'name' => 'required',
+            'key' => ['required', new \Illuminate\Validation\Rules\Enum(SongKeyEnum::class)],
+        ]);
+
+        $song = $artist->songs()->create($validated);
+
+        return redirect()->route('artists.songs.show', [
+            'artist' => $artist,
+            'song' => $song,
         ]);
     }
 
@@ -41,8 +66,8 @@ class SongController extends Controller
             'key' => $song->key,
             'views' => $song->views,
             'sections' => $song->sections->map(
-                fn(SongSection $section) => $this->formatSection($section)
-            )
+                fn (SongSection $section) => $this->formatSection($section)
+            ),
         ];
     }
 
@@ -55,31 +80,31 @@ class SongController extends Controller
             'order' => $section->order,
             'content' => $section->is_lyrical
                 ? $this->formatLyricLines($section->lyricLines)
-                : $this->formatChordSequence($section->chordSequence)
+                : $this->formatChordSequence($section->chordSequence),
         ];
     }
 
     private function formatLyricLines(Collection $lines): SupportCollection
     {
-        return $lines->map(fn(LyricLine $line) => [
+        return $lines->map(fn (LyricLine $line) => [
             'text' => $line->text,
-            'chords' => $this->formatChordPlacements($line->chordPlacements)
+            'chords' => $this->formatChordPlacements($line->chordPlacements),
         ]);
     }
 
     private function formatChordPlacements(Collection $placements): SupportCollection
     {
-        return $placements->map(fn(ChordPlacement $placement) => [
+        return $placements->map(fn (ChordPlacement $placement) => [
             'name' => $placement->chord->name,
-            'position' => $placement->position
+            'position' => $placement->position,
         ]);
     }
 
     private function formatChordSequence(Collection $sequence): SupportCollection
     {
-        return $sequence->map(fn(ChordSequence $seq) => [
+        return $sequence->map(fn (ChordSequence $seq) => [
             'name' => $seq->chord->name,
-            'order' => $seq->order
+            'order' => $seq->order,
         ]);
     }
 }

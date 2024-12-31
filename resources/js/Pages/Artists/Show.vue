@@ -1,5 +1,6 @@
 <script setup>
 import Container from '@/Components/Container.vue';
+import IconLink from '@/Components/IconLink.vue';
 import ItemList from '@/Components/ItemList.vue';
 import NavBar from '@/Components/NavBar.vue';
 import PageHeader from '@/Components/PageHeader.vue';
@@ -13,9 +14,14 @@ defineProps({
     <Head :title="artist.name" />
     <NavBar />
 
-    <main>
+    <main class="mt-6">
         <Container>
-            <PageHeader :title="artist.name" />
+            <div class="flex justify-between">
+                <PageHeader :title="artist.name" />
+                <IconLink :href="route('artists.songs.create', artist)"
+                    ><i class="fa-solid fa-plus"></i>
+                </IconLink>
+            </div>
             <ItemList
                 :items="artist.songs"
                 :parent="{ slug: artist.slug }"
