@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ChordPlacement extends Model
+class LineChord extends Model
 {
     /** @use HasFactory<\Database\Factories\ChordPlacementFactory> */
     use HasFactory;

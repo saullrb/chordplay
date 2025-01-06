@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ChordPlacement>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\LyricLine>
  */
-class ChordPlacementFactory extends Factory
+class SectionLineFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -16,6 +16,9 @@ class ChordPlacementFactory extends Factory
      */
     public function definition(): array
     {
-        return [];
+        return [
+            'lyrics' => fake()->sentence(),
+            'sequence' => 1,
+        ];
     }
 }

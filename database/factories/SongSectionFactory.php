@@ -17,8 +17,7 @@ class SongSectionFactory extends Factory
     public function definition(): array
     {
         return [
-            'is_lyrical' => fake()->boolean(80),
-            'order' => 1,
+            'sequence' => 1,
         ];
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-use App\Models\Chord;
-use App\Models\LyricLine;
+use App\Models\SongSection;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,14 +12,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('chord_placements', function (Blueprint $table) {
+        Schema::create('section_lines', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(LyricLine::class)->constrained()->cascadeOnDelete();
-            $table->foreignIdFor(Chord::class)->constrained();
-            $table->integer('position');
+            $table->foreignIdFor(SongSection::class);
+            $table->integer('sequence')->default(1);
+            $table->string('lyrics');
             $table->timestamps();
-
-            $table->unique(['lyric_line_id', 'position']);
         });
     }
 
@@ -29,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('chord_placements');
+        Schema::dropIfExists('lyric_lines');
     }
 };

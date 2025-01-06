@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Enums\SongKeyEnum;
 use App\Models\Artist;
-use App\Models\ChordPlacement;
-use App\Models\ChordSequence;
-use App\Models\LyricLine;
+use App\Models\Chord;
+use App\Models\LineChord;
+use App\Models\SectionLine;
 use App\Models\Song;
 use App\Models\SongSection;
 use Illuminate\Database\Eloquent\Collection;
@@ -20,11 +20,9 @@ class SongController extends Controller
     public function show(Artist $artist, Song $song): Response
     {
         $song->load([
-            'sections' => fn ($query) => $query->orderBy('order'),
-            'sections.lyricLines' => fn ($query) => $query->orderBy('order'),
-            'sections.lyricLines.chordPlacements.chord',
-            'sections.chordSequence' => fn ($query) => $query->orderBy('order'),
-            'sections.chordSequence.chord',
+            'sections' => fn ($query) => $query->orderBy('sequence'),
+            'sections.sectionLines' => fn ($query) => $query->orderBy('sequence'),
+            'sections.sectionLines.lineChords.chord',
         ]);
 
         $song->increment('views');
@@ -37,9 +35,12 @@ class SongController extends Controller
 
     public function create(Artist $artist)
     {
+        $chords = Chord::all()->pluck('name');
+
         return Inertia::render('Songs/Create', [
             'song_keys' => array_map(fn ($key) => $key->value, SongKeyEnum::cases()),
             'artist' => $artist,
+            'chords' => $chords,
         ]);
     }
 
@@ -76,35 +77,24 @@ class SongController extends Controller
         return [
             'id' => $section->id,
             'type' => $section->type,
-            'is_lyrical' => $section->is_lyrical,
-            'order' => $section->order,
-            'content' => $section->is_lyrical
-                ? $this->formatLyricLines($section->lyricLines)
-                : $this->formatChordSequence($section->chordSequence),
+            'sequence' => $section->sequence,
+            'content' => $this->formatSectionLines($section->sectionLines),
         ];
     }
 
-    private function formatLyricLines(Collection $lines): SupportCollection
+    private function formatSectionLines($section_lines): SupportCollection
     {
-        return $lines->map(fn (LyricLine $line) => [
-            'text' => $line->text,
-            'chords' => $this->formatChordPlacements($line->chordPlacements),
+        return $section_lines->map(fn (SectionLine $line) => [
+            'lyrics' => $line->lyrics,
+            'chords' => $this->formatLineChords($line->lineChords),
         ]);
     }
 
-    private function formatChordPlacements(Collection $placements): SupportCollection
+    private function formatLineChords(Collection $line_chords): SupportCollection
     {
-        return $placements->map(fn (ChordPlacement $placement) => [
-            'name' => $placement->chord->name,
-            'position' => $placement->position,
-        ]);
-    }
-
-    private function formatChordSequence(Collection $sequence): SupportCollection
-    {
-        return $sequence->map(fn (ChordSequence $seq) => [
-            'name' => $seq->chord->name,
-            'order' => $seq->order,
+        return $line_chords->map(fn (LineChord $line_chord) => [
+            'name' => $line_chord->chord->name,
+            'position' => $line_chord->position,
         ]);
     }
 }

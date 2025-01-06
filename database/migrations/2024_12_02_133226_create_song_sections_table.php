@@ -15,8 +15,7 @@ return new class extends Migration
         Schema::create('song_sections', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Song::class)->constrained();
-            $table->boolean('is_lyrical')->default(true);
-            $table->integer('order')->default(1);
+            $table->integer('sequence')->default(1);
             $table->timestamps();
         });
     }

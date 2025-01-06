@@ -11,18 +11,12 @@ class SongSection extends Model
     use HasFactory;
 
     protected $fillable = [
-        "is_lyrical",
-        "order",
-        "song_id"
+        'sequence',
+        'song_id',
     ];
 
-    public function lyricLines()
+    public function sectionLines()
     {
-        return $this->hasMany(LyricLine::class);
-    }
-
-    public function chordSequence()
-    {
-        return $this->hasMany(ChordSequence::class);
+        return $this->hasMany(SectionLine::class);
     }
 }
