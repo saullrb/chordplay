@@ -12,10 +12,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('song_sections', function (Blueprint $table) {
+        Schema::create('song_lines', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Song::class)->constrained();
+            $table->foreignIdFor(Song::class);
             $table->integer('sequence')->default(1);
+            $table->string('lyrics')->default('');
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('song_sections');
+        Schema::dropIfExists('lyric_lines');
     }
 };

@@ -5,12 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SectionLine extends Model
+class SongLine extends Model
 {
     /** @use HasFactory<\Database\Factories\LyricLineFactory> */
     use HasFactory;
 
-    public function lineChords()
+    protected $fillable = ['sequence', 'lyrics'];
+
+    public function chords()
     {
         return $this->hasMany(LineChord::class);
     }

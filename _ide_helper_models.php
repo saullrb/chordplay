@@ -66,56 +66,6 @@ namespace App\Models{
  * 
  *
  * @property int $id
- * @property int $lyric_line_id
- * @property int $chord_id
- * @property int $position
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Chord $chord
- * @method static \Database\Factories\ChordPlacementFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChordPlacement newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChordPlacement newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChordPlacement query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChordPlacement whereChordId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChordPlacement whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChordPlacement whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChordPlacement whereLyricLineId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChordPlacement wherePosition($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChordPlacement whereUpdatedAt($value)
- */
-	class ChordPlacement extends \Eloquent {}
-}
-
-namespace App\Models{
-/**
- * 
- *
- * @property int $id
- * @property int $song_section_id
- * @property int $chord_id
- * @property int $order
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Chord $chord
- * @method static \Database\Factories\ChordSequenceFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChordSequence newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChordSequence newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChordSequence query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChordSequence whereChordId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChordSequence whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChordSequence whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChordSequence whereOrder($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChordSequence whereSongSectionId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChordSequence whereUpdatedAt($value)
- */
-	class ChordSequence extends \Eloquent {}
-}
-
-namespace App\Models{
-/**
- * 
- *
- * @property int $id
  * @property int $chord_id
  * @property string $frets
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -138,25 +88,24 @@ namespace App\Models{
  * 
  *
  * @property int $id
- * @property int $song_section_id
- * @property int $order
- * @property string $text
+ * @property int $song_line_id
+ * @property int $chord_id
+ * @property int $position
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ChordPlacement> $chordPlacements
- * @property-read int|null $chord_placements_count
- * @method static \Database\Factories\LyricLineFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LyricLine newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LyricLine newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LyricLine query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LyricLine whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LyricLine whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LyricLine whereOrder($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LyricLine whereSongSectionId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LyricLine whereText($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LyricLine whereUpdatedAt($value)
+ * @property-read \App\Models\Chord $chord
+ * @method static \Database\Factories\LineChordFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LineChord newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LineChord newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LineChord query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LineChord whereChordId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LineChord whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LineChord whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LineChord wherePosition($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LineChord whereSongLineId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LineChord whereUpdatedAt($value)
  */
-	class LyricLine extends \Eloquent {}
+	class LineChord extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -171,8 +120,8 @@ namespace App\Models{
  * @property int $views
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SongSection> $sections
- * @property-read int|null $sections_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SongLine> $lines
+ * @property-read int|null $lines_count
  * @method static \Database\Factories\SongFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Song newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Song newQuery()
@@ -195,26 +144,24 @@ namespace App\Models{
  *
  * @property int $id
  * @property int $song_id
- * @property int $is_lyrical
- * @property int $order
+ * @property int $sequence
+ * @property string $lyrics
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ChordSequence> $chordSequence
- * @property-read int|null $chord_sequence_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\LyricLine> $lyricLines
- * @property-read int|null $lyric_lines_count
- * @method static \Database\Factories\SongSectionFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SongSection newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SongSection newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SongSection query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SongSection whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SongSection whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SongSection whereIsLyrical($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SongSection whereOrder($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SongSection whereSongId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SongSection whereUpdatedAt($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\LineChord> $chords
+ * @property-read int|null $chords_count
+ * @method static \Database\Factories\SongLineFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SongLine newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SongLine newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SongLine query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SongLine whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SongLine whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SongLine whereLyrics($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SongLine whereSequence($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SongLine whereSongId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SongLine whereUpdatedAt($value)
  */
-	class SongSection extends \Eloquent {}
+	class SongLine extends \Eloquent {}
 }
 
 namespace App\Models{

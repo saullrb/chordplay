@@ -13,15 +13,15 @@ class Song extends Model
     use HasFactory;
 
     protected $fillable = [
-        "name",
-        "slug",
-        "artist_id",
-        "key"
+        'name',
+        'slug',
+        'artist_id',
+        'key',
     ];
 
-    public function sections(): HasMany
+    public function lines(): HasMany
     {
-        return $this->hasMany(SongSection::class);
+        return $this->hasMany(SongLine::class);
     }
 
     protected static function boot()
@@ -39,7 +39,7 @@ class Song extends Model
         });
     }
 
-    private static function generateSlug(Song $song): String
+    private static function generateSlug(Song $song): string
     {
         $baseSlug = Str::slug($song->name);
         $slug = $baseSlug;
@@ -47,7 +47,7 @@ class Song extends Model
         $count = Song::whereArtistId($song->artist_id)->whereName($song->name)->count();
 
         if ($count > 0) {
-            $slug = $baseSlug . "-" . $count;
+            $slug = $baseSlug.'-'.$count;
         }
 
         return $slug;

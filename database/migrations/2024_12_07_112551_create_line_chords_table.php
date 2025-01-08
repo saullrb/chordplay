@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Chord;
-use App\Models\SectionLine;
+use App\Models\SongLine;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,12 +15,12 @@ return new class extends Migration
     {
         Schema::create('line_chords', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(SectionLine::class)->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(SongLine::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Chord::class)->constrained();
             $table->integer('position');
             $table->timestamps();
 
-            $table->unique(['section_line_id', 'position']);
+            $table->unique(['song_line_id', 'position']);
         });
     }
 

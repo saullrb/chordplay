@@ -6,9 +6,8 @@ use App\Enums\SongKeyEnum;
 use App\Models\Artist;
 use App\Models\Chord;
 use App\Models\LineChord;
-use App\Models\SectionLine;
 use App\Models\Song;
-use App\Models\SongSection;
+use App\Models\SongLine;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection as SupportCollection;
@@ -20,9 +19,8 @@ class SongController extends Controller
     public function show(Artist $artist, Song $song): Response
     {
         $song->load([
-            'sections' => fn ($query) => $query->orderBy('sequence'),
-            'sections.sectionLines' => fn ($query) => $query->orderBy('sequence'),
-            'sections.sectionLines.lineChords.chord',
+            'lines' => fn ($query) => $query->orderBy('sequence'),
+            'lines.chords.chord',
         ]);
 
         $song->increment('views');
@@ -35,7 +33,7 @@ class SongController extends Controller
 
     public function create(Artist $artist)
     {
-        $chords = Chord::all()->pluck('name');
+        $chords = Chord::select('id', 'name')->get();
 
         return Inertia::render('Songs/Create', [
             'song_keys' => array_map(fn ($key) => $key->value, SongKeyEnum::cases()),
@@ -47,11 +45,22 @@ class SongController extends Controller
     public function store(Request $request, Artist $artist)
     {
         $validated = $request->validate([
-            'name' => 'required',
+            'name' => 'required|string|max:255',
             'key' => ['required', new \Illuminate\Validation\Rules\Enum(SongKeyEnum::class)],
+            'song_lines' => 'required|array',
+            'song_lines.*.sequence' => 'required|integer',
+            'song_lines.*.lyrics' => 'nullable|string',
+            'song_lines.*.chords' => 'nullable|array',
+            'song_lines.*.chords.*.id' => 'required|integer',
+            'song_lines.*.chords.*.position' => 'required|integer',
         ]);
 
-        $song = $artist->songs()->create($validated);
+        $song = $artist->songs()->create([
+            'name' => $validated['name'],
+            'key' => $validated['key'],
+        ]);
+
+        dd(json_encode($validated['sections']));
 
         return redirect()->route('artists.songs.show', [
             'artist' => $artist,
@@ -66,28 +75,18 @@ class SongController extends Controller
             'slug' => $song->slug,
             'key' => $song->key,
             'views' => $song->views,
-            'sections' => $song->sections->map(
-                fn (SongSection $section) => $this->formatSection($section)
+            'lines' => $song->lines->map(
+                fn (SongLine $line) => $this->formatLine($line)
             ),
         ];
     }
 
-    private function formatSection(SongSection $section): array
+    private function formatLine($line)
     {
         return [
-            'id' => $section->id,
-            'type' => $section->type,
-            'sequence' => $section->sequence,
-            'content' => $this->formatSectionLines($section->sectionLines),
-        ];
-    }
-
-    private function formatSectionLines($section_lines): SupportCollection
-    {
-        return $section_lines->map(fn (SectionLine $line) => [
             'lyrics' => $line->lyrics,
-            'chords' => $this->formatLineChords($line->lineChords),
-        ]);
+            'chords' => $this->formatLineChords($line->chords),
+        ];
     }
 
     private function formatLineChords(Collection $line_chords): SupportCollection

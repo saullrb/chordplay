@@ -10,6 +10,8 @@ class LineChord extends Model
     /** @use HasFactory<\Database\Factories\ChordPlacementFactory> */
     use HasFactory;
 
+    protected $fillable = ['song_line_id', 'chord_id', 'position'];
+
     public function chord()
     {
         return $this->belongsTo(Chord::class);

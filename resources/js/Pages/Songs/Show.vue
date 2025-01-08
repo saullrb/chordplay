@@ -58,23 +58,17 @@ function formatChordLine(lineLength, chords) {
             }"
         >
             <section
-                v-for="section in song.sections"
-                :key="section.id"
-                class="mb-4 font-mono text-sm leading-5 tracking-tighter"
+                v-for="line in song.lines"
+                :key="line.id"
+                class="font-mono text-sm leading-5 tracking-tighter"
             >
-                <div
-                    class="break-inside-avoid"
-                    v-for="line in section.content"
-                    :key="line.id"
-                >
-                    <span class="whitespace-pre text-yellow-600">
-                        {{ formatChordLine(line.lyrics.length, line.chords) }}
-                    </span>
-                    <p class="whitespace-nowrap">
-                        {{ line.lyrics }}
-                    </p>
-                </div>
-                <br />
+                <br v-if="!line.lyrics" />
+                <span class="whitespace-pre text-yellow-600">
+                    {{ formatChordLine(line.lyrics.length, line.chords) }}
+                </span>
+                <p class="whitespace-nowrap">
+                    {{ line.lyrics }}
+                </p>
             </section>
         </main>
     </Container>
