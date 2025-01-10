@@ -56,10 +56,7 @@ class SongController extends Controller
             'song_lines.*.chords.*.position' => 'required|integer',
         ]);
 
-        $song = $artist->songs()->create([
-            'name' => $validated['name'],
-            'key' => $validated['key'],
-        ]);
+        $song = $artist->songs()->create($validated->only(['name', 'key']));
 
         foreach ($validated['song_lines'] as $line) {
             $song_line = $song->lines()->create([
@@ -94,7 +91,7 @@ class SongController extends Controller
         ];
     }
 
-    private function formatLine($line)
+    private function formatLine(SongLine $line): array
     {
         return [
             'lyrics' => $line->lyrics,

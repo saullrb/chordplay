@@ -34,7 +34,7 @@ const isDualColumn = ref(false);
                 @click="isDualColumn = !isDualColumn"
                 class="rounded-md border border-gray-300 bg-transparent px-3 py-1.5 text-sm text-gray-700 transition-colors duration-200 hover:bg-gray-300 hover:text-gray-900 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white"
                 :class="{
-                    'border-gray-400 bg-gray-300 text-yellow-600 dark:border-gray-600 dark:bg-gray-800 dark:text-yellow-600':
+                    'border-gray-400 bg-yellow-600 text-white hover:bg-yellow-600 hover:text-white hover:brightness-105 dark:border-gray-600 dark:bg-yellow-600 dark:text-white dark:hover:bg-yellow-600 dark:hover:brightness-110':
                         isDualColumn,
                 }"
             >
