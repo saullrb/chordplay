@@ -4,6 +4,7 @@ import NavBar from '@/Components/NavBar.vue';
 import PageHeader from '@/Components/PageHeader.vue';
 import TextLink from '@/Components/TextLink.vue';
 import { ref } from 'vue';
+import ChordsAndLyrics from './partials/ChordsAndLyrics.vue';
 
 defineProps({
     song: Object,
@@ -11,16 +12,6 @@ defineProps({
 });
 
 const isDualColumn = ref(false);
-
-function formatChordLine(lineLength, chords) {
-    const chordLine = Array(lineLength).fill(' ');
-
-    chords.forEach((chord) => {
-        chordLine[chord.position] = chord.name;
-    });
-
-    return chordLine.join('');
-}
 </script>
 
 <template>
@@ -57,19 +48,7 @@ function formatChordLine(lineLength, chords) {
                 'columns-2 gap-8': isDualColumn,
             }"
         >
-            <section
-                v-for="line in song.lines"
-                :key="line.id"
-                class="font-mono text-sm leading-5 tracking-tighter"
-            >
-                <br v-if="!line.lyrics" />
-                <span class="whitespace-pre text-yellow-600">
-                    {{ formatChordLine(line.lyrics.length, line.chords) }}
-                </span>
-                <p class="whitespace-nowrap">
-                    {{ line.lyrics }}
-                </p>
-            </section>
+            <ChordsAndLyrics :lines="song.lines" />
         </main>
     </Container>
 </template>

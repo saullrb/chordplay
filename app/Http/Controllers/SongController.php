@@ -8,6 +8,7 @@ use App\Models\Chord;
 use App\Models\LineChord;
 use App\Models\Song;
 use App\Models\SongLine;
+use App\Rules\ValidChords;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection as SupportCollection;
@@ -33,12 +34,12 @@ class SongController extends Controller
 
     public function create(Artist $artist)
     {
-        $chords = Chord::select('id', 'name')->get();
+        $chords = Chord::all()->pluck('name');
 
         return Inertia::render('Songs/Create', [
             'song_keys' => array_map(fn ($key) => $key->value, SongKeyEnum::cases()),
             'artist' => $artist,
-            'chords' => $chords,
+            'available_chords' => $chords,
         ]);
     }
 
@@ -47,11 +48,11 @@ class SongController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'key' => ['required', new \Illuminate\Validation\Rules\Enum(SongKeyEnum::class)],
-            'song_lines' => 'required|array',
+            'song_lines' => ['required', 'array'],
             'song_lines.*.sequence' => 'required|integer',
-            'song_lines.*.lyrics' => 'nullable|string',
+            'song_lines.*.lyrics' => 'nullable|string|max:255',
             'song_lines.*.chords' => 'nullable|array',
-            'song_lines.*.chords.*.id' => 'required|integer',
+            'song_lines.*.chords.*.name' => ['required', 'string', new ValidChords],
             'song_lines.*.chords.*.position' => 'required|integer',
         ]);
 
@@ -60,7 +61,19 @@ class SongController extends Controller
             'key' => $validated['key'],
         ]);
 
-        dd(json_encode($validated['sections']));
+        foreach ($validated['song_lines'] as $line) {
+            $song_line = $song->lines()->create([
+                'sequence' => $line['sequence'],
+                'lyrics' => $line['lyrics'] ?? '',
+            ]);
+
+            foreach ($line['chords'] as $chord) {
+                $song_line->chords()->create([
+                    'chord_id' => Chord::whereName($chord['name'])->firstOrFail()->id,
+                    'position' => $chord['position'],
+                ]);
+            }
+        }
 
         return redirect()->route('artists.songs.show', [
             'artist' => $artist,
