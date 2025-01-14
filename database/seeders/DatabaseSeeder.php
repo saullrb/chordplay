@@ -16,10 +16,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        collect(['A', 'Am', 'C', 'D', 'Dm', 'E', 'Em', 'F', 'G'])->each(
-            fn ($name) => Chord::create(['name' => $name])
-        );
-
         $chords = Chord::all();
 
         Artist::factory()
