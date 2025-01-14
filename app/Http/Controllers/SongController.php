@@ -56,7 +56,7 @@ class SongController extends Controller
             'song_lines.*.chords.*.position' => 'required|integer',
         ]);
 
-        $song = $artist->songs()->create($validated->only(['name', 'key']));
+        $song = $artist->songs()->create(['name' => $validated['name'], 'key' => $validated['key']]);
 
         foreach ($validated['song_lines'] as $line) {
             $song_line = $song->lines()->create([

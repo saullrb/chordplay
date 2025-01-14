@@ -53,6 +53,7 @@ function extractChords(line) {
 function processLyrics() {
     const lines = lyrics.value.split('\n').map((line) => line.trim());
     const song_lines = [];
+    let sequence = 1;
 
     lines.forEach((current, index) => {
         const previous = lines[index - 1];
@@ -63,21 +64,21 @@ function processLyrics() {
         // Current line is chords with no lyrics bellow
         if (isChordLine(current) && (!next || isChordLine(next))) {
             song_lines.push({
-                sequence: index + 1,
+                sequence: sequence++,
                 lyrics: '',
                 chords: extractChords(current),
             });
         } else if (current && !isChordLine(current) && isChordLine(previous)) {
             // Current line is lyrics with chords above
             song_lines.push({
-                sequence: index + 1,
+                sequence: sequence++,
                 lyrics: current,
                 chords: extractChords(previous),
             });
         } else if (!isChordLine(current)) {
             // Current line is lyrics or blank without chords:
             song_lines.push({
-                sequence: index + 1,
+                sequence: sequence++,
                 lyrics: current,
                 chords: [],
             });
@@ -110,7 +111,7 @@ function submit() {
             <TextLink :href="route('artists.show', artist)">
                 {{ artist.name }}
             </TextLink>
-            <div class="mt-12 grid grid-cols-2 justify-between gap-12">
+            <div class="mt-6 grid grid-cols-2 justify-between gap-12 py-6">
                 <form
                     @submit.prevent="submit"
                     class="flex w-full flex-col gap-2"
