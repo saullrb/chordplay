@@ -25,13 +25,15 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-Route::get('/artists/create', [ArtistController::class, 'create'])->name('artists.create');
+Route::middleware('auth')->group(function () {
+    Route::get('/artists/create', [ArtistController::class, 'create'])->name('artists.create');
+    Route::post('/artists', [ArtistController::class, 'store'])->name('artists.store');
+    Route::get('/artists/{artist:slug}/songs/create', [SongController::class, 'create'])->name('artists.songs.create');
+    Route::get('/artists/{artist:slug}/{song:slug}/edit', [SongController::class, 'edit'])->name('artists.songs.edit');
+    Route::patch('/artists/{artist:slug}/{song:slug}', [SongController::class, 'update'])->name('artists.songs.update');
+});
+
 Route::get('/artists/{artist:slug}', [ArtistController::class, 'show'])->name('artists.show');
 Route::get('/artists', [ArtistController::class, 'index'])->name('artists.index');
-Route::post('/artists', [ArtistController::class, 'store'])->name('artists.store');
-
-Route::get('/artists/{artist:slug}/songs/create', [SongController::class, 'create'])->name('artists.songs.create');
 Route::post('/artists/{artist:slug}/songs', [SongController::class, 'store'])->name('artists.songs.store');
 Route::get('/artists/{artist:slug}/{song:slug}', [SongController::class, 'show'])->name('artists.songs.show');
-Route::get('/artists/{artist:slug}/{song:slug}/edit', [SongController::class, 'edit'])->name('artists.songs.edit');
-Route::patch('/artists/{artist:slug}/{song:slug}', [SongController::class, 'update'])->name('artists.songs.update');

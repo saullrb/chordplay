@@ -9,6 +9,15 @@ import { ref } from 'vue';
 
 const props = defineProps({
     artists: Object,
+    can: {
+        type: Object,
+        default: () => ({
+            create_artist: {
+                type: Boolean,
+                default: false,
+            },
+        }),
+    },
 });
 
 const next_url = ref(props.artists.next_page_url);
@@ -31,13 +40,17 @@ const loadMoreArtists = async () => {
 
 <template>
     <Head title="Artists" />
+
     <NavBar />
 
     <main class="mt-6">
         <Container>
             <div class="flex justify-between">
                 <PageHeader title="All Artists" />
-                <IconLink :href="route('artists.create')"
+
+                <IconLink
+                    v-if="can.create_artist"
+                    :href="route('artists.create')"
                     ><i class="fa-solid fa-plus"></i>
                 </IconLink>
             </div>

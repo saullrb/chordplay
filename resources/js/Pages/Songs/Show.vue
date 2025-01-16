@@ -11,6 +11,15 @@ defineProps({
     song: Object,
     artist: Object,
     valid_chords: Array,
+    can: {
+        type: Object,
+        default: () => ({
+            update_song: {
+                type: Boolean,
+                default: false,
+            },
+        }),
+    },
 });
 
 const isDualColumn = ref(false);
@@ -24,7 +33,10 @@ const isDualColumn = ref(false);
         <header>
             <div class="flex items-center gap-2">
                 <PageHeader :title="song.name" />
-                <IconLink :href="route('artists.songs.edit', { artist, song })">
+                <IconLink
+                    v-if="can.update_song"
+                    :href="route('artists.songs.edit', { artist, song })"
+                >
                     <i class="fa-solid fa-pencil"></i>
                 </IconLink>
             </div>
@@ -39,7 +51,7 @@ const isDualColumn = ref(false);
             </div>
             <button
                 @click="isDualColumn = !isDualColumn"
-                class="rounded-md border border-gray-300 bg-transparent px-3 py-1.5 text-sm text-gray-700 transition-colors duration-200 hover:bg-gray-300 hover:text-gray-900 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white"
+                class="hidden rounded-md border border-gray-300 bg-transparent px-3 py-1.5 text-sm text-gray-700 transition-colors duration-200 hover:bg-gray-300 hover:text-gray-900 sm:block dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white"
                 :class="{
                     'border-gray-400 bg-yellow-600 text-white hover:bg-yellow-600 hover:text-white hover:brightness-105 dark:border-gray-600 dark:bg-yellow-600 dark:text-white dark:hover:bg-yellow-600 dark:hover:brightness-110':
                         isDualColumn,

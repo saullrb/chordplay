@@ -1,11 +1,16 @@
 <script setup>
 import { switchTheme } from '@/theme.js';
-import { Link, router } from '@inertiajs/vue3';
+import { Link, router, usePage } from '@inertiajs/vue3';
 import NavLink from '@/Components/NavLink.vue';
 import Container from '@/Components/Container.vue';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
-const showDropdown = ref(false);
+const show_dropdown = ref(false);
+const is_menu_closed = ref(true);
+
+const page = usePage();
+
+const user = computed(() => page.props.auth.user);
 </script>
 
 <template>
@@ -17,6 +22,7 @@ const showDropdown = ref(false);
                 >
                     <!-- Mobile menu button-->
                     <button
+                        @click="is_menu_closed = !is_menu_closed"
                         type="button"
                         class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
                         aria-controls="mobile-menu"
@@ -24,12 +30,8 @@ const showDropdown = ref(false);
                     >
                         <span class="absolute -inset-0.5"></span>
                         <span class="sr-only">Open main menu</span>
-                        <!--
-            Icon when menu is closed.
-
-            Menu open: "hidden", Menu closed: "block"
-          -->
                         <svg
+                            v-show="is_menu_closed"
                             class="block size-6"
                             fill="none"
                             viewBox="0 0 24 24"
@@ -44,13 +46,10 @@ const showDropdown = ref(false);
                                 d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
                             />
                         </svg>
-                        <!--
-            Icon when menu is open.
 
-            Menu open: "block", Menu closed: "hidden"
-          -->
                         <svg
-                            class="hidden size-6"
+                            v-show="!is_menu_closed"
+                            class="block size-6"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke-width="1.5"
@@ -104,11 +103,24 @@ const showDropdown = ref(false);
                     >
                         <i class="fa-solid fa-circle-half-stroke"></i>
                     </button>
+
+                    <div v-if="!user" class="flex">
+                        <NavLink
+                            :href="route('login')"
+                            :active="$page.component === 'Auth/Login'"
+                            >Log In</NavLink
+                        >
+                        <NavLink
+                            :href="route('register')"
+                            :active="$page.component === 'Auth/Register'"
+                            >Register</NavLink
+                        >
+                    </div>
                     <!-- Profile dropdown -->
-                    <div class="relative ml-3">
+                    <div v-else class="relative ml-3">
                         <div>
                             <button
-                                @click="showDropdown = !showDropdown"
+                                @click="show_dropdown = !show_dropdown"
                                 type="button"
                                 class="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                                 id="user-menu-button"
@@ -125,16 +137,6 @@ const showDropdown = ref(false);
                             </button>
                         </div>
 
-                        <!--
-            Dropdown menu, show/hide based on menu state.
-
-            Entering: "transition ease-out duration-100"
-              From: "transform opacity-0 scale-95"
-              To: "transform opacity-100 scale-100"
-            Leaving: "transition ease-in duration-75"
-              From: "transform opacity-100 scale-100"
-              To: "transform opacity-0 scale-95"
-          -->
                         <Transition
                             enter-active-class="transition ease-out duration-100"
                             enter-from-class="transform opacity-0 scale-95"
@@ -144,8 +146,8 @@ const showDropdown = ref(false);
                             leave-to-class="transform opacity-0 scale-95"
                         >
                             <div
-                                v-show="showDropdown"
-                                @click="showDropdown = false"
+                                v-show="show_dropdown"
+                                @click="show_dropdown = false"
                                 class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-200 py-1 text-gray-900 shadow-lg ring-1 ring-black/5 focus:outline-none dark:bg-gray-900 dark:text-white dark:ring-white/5"
                                 role="menu"
                                 aria-orientation="vertical"
@@ -164,9 +166,6 @@ const showDropdown = ref(false);
                                 >
                                 <button
                                     class="block w-full rounded-lg px-4 py-2 text-start text-sm font-semibold text-gray-500 hover:bg-gray-500 hover:text-white dark:text-gray-400 dark:hover:bg-gray-800"
-                                    :class="{
-                                        'text-gray-900 dark:text-white': active,
-                                    }"
                                     @click="router.post(route('logout'))"
                                 >
                                     Log Out
@@ -179,29 +178,17 @@ const showDropdown = ref(false);
         </Container>
 
         <!-- Mobile menu, show/hide based on menu state. -->
-        <div class="sm:hidden" id="mobile-menu">
+        <div v-if="!is_menu_closed" class="sm:hidden" id="mobile-menu">
             <div class="space-y-1 px-2 pb-3 pt-2">
-                <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-                <a
-                    href="#"
-                    class="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
-                    aria-current="page"
-                    >Dashboard</a
+                <NavLink
+                    :href="route('home')"
+                    :active="$page.component === 'Home'"
+                    >Home</NavLink
                 >
-                <a
-                    href="#"
-                    class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-                    >Team</a
-                >
-                <a
-                    href="#"
-                    class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-                    >Projects</a
-                >
-                <a
-                    href="#"
-                    class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-                    >Calendar</a
+                <NavLink
+                    :href="route('artists.index')"
+                    :active="$page.component === 'Artists/Index'"
+                    >Artists</NavLink
                 >
             </div>
         </div>

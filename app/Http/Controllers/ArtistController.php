@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Artist;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class ArtistController extends Controller
 {
+    use AuthorizesRequests;
+
     public function index()
     {
         // $top_artists = Artist::query()->orderByDesc('views')->limit(10)->get();
@@ -19,14 +23,17 @@ class ArtistController extends Controller
         }
 
         return Inertia::render(
-            "Artists/Index",
+            'Artists/Index',
             [
-                "artists" => $artists,
+                'artists' => $artists,
+                'can' => [
+                    'create_artist' => Auth::user()?->can('create', Artist::class) ?? false,
+                ],
             ]
         );
     }
 
-    public function show(String $slug): Response
+    public function show(string $slug): Response
     {
         $artist = Artist::with(['songs' => function ($query) {
             $query->orderBy('title', 'asc');
@@ -34,20 +41,24 @@ class ArtistController extends Controller
 
         $artist->increment('views');
 
-        return Inertia::render("Artists/Show", [
-            "artist" => $artist,
+        return Inertia::render('Artists/Show', [
+            'artist' => $artist,
         ]);
     }
 
     public function create()
     {
+        $this->authorize('create', Artist::class);
+
         return Inertia::render('Artists/Create');
     }
 
     public function store(Request $request)
     {
+        $this->authorize('create', Artist::class);
+
         $validated = $request->validate([
-            'name' => 'required'
+            'name' => 'required',
         ]);
 
         $artist = Artist::create($validated);
