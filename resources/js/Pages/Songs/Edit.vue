@@ -3,35 +3,41 @@ import Container from '@/Components/Container.vue';
 import NavBar from '@/Components/NavBar.vue';
 import PageHeader from '@/Components/PageHeader.vue';
 import TextLink from '@/Components/TextLink.vue';
-import { useForm } from '@inertiajs/vue3';
 import SongContent from './partials/SongContent.vue';
 import SongForm from './partials/SongForm.vue';
+import { useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
     available_keys: Array,
     valid_chords: Array,
     artist: Object,
+    song: Object,
 });
 
 const form = useForm({
-    name: '',
-    key: null,
-    content: '',
+    name: props.song.name,
+    key: props.song.key,
+    content: props.song.content,
 });
 
 function submitForm() {
-    form.post(route('artists.songs.store', props.artist));
+    form.patch(
+        route('artists.songs.update', {
+            artist: props.artist,
+            song: props.song,
+        }),
+    );
 }
 </script>
 
 <template>
-    <Head :title="`${artist.name} - Add Song`" />
+    <Head :title="`${artist.name} - ${song.name} - Edit`" />
 
     <NavBar />
 
     <main class="mt-6">
         <Container>
-            <PageHeader title="Add song" />
+            <PageHeader title="Edit song" />
 
             <TextLink :href="route('artists.show', artist)">
                 {{ artist.name }}
@@ -42,7 +48,7 @@ function submitForm() {
                     :available_keys="available_keys"
                     :valid_chords="valid_chords"
                     :initial_data="form"
-                    submit_label="Add"
+                    submit_label="Update"
                     @submit="submitForm"
                 />
 

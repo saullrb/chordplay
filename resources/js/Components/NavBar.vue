@@ -1,6 +1,6 @@
 <script setup>
 import { switchTheme } from '@/theme.js';
-import { Link } from '@inertiajs/vue3';
+import { Link, router } from '@inertiajs/vue3';
 import NavLink from '@/Components/NavLink.vue';
 import Container from '@/Components/Container.vue';
 import { ref } from 'vue';
@@ -153,23 +153,24 @@ const showDropdown = ref(false);
                                 tabindex="-1"
                             >
                                 <NavLink
-                                    class="px-4 py-2"
                                     :active="route().current('profile.edit')"
                                     :href="route('profile.edit')"
                                     >Your Profile</NavLink
                                 >
                                 <NavLink
-                                    class="px-4 py-2"
                                     :active="route().current('dashboard')"
                                     :href="route('dashboard')"
                                     >Dashboard</NavLink
                                 >
-                                <NavLink
-                                    class="px-4 py-2"
-                                    :active="false"
-                                    href="#"
-                                    >Log Out</NavLink
+                                <button
+                                    class="block w-full rounded-lg px-4 py-2 text-start text-sm font-semibold text-gray-500 hover:bg-gray-500 hover:text-white dark:text-gray-400 dark:hover:bg-gray-800"
+                                    :class="{
+                                        'text-gray-900 dark:text-white': active,
+                                    }"
+                                    @click="router.post(route('logout'))"
                                 >
+                                    Log Out
+                                </button>
                             </div>
                         </Transition>
                     </div>

@@ -4,11 +4,13 @@ import NavBar from '@/Components/NavBar.vue';
 import PageHeader from '@/Components/PageHeader.vue';
 import TextLink from '@/Components/TextLink.vue';
 import { ref } from 'vue';
-import ChordsAndLyrics from './partials/ChordsAndLyrics.vue';
+import SongContent from './partials/SongContent.vue';
+import IconLink from '@/Components/IconLink.vue';
 
 defineProps({
     song: Object,
     artist: Object,
+    valid_chords: Array,
 });
 
 const isDualColumn = ref(false);
@@ -20,7 +22,12 @@ const isDualColumn = ref(false);
 
     <Container>
         <header>
-            <PageHeader :title="song.name" />
+            <div class="flex items-center gap-2">
+                <PageHeader :title="song.name" />
+                <IconLink :href="route('artists.songs.edit', { artist, song })">
+                    <i class="fa-solid fa-pencil"></i>
+                </IconLink>
+            </div>
             <TextLink :href="route('artists.show', artist)">
                 {{ artist.name }}
             </TextLink>
@@ -43,12 +50,12 @@ const isDualColumn = ref(false);
             </button>
         </header>
         <main
-            class="mt-6 dark:text-white"
+            class="py-6 dark:text-white"
             :class="{
                 'columns-2 gap-8': isDualColumn,
             }"
         >
-            <ChordsAndLyrics :lines="song.lines" />
+            <SongContent :content="song.content" :valid_chords="valid_chords" />
         </main>
     </Container>
 </template>
