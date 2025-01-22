@@ -1,8 +1,45 @@
 <script setup>
 const props = defineProps({
     content: String,
-    valid_chords: Array,
+    available_keys: Array,
+    valid_chords: Object,
+    original_key: String,
+    current_key: String,
 });
+
+function getChordType(chord) {
+    for (const [type, chords] of Object.entries(props.valid_chords)) {
+        if (chords.includes(chord)) {
+            return type;
+        }
+    }
+
+    return '';
+}
+
+function findNoteIndex(note) {
+    return props.available_keys.findIndex((n) => n === note);
+}
+
+function transposeChord(chord) {
+    if (!chord) return chord;
+
+    const chord_type = getChordType(chord);
+
+    const original_index = findNoteIndex(props.original_key);
+    const target_index = findNoteIndex(props.current_key);
+    const semitones = target_index - original_index;
+
+    const chord_array = props.valid_chords[chord_type];
+    const current_index = chord_array.findIndex((c) => c === chord);
+
+    let new_index = (current_index + semitones) % chord_array.length;
+    if (new_index < 0) {
+        new_index += chord_array.length;
+    }
+
+    return chord_array[new_index];
+}
 
 function extractBrackets(line) {
     let new_line = '';
@@ -13,11 +50,13 @@ function extractBrackets(line) {
             bracket_content = '';
         } else if (char === ']' && bracket_content) {
             const chord = bracket_content.trim();
+            const transposed_chord = transposeChord(chord);
 
-            if (props.valid_chords?.includes(chord)) {
-                new_line += chord;
-                bracket_content = null;
+            if (transposed_chord) {
+                new_line += transposed_chord;
             }
+
+            bracket_content = null;
         } else if (bracket_content !== null) {
             bracket_content += char;
         } else {

@@ -6,7 +6,6 @@ import { reactive } from 'vue';
 
 const props = defineProps({
     available_keys: Array,
-    valid_chords: Array,
     initial_data: {
         type: Object,
         default: () => ({

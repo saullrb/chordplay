@@ -3,12 +3,26 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Chord extends Model
 {
-    public function simplifiedChord(): HasOne
+    public const VARIATIONS = [
+        'major' => '',
+        'minor' => 'm',
+        'seventh' => '7',
+        'minor_seventh' => 'm7',
+        'major_seventh' => 'maj7',
+        'ninth' => '9',
+        'diminished' => '°',
+        'augmented' => '+',
+    ];
+
+    public const BASE_NOTES = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
+
+    public static function getGroupedChords()
     {
-        return $this->hasOne(Chord::class, 'simplified_chord_id');
+        return self::get()->groupBy('variation')->map(function ($chords) {
+            return $chords->pluck('name');
+        });
     }
 }

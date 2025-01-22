@@ -21,10 +21,19 @@ class SongController extends Controller
     {
         $song->increment('views');
 
+        $available_keys = [];
+
+        if (str_ends_with($song->key, 'm')) {
+            $available_keys = array_values(array_filter(SongKeyEnum::cases(), fn ($key) => str_ends_with($key->value, 'm')));
+        } else {
+            $available_keys = array_values(array_filter(SongKeyEnum::cases(), fn ($key) => ! str_ends_with($key->value, 'm')));
+        }
+
         return Inertia::render('Songs/Show', [
             'song' => $song,
             'artist' => $artist,
-            'valid_chords' => Chord::pluck('name'),
+            'valid_chords' => Chord::getGroupedChords(),
+            'available_keys' => $available_keys,
             'can' => ['update_song' => Auth::user()?->can('update', Song::class) ?? false],
         ]);
     }
@@ -36,7 +45,7 @@ class SongController extends Controller
         return Inertia::render('Songs/Create', [
             'available_keys' => array_map(fn ($key) => $key->value, SongKeyEnum::cases()),
             'artist' => $artist,
-            'valid_chords' => Chord::pluck('name'),
+            'valid_chords' => Chord::getGroupedChords(),
         ]);
     }
 

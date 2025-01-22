@@ -12,13 +12,10 @@ class ChordSeeder extends Seeder
      */
     public function run(): void
     {
-        $base_chords = ['A', 'A#',  'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
-        $variations = ['', 'm', '7', 'm7', 'maj7', '9', '°', '+'];
-
-        foreach ($base_chords as $base_chord) {
-            foreach ($variations as $variation) {
-                $chord = $base_chord.$variation;
-                Chord::create(['name' => $chord]);
+        foreach (Chord::BASE_NOTES as $base_note) {
+            foreach (Chord::VARIATIONS as $variation) {
+                $chord = $base_note.$variation;
+                Chord::create(['name' => $chord, 'variation' => $variation]);
             }
         }
     }

@@ -9,7 +9,7 @@ import SongForm from './partials/SongForm.vue';
 
 const props = defineProps({
     available_keys: Array,
-    valid_chords: Array,
+    valid_chords: Object,
     artist: Object,
 });
 
@@ -40,7 +40,6 @@ function submitForm() {
             <div class="mt-6 grid grid-cols-2 justify-between gap-12 py-6">
                 <SongForm
                     :available_keys="available_keys"
-                    :valid_chords="valid_chords"
                     :initial_data="form"
                     submit_label="Add"
                     @submit="submitForm"

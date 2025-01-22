@@ -7,10 +7,11 @@ import { ref } from 'vue';
 import SongContent from './partials/SongContent.vue';
 import IconLink from '@/Components/IconLink.vue';
 
-defineProps({
+const props = defineProps({
     song: Object,
     artist: Object,
-    valid_chords: Array,
+    valid_chords: Object,
+    available_keys: Array,
     can: {
         type: Object,
         default: () => ({
@@ -22,7 +23,30 @@ defineProps({
     },
 });
 
+const song_key = ref(props.song.key);
 const isDualColumn = ref(false);
+
+function transposeHalfStepUp() {
+    let key_index = props.available_keys.findIndex(
+        (key) => key === song_key.value,
+    );
+
+    if (key_index === props.available_keys.length - 1) {
+        key_index = -1;
+    }
+    song_key.value = props.available_keys[key_index + 1];
+}
+
+function transposeHalfStepDown() {
+    let key_index = props.available_keys.findIndex(
+        (key) => key === song_key.value,
+    );
+
+    if (key_index === 0) {
+        key_index = props.available_keys.length;
+    }
+    song_key.value = props.available_keys[key_index - 1];
+}
 </script>
 
 <template>
@@ -43,11 +67,30 @@ const isDualColumn = ref(false);
             <TextLink :href="route('artists.show', artist)">
                 {{ artist.name }}
             </TextLink>
-            <div class="my-6 flex items-center gap-1 text-sm dark:text-white">
-                <span>Key: </span>
-                <span class="text-yellow-600">
-                    {{ song.key }}
-                </span>
+            <div class="my-6 flex flex-col gap-2">
+                <div class="flex items-center gap-1 text-sm dark:text-white">
+                    <span>Key: </span>
+                    <span class="text-yellow-600">
+                        {{ song_key }}
+                    </span>
+                </div>
+                <div
+                    class="flex items-center justify-start gap-2 text-sm dark:text-white"
+                >
+                    <span>Transpose:</span>
+                    <button
+                        @click="transposeHalfStepDown"
+                        class="flex size-8 items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-gray-300 dark:text-white dark:hover:bg-gray-800"
+                    >
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
+                    <button
+                        @click="transposeHalfStepUp"
+                        class="flex size-8 items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-gray-300 dark:text-white dark:hover:bg-gray-800"
+                    >
+                        <i class="fa-solid fa-add"></i>
+                    </button>
+                </div>
             </div>
             <button
                 @click="isDualColumn = !isDualColumn"
@@ -67,7 +110,13 @@ const isDualColumn = ref(false);
                 'columns-2 gap-8': isDualColumn,
             }"
         >
-            <SongContent :content="song.content" :valid_chords="valid_chords" />
+            <SongContent
+                :original_key="song.key"
+                :current_key="song_key"
+                :available_keys="available_keys"
+                :content="song.content"
+                :valid_chords="valid_chords"
+            />
         </main>
     </Container>
 </template>
