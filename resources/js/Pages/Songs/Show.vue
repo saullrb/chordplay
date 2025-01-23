@@ -3,7 +3,7 @@ import Container from '@/Components/Container.vue';
 import NavBar from '@/Components/NavBar.vue';
 import PageHeader from '@/Components/PageHeader.vue';
 import TextLink from '@/Components/TextLink.vue';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import SongContent from './partials/SongContent.vue';
 import IconLink from '@/Components/IconLink.vue';
 
@@ -24,28 +24,29 @@ const props = defineProps({
 });
 
 const song_key = ref(props.song.key);
-const isDualColumn = ref(false);
+const is_dual_column = ref(false);
+const capo_position = ref(0);
 
-function transposeHalfStepUp() {
+watch(capo_position, (new_position, old_position) => {
+    new_position - old_position > 0
+        ? transpose('down', new_position - old_position)
+        : transpose('up', Math.abs(new_position - old_position));
+});
+
+function transpose(direction, half_steps) {
     let key_index = props.available_keys.findIndex(
         (key) => key === song_key.value,
     );
 
-    if (key_index === props.available_keys.length - 1) {
-        key_index = -1;
+    if (direction === 'down') {
+        key_index =
+            (key_index - half_steps + props.available_keys.length) %
+            props.available_keys.length;
+    } else {
+        key_index = (key_index + half_steps) % props.available_keys.length;
     }
-    song_key.value = props.available_keys[key_index + 1];
-}
 
-function transposeHalfStepDown() {
-    let key_index = props.available_keys.findIndex(
-        (key) => key === song_key.value,
-    );
-
-    if (key_index === 0) {
-        key_index = props.available_keys.length;
-    }
-    song_key.value = props.available_keys[key_index - 1];
+    song_key.value = props.available_keys[key_index];
 }
 </script>
 
@@ -79,25 +80,52 @@ function transposeHalfStepDown() {
                 >
                     <span>Transpose:</span>
                     <button
-                        @click="transposeHalfStepDown"
+                        @click="() => transpose('down', 1)"
                         class="flex size-8 items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-gray-300 dark:text-white dark:hover:bg-gray-800"
                     >
                         <i class="fa-solid fa-minus"></i>
                     </button>
                     <button
-                        @click="transposeHalfStepUp"
+                        @click="() => transpose('up', 1)"
                         class="flex size-8 items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-gray-300 dark:text-white dark:hover:bg-gray-800"
                     >
                         <i class="fa-solid fa-add"></i>
                     </button>
                 </div>
+
+                <div
+                    class="flex items-center justify-start gap-2 text-sm dark:text-white"
+                >
+                    <span>Add Capo:</span>
+                    <select
+                        name="capo"
+                        id="capo"
+                        v-model="capo_position"
+                        class="rounded-md bg-white p-1 dark:bg-gray-800 dark:text-white"
+                    >
+                        <option
+                            value="0"
+                            class="px-2 dark:bg-gray-800 dark:text-white"
+                        >
+                            0
+                        </option>
+                        <option
+                            v-for="n in 11"
+                            :key="n"
+                            :value="n"
+                            class="px-2 dark:bg-gray-800 dark:text-white"
+                        >
+                            {{ n }}
+                        </option>
+                    </select>
+                </div>
             </div>
             <button
-                @click="isDualColumn = !isDualColumn"
+                @click="is_dual_column = !is_dual_column"
                 class="hidden rounded-md border border-gray-300 bg-transparent px-3 py-1.5 text-sm text-gray-700 transition-colors duration-200 hover:bg-gray-300 hover:text-gray-900 sm:block dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white"
                 :class="{
                     'border-gray-400 bg-yellow-600 text-white hover:bg-yellow-600 hover:text-white hover:brightness-105 dark:border-gray-600 dark:bg-yellow-600 dark:text-white dark:hover:bg-yellow-600 dark:hover:brightness-110':
-                        isDualColumn,
+                        is_dual_column,
                 }"
             >
                 <i class="fa-solid fa-table-columns mr-1"></i>
@@ -107,7 +135,7 @@ function transposeHalfStepDown() {
         <main
             class="py-6 dark:text-white"
             :class="{
-                'columns-2 gap-8': isDualColumn,
+                'columns-2 gap-8': is_dual_column,
             }"
         >
             <SongContent

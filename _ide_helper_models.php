@@ -43,9 +43,9 @@ namespace App\Models{
  *
  * @property int $id
  * @property string $name
+ * @property string $variation
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read Chord|null $simplifiedChord
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chord newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chord newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chord query()
@@ -53,6 +53,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chord whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chord whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chord whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chord whereVariation($value)
  */
 	class Chord extends \Eloquent {}
 }
