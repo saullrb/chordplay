@@ -6,9 +6,12 @@ import TextLink from '@/Components/TextLink.vue';
 import { ref, watch } from 'vue';
 import SongContent from './partials/SongContent.vue';
 import IconLink from '@/Components/IconLink.vue';
+import FavoriteButton from '@/Components/FavoriteButton.vue';
+import { router } from '@inertiajs/vue3';
 
 const props = defineProps({
     song: Object,
+    is_favorited: Boolean,
     artist: Object,
     valid_chords: Object,
     available_keys: Array,
@@ -48,6 +51,28 @@ function transpose(direction, half_steps) {
 
     song_key.value = props.available_keys[key_index];
 }
+
+const is_loading = ref(false);
+
+function handleFavorite() {
+    is_loading.value = true;
+
+    const method = props.is_favorited ? 'delete' : 'post';
+
+    router.visit(
+        route('songs.favorite', { artist: props.artist, song: props.song }),
+        {
+            method,
+            only: ['is_favorited'],
+            onFinish: () => {
+                is_loading.value = false;
+            },
+            onError: () => {
+                is_loading.value = false;
+            },
+        },
+    );
+}
 </script>
 
 <template>
@@ -64,6 +89,11 @@ function transpose(direction, half_steps) {
                 >
                     <i class="fa-solid fa-pencil"></i>
                 </IconLink>
+                <FavoriteButton
+                    :is_favorited="is_favorited"
+                    @favorite="handleFavorite"
+                    :disabled="is_loading"
+                />
             </div>
             <TextLink :href="route('artists.show', artist)">
                 {{ artist.name }}

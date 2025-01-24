@@ -41,8 +41,11 @@ class ArtistController extends Controller
 
         $artist->increment('views');
 
+        $is_favorited = Auth::user()->favoriteArtists()->where('artist_id', $artist->id)->exists() ?? null;
+
         return Inertia::render('Artists/Show', [
             'artist' => $artist,
+            'is_favorited' => $is_favorited,
         ]);
     }
 
@@ -64,5 +67,19 @@ class ArtistController extends Controller
         $artist = Artist::create($validated);
 
         return redirect()->route('artists.show', $artist);
+    }
+
+    public function favorite(Artist $artist)
+    {
+        Auth::user()->addFavoriteArtist($artist);
+
+        return back()->with('is_favorited', true);
+    }
+
+    public function unfavorite(Artist $artist)
+    {
+        Auth::user()->removeFavoriteArtist($artist);
+
+        return back()->with('is_favorited', false);
     }
 }

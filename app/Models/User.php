@@ -5,19 +5,14 @@ namespace App\Models;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',
@@ -25,11 +20,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'role_id',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
@@ -38,6 +28,36 @@ class User extends Authenticatable implements MustVerifyEmail
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
+    }
+
+    public function favoriteSongs(): BelongsToMany
+    {
+        return $this->belongsToMany(Song::class, 'favorite_songs');
+    }
+
+    public function favoriteArtists(): BelongsToMany
+    {
+        return $this->belongsToMany(Artist::class, 'favorite_artists');
+    }
+
+    public function addFavoriteArtist(Artist $artist)
+    {
+        $this->favoriteArtists()->attach($artist);
+    }
+
+    public function addFavoriteSong(Song $song)
+    {
+        $this->favoriteSongs()->attach($song);
+    }
+
+    public function removeFavoriteArtist(Artist $artist)
+    {
+        $this->favoriteArtists()->detach($artist);
+    }
+
+    public function removeFavoriteSong(Song $song)
+    {
+        $this->favoriteSongs()->detach($song);
     }
 
     public function isAdmin(): bool
@@ -50,11 +70,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->role->id === Role::STAFF;
     }
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [

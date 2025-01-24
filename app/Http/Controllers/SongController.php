@@ -29,8 +29,11 @@ class SongController extends Controller
             $available_keys = array_values(array_filter(SongKeyEnum::cases(), fn ($key) => ! str_ends_with($key->value, 'm')));
         }
 
+        $is_favorited = Auth::user()->favoriteSongs()->where('song_id', $song->id)->exists() ?? null;
+
         return Inertia::render('Songs/Show', [
             'song' => $song,
+            'is_favorited' => $is_favorited,
             'artist' => $artist,
             'valid_chords' => Chord::getGroupedChords(),
             'available_keys' => $available_keys,
@@ -103,5 +106,19 @@ class SongController extends Controller
             'artist' => $artist,
             'song' => $song,
         ]);
+    }
+
+    public function favorite(Artist $artist, Song $song)
+    {
+        Auth::user()->addFavoriteSong($song);
+
+        return back()->with('is_favorited', true);
+    }
+
+    public function unfavorite(Artist $artist, Song $song)
+    {
+        Auth::user()->removeFavoriteSong($song);
+
+        return back()->with('is_favorited', true);
     }
 }
