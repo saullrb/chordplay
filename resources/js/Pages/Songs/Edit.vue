@@ -8,9 +8,9 @@ import SongForm from './partials/SongForm.vue';
 import { useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
-    available_keys: Array,
-    valid_chords: Array,
+    valid_chords: Object,
     artist: Object,
+    available_keys: Array,
     song: Object,
 });
 
@@ -55,8 +55,11 @@ function submitForm() {
                 <section class="dark:text-white">
                     <h3 class="text-md mb-6">Preview</h3>
                     <SongContent
+                        :available_keys="available_keys"
                         :content="form.content"
                         :valid_chords="valid_chords"
+                        :original_key="form.key"
+                        :current_key="form.key"
                     />
                 </section>
             </div>
