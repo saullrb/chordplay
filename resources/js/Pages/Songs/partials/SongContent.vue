@@ -14,7 +14,7 @@ function getChordType(chord) {
         }
     }
 
-    return '';
+    return null;
 }
 
 function findNoteIndex(note) {
@@ -25,6 +25,10 @@ function transposeChord(chord) {
     if (!chord) return chord;
 
     const chord_type = getChordType(chord);
+
+    if (chord_type === null) {
+        return ' ';
+    }
 
     const original_index = findNoteIndex(props.original_key);
     const target_index = findNoteIndex(props.current_key);

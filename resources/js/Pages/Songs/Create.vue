@@ -48,8 +48,11 @@ function submitForm() {
                 <section class="dark:text-white">
                     <h3 class="text-md mb-6">Preview</h3>
                     <SongContent
+                        :available_keys="available_keys"
                         :content="form.content"
                         :valid_chords="valid_chords"
+                        :original_key="form.key"
+                        :current_key="form.key"
                     />
                 </section>
             </div>
