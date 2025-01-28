@@ -111,13 +111,13 @@ function handleFavorite() {
                     <span>Transpose:</span>
                     <button
                         @click="() => transpose('down', 1)"
-                        class="flex size-8 items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-gray-300 dark:text-white dark:hover:bg-gray-800"
+                        class="flex size-8 cursor-pointer items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-gray-300 dark:text-white dark:hover:bg-gray-800"
                     >
                         <i class="fa-solid fa-minus"></i>
                     </button>
                     <button
                         @click="() => transpose('up', 1)"
-                        class="flex size-8 items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-gray-300 dark:text-white dark:hover:bg-gray-800"
+                        class="flex size-8 cursor-pointer items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-gray-300 dark:text-white dark:hover:bg-gray-800"
                     >
                         <i class="fa-solid fa-add"></i>
                     </button>
@@ -131,7 +131,7 @@ function handleFavorite() {
                         name="capo"
                         id="capo"
                         v-model="capo_position"
-                        class="rounded-md bg-white p-1 dark:bg-gray-800 dark:text-white"
+                        class="h-8 w-14 rounded-md border border-gray-300 bg-gray-200 p-1 text-gray-700 dark:bg-gray-800 dark:text-white"
                     >
                         <option
                             value="0"
@@ -152,7 +152,7 @@ function handleFavorite() {
             </div>
             <button
                 @click="is_dual_column = !is_dual_column"
-                class="hidden rounded-md border border-gray-300 bg-transparent px-3 py-1.5 text-sm text-gray-700 transition-colors duration-200 hover:bg-gray-300 hover:text-gray-900 sm:block dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white"
+                class="cursor-pointer rounded-md border border-gray-300 bg-transparent px-3 py-1.5 text-sm text-gray-700 transition-colors duration-200 hover:bg-gray-300 hover:text-gray-900 sm:block dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white"
                 :class="{
                     'border-gray-400 bg-yellow-600 text-white hover:bg-yellow-600 hover:text-white hover:brightness-105 dark:border-gray-600 dark:bg-yellow-600 dark:text-white dark:hover:bg-yellow-600 dark:hover:brightness-110':
                         is_dual_column,

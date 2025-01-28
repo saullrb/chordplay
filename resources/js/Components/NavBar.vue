@@ -24,7 +24,7 @@ const user = computed(() => page.props.auth.user);
                     <button
                         @click="is_menu_closed = !is_menu_closed"
                         type="button"
-                        class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                        class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:ring-2 focus:ring-white focus:outline-hidden focus:ring-inset"
                         aria-controls="mobile-menu"
                         aria-expanded="false"
                     >
@@ -99,7 +99,7 @@ const user = computed(() => page.props.auth.user);
                 >
                     <button
                         @click="switchTheme"
-                        class="flex size-8 items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-gray-300 dark:text-white dark:hover:bg-gray-800"
+                        class="flex size-8 cursor-pointer items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-gray-300 dark:text-white dark:hover:bg-gray-800"
                     >
                         <i class="fa-solid fa-circle-half-stroke"></i>
                     </button>
@@ -122,7 +122,7 @@ const user = computed(() => page.props.auth.user);
                             <button
                                 @click="show_dropdown = !show_dropdown"
                                 type="button"
-                                class="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                                class="relative flex cursor-pointer rounded-full bg-gray-800 text-sm focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden"
                                 id="user-menu-button"
                                 aria-expanded="false"
                                 aria-haspopup="true"
@@ -148,7 +148,7 @@ const user = computed(() => page.props.auth.user);
                             <div
                                 v-show="show_dropdown"
                                 @click="show_dropdown = false"
-                                class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-200 py-1 text-gray-900 shadow-lg ring-1 ring-black/5 focus:outline-none dark:bg-gray-900 dark:text-white dark:ring-white/5"
+                                class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-200 py-1 text-gray-900 ring-1 shadow-lg ring-black/5 focus:outline-hidden dark:bg-gray-900 dark:text-white dark:ring-white/5"
                                 role="menu"
                                 aria-orientation="vertical"
                                 aria-labelledby="user-menu-button"
@@ -179,7 +179,7 @@ const user = computed(() => page.props.auth.user);
 
         <!-- Mobile menu, show/hide based on menu state. -->
         <div v-if="!is_menu_closed" class="sm:hidden" id="mobile-menu">
-            <div class="space-y-1 px-2 pb-3 pt-2">
+            <div class="space-y-1 px-2 pt-2 pb-3">
                 <NavLink
                     :href="route('home')"
                     :active="$page.component === 'Home'"
