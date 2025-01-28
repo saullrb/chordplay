@@ -155,14 +155,14 @@ const user = computed(() => page.props.auth.user);
                                 tabindex="-1"
                             >
                                 <NavLink
-                                    :active="route().current('profile.edit')"
-                                    :href="route('profile.edit')"
-                                    >Your Profile</NavLink
-                                >
-                                <NavLink
                                     :active="route().current('dashboard')"
                                     :href="route('dashboard')"
                                     >Dashboard</NavLink
+                                >
+                                <NavLink
+                                    :active="route().current('profile.edit')"
+                                    :href="route('profile.edit')"
+                                    >Your Profile</NavLink
                                 >
                                 <button
                                     class="block w-full rounded-lg px-4 py-2 text-start text-sm font-semibold text-gray-500 hover:bg-gray-500 hover:text-white dark:text-gray-400 dark:hover:bg-gray-800"

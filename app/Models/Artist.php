@@ -13,8 +13,12 @@ class Artist extends Model
     use HasFactory;
 
     protected $fillable = [
-        "name",
-        "slug"
+        'name',
+        'slug',
+    ];
+
+    protected $hidden = [
+        'pivot',
     ];
 
     protected static function boot()
@@ -32,7 +36,7 @@ class Artist extends Model
         });
     }
 
-    private static function generateSlug(String $name): String
+    private static function generateSlug(string $name): string
     {
         $baseSlug = Str::slug($name);
         $slug = $baseSlug;
@@ -40,7 +44,7 @@ class Artist extends Model
         $count = Artist::whereName($name)->count();
 
         if ($count > 0) {
-            $slug = $baseSlug . "-" . $count;
+            $slug = $baseSlug.'-'.$count;
         }
 
         return $slug;

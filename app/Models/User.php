@@ -30,14 +30,25 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsTo(Role::class);
     }
 
+    public function getFavorites(): array
+    {
+        return [
+            'favorite_songs' => $this->favoriteSongs,
+            'favorite_artists' => $this->favoriteArtists,
+        ];
+    }
+
     public function favoriteSongs(): BelongsToMany
     {
-        return $this->belongsToMany(Song::class, 'favorite_songs');
+        return $this->belongsToMany(Song::class, 'favorite_songs')
+            ->with('artist:id,name,slug')
+            ->select('songs.id', 'songs.name', 'songs.slug', 'songs.artist_id');
+
     }
 
     public function favoriteArtists(): BelongsToMany
     {
-        return $this->belongsToMany(Artist::class, 'favorite_artists');
+        return $this->belongsToMany(Artist::class, 'favorite_artists')->select('artists.id', 'artists.name', 'artists.slug');
     }
 
     public function addFavoriteArtist(Artist $artist)

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ArtistController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SongController;
 use Illuminate\Support\Facades\Route;
@@ -13,9 +14,7 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'show'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -35,6 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/artists/{artist:slug}/{song:slug}', [SongController::class, 'update'])->name('artists.songs.update');
     Route::post('/artists/{artist:slug}/{song:slug}/favorite', [SongController::class,  'favorite'])->name('songs.favorite');
     Route::delete('/artists/{artist:slug}/{song:slug}/favorite', [SongController::class,  'unfavorite'])->name('songs.favorite');
+    Route::delete('/artists/{artist:slug}/favorite', [ArtistController::class, 'unfavorite'])->name('artists.favorite');
 });
 
 Route::get('/artists/{artist:slug}', [ArtistController::class, 'show'])->name('artists.show');

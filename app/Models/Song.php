@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Str;
 
 class Song extends Model
@@ -18,6 +19,15 @@ class Song extends Model
         'key',
         'content',
     ];
+
+    protected $hidden = [
+        'pivot',
+    ];
+
+    public function artist(): BelongsTo
+    {
+        return $this->belongsTo(Artist::class);
+    }
 
     protected static function boot()
     {
