@@ -65,7 +65,7 @@ function handleSubmit() {
                 v-model="form.content"
                 id="content"
                 required
-                class="h-80 resize-y overflow-auto whitespace-pre-wrap px-2 font-mono text-sm leading-5 tracking-tighter dark:bg-gray-800 dark:text-white"
+                class="h-80 resize-y overflow-auto px-2 font-mono text-sm leading-5 tracking-tighter whitespace-pre-wrap dark:bg-gray-800 dark:text-white"
             ></textarea>
         </div>
         <InputError :message="form.errors?.content" />

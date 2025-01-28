@@ -4,8 +4,8 @@ import NavBar from '../Components/NavBar.vue';
 </script>
 
 <template>
-  <Head title="Home" />
-  <NavBar />
+    <Head title="Home" />
+    <NavBar />
 
-  <h1>Hello World</h1>
+    <h1>Hello World</h1>
 </template>
