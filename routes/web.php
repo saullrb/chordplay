@@ -3,16 +3,18 @@
 use App\Http\Controllers\ArtistController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SongController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Home', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-    ]);
+    return Inertia::render('Home');
 })->name('home');
+
+Route::get('/search', [SearchController::class, 'index'])->name('search');
+
+Route::get('/search/results', [SearchController::class, 'show'])->name('search.show');
 
 Route::get('/dashboard', [DashboardController::class, 'show'])->middleware(['auth', 'verified'])->name('dashboard');
 
