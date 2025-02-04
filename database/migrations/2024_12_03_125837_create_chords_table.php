@@ -18,6 +18,16 @@ return new class extends Migration
             $table->enum('variation', Chord::VARIATIONS);
             $table->timestamps();
         });
+
+        foreach (Chord::BASE_NOTES as $base_note) {
+            foreach (Chord::VARIATIONS as $variation) {
+                $chord = $base_note.$variation;
+                Chord::create([
+                    'name' => $chord,
+                    'variation' => $variation
+                ]);
+            }
+        }
     }
 
     /**

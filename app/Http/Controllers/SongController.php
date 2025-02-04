@@ -29,7 +29,7 @@ class SongController extends Controller
             $available_keys = array_values(array_filter(SongKeyEnum::cases(), fn ($key) => ! str_ends_with($key->value, 'm')));
         }
 
-        $is_favorited = Auth::user()->favoriteSongs()->where('song_id', $song->id)->exists() ?? null;
+        $is_favorited = Auth::user()?->favoriteSongs()->where('song_id', $song->id)->exists() ?? false;
 
         return Inertia::render('Songs/Show', [
             'song' => $song,
