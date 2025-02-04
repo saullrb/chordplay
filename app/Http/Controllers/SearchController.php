@@ -35,6 +35,13 @@ class SearchController extends Controller
 
     private function getSearchResults($query, $limit = null)
     {
+        if (!$query) {
+            return [
+                'songs' => collect(),
+                'artists' => collect(),
+            ];
+        }
+
         $song_query = Song::query()
             ->where('name', 'LIKE', "%{$query}%")
             ->with('artist:id,name,slug')
