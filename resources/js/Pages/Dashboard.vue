@@ -24,7 +24,7 @@ defineProps({
             >
                 <h2 class="text-xl dark:text-white">Favorite Songs</h2>
                 <div class="mt-2 text-gray-900 dark:text-gray-100">
-                    <ul class="divide-y divide-gray-300 dark:divide-gray-700">
+                    <ul v-if="favorite_songs.length" class="divide-y divide-gray-300 dark:divide-gray-700">
                         <li
                             class="flex justify-between gap-x-6 rounded p-2 transition-colors duration-150 hover:bg-gray-300 dark:hover:bg-gray-700"
                             v-for="song in favorite_songs"
@@ -46,6 +46,7 @@ defineProps({
                             </Link>
                         </li>
                     </ul>
+                    <p v-else class="text-gray-500">No favorite songs yet.</p>
                 </div>
             </div>
             <div
@@ -53,7 +54,7 @@ defineProps({
             >
                 <h2 class="text-xl dark:text-white">Favorite Artists</h2>
                 <div class="mt-2 text-gray-900 dark:text-gray-100">
-                    <ul class="divide-y divide-gray-300 dark:divide-gray-700">
+                    <ul v-if="favorite_artists.length" class="divide-y divide-gray-300 dark:divide-gray-700">
                         <li
                             class="flex justify-between gap-x-6 rounded p-2 transition-colors duration-150 hover:bg-gray-300 dark:hover:bg-gray-700"
                             v-for="artist in favorite_artists"
@@ -67,6 +68,7 @@ defineProps({
                             </Link>
                         </li>
                     </ul>
+                    <p v-else class="text-gray-500">No favorite artists yet.</p>
                 </div>
             </div>
         </Container>
