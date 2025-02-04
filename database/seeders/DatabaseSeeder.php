@@ -19,7 +19,6 @@ class DatabaseSeeder extends Seeder
             ->create();
 
         $this->call(ChordSeeder::class);
-        $this->call(RoleSeeder::class);
         $this->call(AdminUserSeeder::class);
 
         User::create([

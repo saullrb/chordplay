@@ -21,6 +21,14 @@ class SongFactory extends Factory
             'name' => fake()->word().' '.fake()->word,
             'key' => fake()->randomElement(array_column(SongKeyEnum::cases(), 'value')),
             'views' => fake()->randomNumber(2),
+            'content' => "Am                 G                F
+" . fake()->sentence(4) . "
+C                  Em               Am
+" . fake()->sentence(3) . "
+F                  G                Am
+" . fake()->sentence(4) . "
+Am                 F                G
+" . fake()->sentence(3),
         ];
     }
 }

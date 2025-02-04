@@ -15,12 +15,7 @@ class ArtistController extends Controller
 
     public function index()
     {
-        // $top_artists = Artist::query()->orderByDesc('views')->limit(10)->get();
         $artists = Artist::query()->orderBy('name')->simplePaginate(10);
-
-        if (request()->wantsJson()) {
-            return $artists;
-        }
 
         return Inertia::render(
             'Artists/Index',
@@ -41,7 +36,7 @@ class ArtistController extends Controller
 
         $artist->increment('views');
 
-        $is_favorited = Auth::user()->favoriteArtists()->where('artist_id', $artist->id)->exists() ?? null;
+        $is_favorited = Auth::user()?->favoriteArtists()->where('artist_id', $artist->id)->exists() ?? false;
 
         return Inertia::render('Artists/Show', [
             'artist' => $artist,
