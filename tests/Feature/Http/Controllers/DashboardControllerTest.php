@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Song;
 use App\Models\Artist;
+use App\Models\Song;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -18,7 +18,7 @@ class DashboardControllerTest extends TestCase
         $artist = Artist::factory()->create();
         $song = Song::factory()->create([
             'artist_id' => $artist->id,
-            'name' => 'Favorite Song'
+            'name' => 'Favorite Song',
         ]);
         $user->addFavoriteSong($song);
 
@@ -67,4 +67,5 @@ class DashboardControllerTest extends TestCase
             ->where('favorite_artists.0.name', 'Favorite Artist')
         );
     }
-} 
+}
+

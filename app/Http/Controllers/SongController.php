@@ -7,6 +7,7 @@ use App\Models\Artist;
 use App\Models\Chord;
 use App\Models\Song;
 use App\Rules\ValidContent;
+use App\Services\SongService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,9 +18,19 @@ class SongController extends Controller
 {
     use AuthorizesRequests;
 
+    protected $songService;
+
+    public function __construct(SongService $songService)
+    {
+        $this->songService = $songService;
+    }
+
     public function show(Artist $artist, Song $song): Response
     {
         $song->increment('views');
+        $song->load(['lines' => function ($query) {
+            $query->orderBy('line_number');
+        }]);
 
         $available_keys = [];
 
@@ -56,17 +67,7 @@ class SongController extends Controller
     {
         $this->authorize('create', Song::class);
 
-        $content_rule = new ValidContent;
-
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'key' => ['required', new \Illuminate\Validation\Rules\Enum(SongKeyEnum::class)],
-            'content' => ['required', 'string', $content_rule],
-        ]);
-
-        $validated['content'] = $content_rule->processed_content;
-
-        $song = $artist->songs()->create($validated);
+        $song = $this->songService->store($request->all(), $artist->id);
 
         return redirect()->route('artists.songs.show', [
             'artist' => $artist,

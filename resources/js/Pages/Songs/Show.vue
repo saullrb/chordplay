@@ -76,6 +76,7 @@ function handleFavorite() {
 </script>
 
 <template>
+
     <Head :title="`${song.name} - ${artist.name}`" />
     <NavBar />
 
@@ -83,17 +84,10 @@ function handleFavorite() {
         <header>
             <div class="flex items-center gap-2">
                 <PageHeader :title="song.name" />
-                <IconLink
-                    v-if="can.update_song"
-                    :href="route('artists.songs.edit', { artist, song })"
-                >
+                <IconLink v-if="can.update_song" :href="route('artists.songs.edit', { artist, song })">
                     <i class="fa-solid fa-pencil"></i>
                 </IconLink>
-                <FavoriteButton
-                    :is_favorited="is_favorited"
-                    @favorite="handleFavorite"
-                    :disabled="is_loading"
-                />
+                <FavoriteButton :is_favorited="is_favorited" @favorite="handleFavorite" :disabled="is_loading" />
             </div>
             <TextLink :href="route('artists.show', artist)">
                 {{ artist.name }}
@@ -105,76 +99,46 @@ function handleFavorite() {
                         {{ song_key }}
                     </span>
                 </div>
-                <div
-                    class="flex items-center justify-start gap-2 text-sm dark:text-white"
-                >
+                <div class="flex items-center justify-start gap-2 text-sm dark:text-white">
                     <span>Transpose:</span>
-                    <button
-                        @click="() => transpose('down', 1)"
-                        class="flex size-8 cursor-pointer items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-gray-300 dark:text-white dark:hover:bg-gray-800"
-                    >
+                    <button @click="() => transpose('down', 1)"
+                        class="flex size-8 cursor-pointer items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-gray-300 dark:text-white dark:hover:bg-gray-800">
                         <i class="fa-solid fa-minus"></i>
                     </button>
-                    <button
-                        @click="() => transpose('up', 1)"
-                        class="flex size-8 cursor-pointer items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-gray-300 dark:text-white dark:hover:bg-gray-800"
-                    >
+                    <button @click="() => transpose('up', 1)"
+                        class="flex size-8 cursor-pointer items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-gray-300 dark:text-white dark:hover:bg-gray-800">
                         <i class="fa-solid fa-add"></i>
                     </button>
                 </div>
 
-                <div
-                    class="flex items-center justify-start gap-2 text-sm dark:text-white"
-                >
+                <div class="flex items-center justify-start gap-2 text-sm dark:text-white">
                     <span>Add Capo:</span>
-                    <select
-                        name="capo"
-                        id="capo"
-                        v-model="capo_position"
-                        class="h-8 w-14 rounded-md border border-gray-300 bg-gray-200 p-1 text-gray-700 dark:bg-gray-800 dark:text-white"
-                    >
-                        <option
-                            value="0"
-                            class="px-2 dark:bg-gray-800 dark:text-white"
-                        >
+                    <select name="capo" id="capo" v-model="capo_position"
+                        class="h-8 w-14 rounded-md border border-gray-300 bg-gray-200 p-1 text-gray-700 dark:bg-gray-800 dark:text-white">
+                        <option value="0" class="px-2 dark:bg-gray-800 dark:text-white">
                             0
                         </option>
-                        <option
-                            v-for="n in 11"
-                            :key="n"
-                            :value="n"
-                            class="px-2 dark:bg-gray-800 dark:text-white"
-                        >
+                        <option v-for="n in 11" :key="n" :value="n" class="px-2 dark:bg-gray-800 dark:text-white">
                             {{ n }}
                         </option>
                     </select>
                 </div>
             </div>
-            <button
-                @click="is_dual_column = !is_dual_column"
+            <button @click="is_dual_column = !is_dual_column"
                 class="cursor-pointer rounded-md border border-gray-300 bg-transparent px-3 py-1.5 text-sm text-gray-700 transition-colors duration-200 hover:bg-gray-300 hover:text-gray-900 sm:block dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white"
                 :class="{
                     'border-gray-400 bg-yellow-600 text-white hover:bg-yellow-600 hover:text-white hover:brightness-105 dark:border-gray-600 dark:bg-yellow-600 dark:text-white dark:hover:bg-yellow-600 dark:hover:brightness-110':
                         is_dual_column,
-                }"
-            >
+                }">
                 <i class="fa-solid fa-table-columns mr-1"></i>
                 Dual Column
             </button>
         </header>
-        <main
-            class="py-6 dark:text-white"
-            :class="{
-                'columns-2 gap-8': is_dual_column,
-            }"
-        >
-            <SongContent
-                :original_key="song.key"
-                :current_key="song_key"
-                :available_keys="available_keys"
-                :content="song.content"
-                :valid_chords="valid_chords"
-            />
+        <main class="py-6 dark:text-white" :class="{
+            'columns-2 gap-8': is_dual_column,
+        }">
+            <SongContent :original_key="song.key" :current_key="song_key" :available_keys="available_keys"
+                :content="song.lines" :valid_chords="valid_chords" />
         </main>
     </Container>
 </template>

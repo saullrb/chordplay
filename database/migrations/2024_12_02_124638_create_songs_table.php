@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('slug');
             $table->foreignId('artist_id')->constrained();
             $table->enum('key', array_column(SongKeyEnum::cases(), 'value'))->nullable();
-            $table->text('content');
             $table->unsignedBigInteger('views')->default(0);
             $table->timestamps();
 

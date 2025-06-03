@@ -83,4 +83,5 @@ class ProfileControllerTest extends TestCase
         $response->assertSessionHasErrors('password');
         $this->assertNotNull($user->fresh());
     }
-} 
+}
+

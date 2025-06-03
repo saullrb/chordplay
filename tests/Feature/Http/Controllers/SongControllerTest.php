@@ -2,10 +2,10 @@
 
 namespace Tests\Feature\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Song;
 use App\Models\Artist;
 use App\Models\Role;
+use App\Models\Song;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -45,7 +45,7 @@ class SongControllerTest extends TestCase
             ->post(route('artists.songs.store', $artist), [
                 'name' => 'Test Song',
                 'key' => 'C',
-                'content' => '[Am] Test'
+                'content' => '[Am] Test',
             ])
             ->assertForbidden();
 
@@ -53,7 +53,7 @@ class SongControllerTest extends TestCase
             ->post(route('artists.songs.store', $artist), [
                 'name' => 'Test Song',
                 'key' => 'C',
-                'content' => '[Am] Test'
+                'content' => '[Am] Test',
             ])
             ->assertRedirect();
     }
@@ -72,7 +72,7 @@ class SongControllerTest extends TestCase
         $artist = Artist::factory()->create();
         $song = Song::factory()->create([
             'artist_id' => $artist->id,
-            'views' => 0
+            'views' => 0,
         ]);
 
         $this->get(route('artists.songs.show', [$artist, $song]));
@@ -89,7 +89,7 @@ class SongControllerTest extends TestCase
             ->post(route('artists.songs.store', $artist), [
                 'name' => '',
                 'key' => 'InvalidKey',
-                'content' => ''
+                'content' => '',
             ]);
 
         $response->assertSessionHasErrors(['name', 'key', 'content']);
@@ -104,7 +104,7 @@ class SongControllerTest extends TestCase
             ->post(route('artists.songs.store', $artist), [
                 'name' => 'Test Song',
                 'key' => 'C',
-                'content' => '[InvalidChord] [NotAChord]\nTest lyrics'
+                'content' => '[InvalidChord] [NotAChord]\nTest lyrics',
             ]);
 
         $response->assertSessionHasErrors(['content']);
@@ -115,9 +115,9 @@ class SongControllerTest extends TestCase
         $user = User::factory()->create(['role_id' => Role::USER]);
         $artist = Artist::factory()->create();
         $song = Song::factory()->create(['artist_id' => $artist->id]);
-        
+
         $user->addFavoriteSong($song);
-        
+
         $response = $this->actingAs($user)
             ->get(route('artists.songs.show', [$artist, $song]));
 
@@ -148,13 +148,13 @@ class SongControllerTest extends TestCase
             ->patch(route('artists.songs.update', [$artist, $song]), [
                 'name' => 'Updated Song',
                 'key' => 'Am',
-                'content' => '[Am] Updated lyrics'
+                'content' => '[Am] Updated lyrics',
             ]);
 
         $response->assertRedirect();
         $this->assertDatabaseHas('songs', [
             'id' => $song->id,
-            'name' => 'Updated Song'
+            'name' => 'Updated Song',
         ]);
     }
 
@@ -180,7 +180,7 @@ class SongControllerTest extends TestCase
             ->patch(route('artists.songs.update', [$artist, $song]), [
                 'name' => 'Updated Song',
                 'key' => 'Am',
-                'content' => '[Am] Updated lyrics'
+                'content' => '[Am] Updated lyrics',
             ]);
 
         $response->assertForbidden();
@@ -208,7 +208,7 @@ class SongControllerTest extends TestCase
         $response->assertRedirect();
         $this->assertDatabaseHas('favorite_songs', [
             'user_id' => $user->id,
-            'song_id' => $song->id
+            'song_id' => $song->id,
         ]);
     }
 
@@ -225,7 +225,8 @@ class SongControllerTest extends TestCase
         $response->assertRedirect();
         $this->assertDatabaseMissing('favorite_songs', [
             'user_id' => $user->id,
-            'song_id' => $song->id
+            'song_id' => $song->id,
         ]);
     }
-} 
+}
+
