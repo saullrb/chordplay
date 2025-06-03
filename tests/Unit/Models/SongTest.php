@@ -2,10 +2,10 @@
 
 namespace Tests\Unit\Models;
 
-use App\Models\Song;
 use App\Models\Artist;
-use Tests\TestCase;
+use App\Models\Song;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class SongTest extends TestCase
 {
@@ -15,15 +15,8 @@ class SongTest extends TestCase
     {
         $artist = Artist::factory()->create();
         $song = Song::factory()->create(['artist_id' => $artist->id]);
-        
-        $this->assertTrue($song->artist->is($artist));
-    }
 
-    public function test_song_can_be_favorited()
-    {
-        $artist = Artist::factory()->create();
-        $song = Song::factory()->create(['artist_id' => $artist->id]);
-        $this->assertDatabaseCount('favorite_songs', 0);
+        $this->assertTrue($song->artist->is($artist));
     }
 
     public function test_song_generates_slug()
@@ -31,8 +24,9 @@ class SongTest extends TestCase
         $artist = Artist::factory()->create();
         $song = Song::factory()->create([
             'artist_id' => $artist->id,
-            'name' => 'Test Song'
+            'name' => 'Test Song',
         ]);
         $this->assertEquals('test-song', $song->slug);
     }
-} 
+}
+

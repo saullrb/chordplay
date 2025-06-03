@@ -2,10 +2,10 @@
 
 namespace Tests\Feature\Http\Controllers;
 
-use App\Models\User;
 use App\Models\Artist;
 use App\Models\Role;
 use App\Models\Song;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -51,7 +51,7 @@ class ArtistControllerTest extends TestCase
 
         $response = $this->actingAs($staff)
             ->post(route('artists.store'), [
-                'name' => 'New Artist'
+                'name' => 'New Artist',
             ]);
 
         $response->assertRedirect();
@@ -91,7 +91,7 @@ class ArtistControllerTest extends TestCase
 
         $response = $this->actingAs($staff)
             ->post(route('artists.store'), [
-                'name' => ''
+                'name' => '',
             ]);
 
         $response->assertSessionHasErrors(['name']);
@@ -117,7 +117,7 @@ class ArtistControllerTest extends TestCase
         $response->assertRedirect();
         $this->assertDatabaseHas('favorite_artists', [
             'user_id' => $user->id,
-            'artist_id' => $artist->id
+            'artist_id' => $artist->id,
         ]);
     }
 
@@ -133,7 +133,7 @@ class ArtistControllerTest extends TestCase
         $response->assertRedirect();
         $this->assertDatabaseMissing('favorite_artists', [
             'user_id' => $user->id,
-            'artist_id' => $artist->id
+            'artist_id' => $artist->id,
         ]);
     }
 
@@ -143,10 +143,11 @@ class ArtistControllerTest extends TestCase
 
         $response = $this->actingAs($user)
             ->post(route('artists.store'), [
-                'name' => 'New Artist'
+                'name' => 'New Artist',
             ]);
 
         $response->assertForbidden();
         $this->assertDatabaseMissing('artists', ['name' => 'New Artist']);
     }
-} 
+}
+

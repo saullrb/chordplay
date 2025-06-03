@@ -2,15 +2,16 @@
 
 namespace App\Rules;
 
+use App\Enums\SongLineContentType;
 use App\Models\Chord;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
 class ValidContent implements ValidationRule
 {
-    protected array $invalid_chords = [];
+    public array $processed_content = [];
 
-    public ?string $processed_content = null;
+    private array $invalid_chords = [];
 
     /**
      * Run the validation rule.
@@ -22,13 +23,15 @@ class ValidContent implements ValidationRule
         $lines = explode(PHP_EOL, $value);
         $chord_lines = [];
         $processed_lines = [];
+        $line_number = 0;
 
         foreach ($lines as $line) {
             $trimmed_line = trim($line);
 
             if (str_starts_with($trimmed_line, '[')) {
                 $output = '';
-                $inside_brackets = true;
+                $inside_brackets = false;
+
                 foreach (str_split($line) as $char) {
                     if ($char === '[') {
                         $inside_brackets = true;
@@ -41,15 +44,38 @@ class ValidContent implements ValidationRule
                     }
                 }
 
-                $processed_lines[] = $output;
+                $processed_lines[] = [
+                    'line_number' => $line_number,
+                    'content_type' => SongLineContentType::CHORDS,
+                    'content' => $output,
+                ];
                 $chord_lines[] = $output;
             } else {
-                $processed_lines[] = $trimmed_line;
+                $processed_lines[] = [
+                    'line_number' => $line_number,
+                    'content' => $trimmed_line,
+                    'content_type' => empty($trimmed_line) ? SongLineContentType::EMPTY : SongLineContentType::LYRICS,
+                ];
             }
+
+            $line_number++;
         }
 
-        $this->processed_content = implode(PHP_EOL, $processed_lines);
+        $this->processed_content = $processed_lines;
 
+        $chords = $this->extractChords($chord_lines);
+
+        $valid_chords = Chord::whereIn('name', $chords)->pluck('name')->toArray();
+
+        $this->invalid_chords = array_diff($chords, $valid_chords);
+
+        if (! empty($this->invalid_chords)) {
+            $fail($this->message());
+        }
+    }
+
+    private function extractChords(array $chord_lines): array
+    {
         $chords = [];
 
         foreach ($chord_lines as $line) {
@@ -71,18 +97,10 @@ class ValidContent implements ValidationRule
             }
         }
 
-        $chords = array_keys($chords);
-
-        $existing_chords = Chord::whereIn('name', $chords)->pluck('name')->toArray();
-
-        $this->invalid_chords = array_diff($chords, $existing_chords);
-
-        if (! empty($this->invalid_chords)) {
-            $fail($this->message());
-        }
+        return array_keys($chords);
     }
 
-    public function message()
+    private function message()
     {
         return 'These chords are invalid: '.implode(', ', $this->invalid_chords);
     }

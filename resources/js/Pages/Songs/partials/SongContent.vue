@@ -1,6 +1,6 @@
 <script setup>
 const props = defineProps({
-    content: String,
+    content: Array,
     available_keys: Array,
     valid_chords: Object,
     original_key: String,
@@ -70,23 +70,18 @@ function extractBrackets(line) {
 
     return new_line;
 }
+
 </script>
 
 <template>
-    <div
-        v-for="(line, line_index) in content?.split('\n')"
-        :key="line_index"
-        class="w-full font-mono text-sm leading-5 tracking-tighter"
-    >
+    <div v-for="(line, line_index) in content" :key="line_index"
+        class="w-full font-mono text-sm leading-5 tracking-tighter">
         <div class="break-inside-avoid">
-            <p
-                v-if="line.trim().startsWith('[')"
-                class="whitespace-pre text-yellow-600"
-            >
-                {{ extractBrackets(line) }}
+            <p v-if="line.content_type === 'chords'" class="whitespace-pre text-yellow-600">
+                {{ extractBrackets(line.content) }}
             </p>
-            <p v-else-if="line" class="whitespace-pre">
-                {{ line }}
+            <p v-else-if="line.content_type === 'lyrics'" class="whitespace-pre">
+                {{ line.content }}
             </p>
             <br v-else />
         </div>

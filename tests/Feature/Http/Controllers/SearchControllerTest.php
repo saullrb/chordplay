@@ -2,9 +2,8 @@
 
 namespace Tests\Feature\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Song;
 use App\Models\Artist;
+use App\Models\Song;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -18,10 +17,10 @@ class SearchControllerTest extends TestCase
         Artist::factory()->count(5)->create();
         Song::factory()->create([
             'name' => 'Test Song',
-            'artist_id' => $artist->id
+            'artist_id' => $artist->id,
         ]);
         Song::factory()->count(5)->create([
-            'artist_id' => $artist->id
+            'artist_id' => $artist->id,
         ]);
 
         $response = $this->get(route('search', ['query' => 'test']));
@@ -47,4 +46,5 @@ class SearchControllerTest extends TestCase
             ->where('query', '')
         );
     }
-} 
+}
+
