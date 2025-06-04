@@ -69,6 +69,7 @@ function handleFavorite() {
         {
             method,
             only: ['is_favorited'],
+            preserveState: true,
             onFinish: () => {
                 is_loading.value = false;
             },

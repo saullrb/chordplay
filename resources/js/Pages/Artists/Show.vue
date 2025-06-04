@@ -32,6 +32,7 @@ function handleFavorite() {
     router.visit(route('artists.favorite', props.artist), {
         method,
         only: ['is_favorited'],
+        preserveState: true,
         onFinish: () => {
             is_loading.value = false;
         },
@@ -43,6 +44,7 @@ function handleFavorite() {
 </script>
 
 <template>
+
     <Head :title="artist.name" />
 
     <NavBar />
@@ -52,24 +54,14 @@ function handleFavorite() {
             <div class="flex justify-between">
                 <div class="flex items-center gap-4">
                     <PageHeader :title="artist.name" />
-                    <FavoriteButton
-                        @favorite="handleFavorite"
-                        :is_favorited="is_favorited"
-                        :disabled="is_loading"
-                    />
+                    <FavoriteButton @favorite="handleFavorite" :is_favorited="is_favorited" :disabled="is_loading" />
                 </div>
 
-                <IconLink
-                    v-if="can.create_song"
-                    :href="route('artists.songs.create', artist)"
-                    ><i class="fa-solid fa-plus"></i>
+                <IconLink v-if="can.create_song" :href="route('artists.songs.create', artist)"><i
+                        class="fa-solid fa-plus"></i>
                 </IconLink>
             </div>
-            <ItemList
-                :items="artist.songs"
-                :parent="{ slug: artist.slug }"
-                showRouteName="artists.songs.show"
-            />
+            <ItemList :items="artist.songs" :parent="{ slug: artist.slug }" showRouteName="artists.songs.show" />
         </Container>
     </main>
 </template>
