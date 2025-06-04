@@ -4,7 +4,7 @@ const props = defineProps({
     available_keys: Array,
     valid_chords: Object,
     original_key: String,
-    current_key: String,
+    key_offset: Number
 });
 
 function getChordType(chord) {
@@ -31,7 +31,7 @@ function transposeChord(chord) {
     }
 
     const original_index = findNoteIndex(props.original_key);
-    const target_index = findNoteIndex(props.current_key);
+    const target_index = original_index + props.key_offset;
     const semitones = target_index - original_index;
 
     const chord_array = props.valid_chords[chord_type];

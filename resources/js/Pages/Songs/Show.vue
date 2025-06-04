@@ -29,14 +29,15 @@ const props = defineProps({
 const song_key = ref(props.song.key);
 const is_dual_column = ref(false);
 const capo_position = ref(0);
+const key_offset = ref(0);
 
 watch(capo_position, (new_position, old_position) => {
     new_position - old_position > 0
-        ? transpose('down', new_position - old_position)
-        : transpose('up', Math.abs(new_position - old_position));
+        ? transpose('down', new_position - old_position, false)
+        : transpose('up', Math.abs(new_position - old_position), false);
 });
 
-function transpose(direction, half_steps) {
+function transpose(direction, half_steps, should_change_key = true) {
     let key_index = props.available_keys.findIndex(
         (key) => key === song_key.value,
     );
@@ -45,11 +46,15 @@ function transpose(direction, half_steps) {
         key_index =
             (key_index - half_steps + props.available_keys.length) %
             props.available_keys.length;
+        key_offset.value -= half_steps;
     } else {
         key_index = (key_index + half_steps) % props.available_keys.length;
+        key_offset.value += half_steps;
     }
 
-    song_key.value = props.available_keys[key_index];
+    if (should_change_key) {
+        song_key.value = props.available_keys[key_index];
+    }
 }
 
 const is_loading = ref(false);
@@ -93,18 +98,15 @@ function handleFavorite() {
                 {{ artist.name }}
             </TextLink>
             <div class="my-6 flex flex-col gap-2">
-                <div class="flex items-center gap-1 text-sm dark:text-white">
-                    <span>Key: </span>
-                    <span class="text-yellow-600">
-                        {{ song_key }}
-                    </span>
-                </div>
                 <div class="flex items-center justify-start gap-2 text-sm dark:text-white">
-                    <span>Transpose:</span>
+                    <span>Key: </span>
                     <button @click="() => transpose('down', 1)"
                         class="flex size-8 cursor-pointer items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-gray-300 dark:text-white dark:hover:bg-gray-800">
                         <i class="fa-solid fa-minus"></i>
                     </button>
+                    <span class="text-yellow-600">
+                        {{ song_key }}
+                    </span>
                     <button @click="() => transpose('up', 1)"
                         class="flex size-8 cursor-pointer items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-gray-300 dark:text-white dark:hover:bg-gray-800">
                         <i class="fa-solid fa-add"></i>
@@ -112,9 +114,9 @@ function handleFavorite() {
                 </div>
 
                 <div class="flex items-center justify-start gap-2 text-sm dark:text-white">
-                    <span>Add Capo:</span>
+                    <span>Capo Fret:</span>
                     <select name="capo" id="capo" v-model="capo_position"
-                        class="h-8 w-14 rounded-md border border-gray-300 bg-gray-200 p-1 text-gray-700 dark:bg-gray-800 dark:text-white">
+                        class="text-sm px-2 h-8 w-14 rounded-md border border-gray-300 bg-gray-200 p-1 text-gray-700 dark:bg-gray-800 dark:text-white">
                         <option value="0" class="px-2 dark:bg-gray-800 dark:text-white">
                             0
                         </option>
@@ -137,7 +139,7 @@ function handleFavorite() {
         <main class="py-6 dark:text-white" :class="{
             'columns-2 gap-8': is_dual_column,
         }">
-            <SongContent :original_key="song.key" :current_key="song_key" :available_keys="available_keys"
+            <SongContent :original_key="song.key" :key_offset="key_offset" :available_keys="available_keys"
                 :content="song.lines" :valid_chords="valid_chords" />
         </main>
     </Container>
