@@ -86,17 +86,17 @@ namespace App\Models{
  * @property string $slug
  * @property int $artist_id
  * @property string|null $key
- * @property string $content
  * @property int $views
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Artist $artist
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SongLine> $lines
+ * @property-read int|null $lines_count
  * @method static \Database\Factories\SongFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Song newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Song newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Song query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Song whereArtistId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Song whereContent($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Song whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Song whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Song whereKey($value)
@@ -106,6 +106,32 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Song whereViews($value)
  */
 	class Song extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * 
+ *
+ * @property int $id
+ * @property int $song_id
+ * @property int $line_number
+ * @property string $content_type
+ * @property string $content
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Song $song
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SongLine newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SongLine newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SongLine query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SongLine whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SongLine whereContentType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SongLine whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SongLine whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SongLine whereLineNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SongLine whereSongId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SongLine whereUpdatedAt($value)
+ */
+	class SongLine extends \Eloquent {}
 }
 
 namespace App\Models{
