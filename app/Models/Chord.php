@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Chord extends Model
 {
     protected $fillable = ['name', 'variation'];
+
     public const VARIATIONS = [
         'major' => '',
         'minor' => 'm',

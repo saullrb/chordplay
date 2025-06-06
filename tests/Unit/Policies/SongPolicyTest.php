@@ -2,13 +2,13 @@
 
 namespace Tests\Unit\Policies;
 
-use App\Models\User;
-use App\Models\Song;
 use App\Models\Artist;
 use App\Models\Role;
+use App\Models\Song;
+use App\Models\User;
 use App\Policies\SongPolicy;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class SongPolicyTest extends TestCase
 {
@@ -19,7 +19,7 @@ class SongPolicyTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->policy = new SongPolicy();
+        $this->policy = new SongPolicy;
     }
 
     public function test_staff_can_create()
@@ -33,7 +33,7 @@ class SongPolicyTest extends TestCase
         $staff = User::factory()->create(['role_id' => Role::STAFF]);
         $artist = Artist::factory()->create();
         $song = Song::factory()->create(['artist_id' => $artist->id]);
-        
+
         $this->assertTrue($this->policy->update($staff, $song));
     }
 
@@ -48,7 +48,7 @@ class SongPolicyTest extends TestCase
         $user = User::factory()->create(['role_id' => Role::USER]);
         $artist = Artist::factory()->create();
         $song = Song::factory()->create(['artist_id' => $artist->id]);
-        
+
         $this->assertFalse($this->policy->update($user, $song));
     }
 
@@ -63,7 +63,7 @@ class SongPolicyTest extends TestCase
         $admin = User::factory()->create(['role_id' => Role::ADMIN]);
         $artist = Artist::factory()->create();
         $song = Song::factory()->create(['artist_id' => $artist->id]);
-        
+
         $this->assertTrue($this->policy->update($admin, $song));
     }
-} 
+}

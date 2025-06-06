@@ -29,4 +29,3 @@ class SongTest extends TestCase
         $this->assertEquals('test-song', $song->slug);
     }
 }
-

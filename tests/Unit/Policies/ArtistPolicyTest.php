@@ -2,11 +2,11 @@
 
 namespace Tests\Unit\Policies;
 
-use App\Models\User;
 use App\Models\Role;
+use App\Models\User;
 use App\Policies\ArtistPolicy;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class ArtistPolicyTest extends TestCase
 {
@@ -17,7 +17,7 @@ class ArtistPolicyTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->policy = new ArtistPolicy();
+        $this->policy = new ArtistPolicy;
     }
 
     public function test_staff_can_create()
@@ -37,4 +37,4 @@ class ArtistPolicyTest extends TestCase
         $admin = User::factory()->create(['role_id' => Role::ADMIN]);
         $this->assertTrue($this->policy->create($admin));
     }
-} 
+}

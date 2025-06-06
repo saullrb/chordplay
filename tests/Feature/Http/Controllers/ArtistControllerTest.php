@@ -150,4 +150,3 @@ class ArtistControllerTest extends TestCase
         $this->assertDatabaseMissing('artists', ['name' => 'New Artist']);
     }
 }
-

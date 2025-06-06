@@ -84,4 +84,3 @@ class ProfileControllerTest extends TestCase
         $this->assertNotNull($user->fresh());
     }
 }
-

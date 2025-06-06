@@ -24,7 +24,7 @@ return new class extends Migration
                 $chord = $base_note.$variation;
                 Chord::create([
                     'name' => $chord,
-                    'variation' => $variation
+                    'variation' => $variation,
                 ]);
             }
         }
