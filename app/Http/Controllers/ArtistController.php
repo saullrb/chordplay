@@ -31,7 +31,7 @@ class ArtistController extends Controller
     public function show(string $slug): Response
     {
         $artist = Artist::with(['songs' => function ($query) {
-            $query->orderBy('title', 'asc');
+            $query->orderBy('name', 'asc');
         }])->where('slug', $slug)->firstOrFail();
 
         $artist->increment('views');
