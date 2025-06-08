@@ -16,7 +16,7 @@ Route::get('/search', [SearchController::class, 'index'])->name('search');
 
 Route::get('/search/results', [SearchController::class, 'show'])->name('search.show');
 
-Route::get('/dashboard', [DashboardController::class, 'show'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'show'])->middleware(['auth'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

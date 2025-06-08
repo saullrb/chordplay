@@ -20,7 +20,6 @@ return new class extends Migration
 
         DB::table('roles')->insert([
             ['id' => Role::USER, 'name' => 'user', 'created_at' => now(), 'updated_at' => now()],
-            ['id' => Role::STAFF, 'name' => 'staff', 'created_at' => now(), 'updated_at' => now()],
             ['id' => Role::ADMIN, 'name' => 'admin', 'created_at' => now(), 'updated_at' => now()],
         ]);
     }

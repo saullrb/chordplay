@@ -31,25 +31,25 @@ class ArtistControllerTest extends TestCase
         );
     }
 
-    public function test_only_staff_can_access_create_page()
+    public function test_only_admin_can_access_create_page()
     {
         $user = User::factory()->create(['role_id' => Role::USER]);
-        $staff = User::factory()->create(['role_id' => Role::STAFF]);
+        $admin = User::factory()->create(['role_id' => Role::ADMIN]);
 
         $this->actingAs($user)
             ->get(route('artists.create'))
             ->assertForbidden();
 
-        $this->actingAs($staff)
+        $this->actingAs($admin)
             ->get(route('artists.create'))
             ->assertOk();
     }
 
-    public function test_staff_can_store_artist()
+    public function test_admin_can_store_artist()
     {
-        $staff = User::factory()->create(['role_id' => Role::STAFF]);
+        $admin = User::factory()->create(['role_id' => Role::ADMIN]);
 
-        $response = $this->actingAs($staff)
+        $response = $this->actingAs($admin)
             ->post(route('artists.store'), [
                 'name' => 'New Artist',
             ]);
@@ -87,9 +87,9 @@ class ArtistControllerTest extends TestCase
 
     public function test_artist_creation_requires_valid_data()
     {
-        $staff = User::factory()->create(['role_id' => Role::STAFF]);
+        $admin = User::factory()->create(['role_id' => Role::ADMIN]);
 
-        $response = $this->actingAs($staff)
+        $response = $this->actingAs($admin)
             ->post(route('artists.store'), [
                 'name' => '',
             ]);
@@ -103,7 +103,7 @@ class ArtistControllerTest extends TestCase
 
         $response = $this->post(route('artists.favorite', $artist));
 
-        $response->assertRedirect('/login');
+        $response->assertRedirect(route('google.redirect'));
     }
 
     public function test_users_can_favorite_artists()

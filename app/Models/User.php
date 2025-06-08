@@ -16,13 +16,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $fillable = [
         'name',
         'email',
-        'password',
         'role_id',
-    ];
-
-    protected $hidden = [
-        'password',
-        'remember_token',
     ];
 
     public function role(): BelongsTo
@@ -74,18 +68,5 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isAdmin(): bool
     {
         return $this->role->id === Role::ADMIN;
-    }
-
-    public function isStaff(): bool
-    {
-        return $this->role->id === Role::STAFF;
-    }
-
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
     }
 }

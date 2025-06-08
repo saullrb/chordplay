@@ -17,28 +17,28 @@ class SongControllerTest extends TestCase
     {
         $artist = Artist::factory()->create();
         $this->get(route('artists.songs.create', $artist))
-            ->assertRedirect('/login');
+            ->assertRedirect(route('google.redirect'));
     }
 
-    public function test_only_staff_can_access_create_page()
+    public function test_only_admin_can_access_create_page()
     {
         $user = User::factory()->create(['role_id' => Role::USER]);
-        $staff = User::factory()->create(['role_id' => Role::STAFF]);
+        $admin = User::factory()->create(['role_id' => Role::ADMIN]);
         $artist = Artist::factory()->create();
 
         $this->actingAs($user)
             ->get(route('artists.songs.create', $artist))
             ->assertForbidden();
 
-        $this->actingAs($staff)
+        $this->actingAs($admin)
             ->get(route('artists.songs.create', $artist))
             ->assertOk();
     }
 
-    public function test_only_staff_can_store_song()
+    public function test_only_admin_can_store_song()
     {
         $user = User::factory()->create(['role_id' => Role::USER]);
-        $staff = User::factory()->create(['role_id' => Role::STAFF]);
+        $admin = User::factory()->create(['role_id' => Role::ADMIN]);
         $artist = Artist::factory()->create();
 
         $this->actingAs($user)
@@ -49,7 +49,7 @@ class SongControllerTest extends TestCase
             ])
             ->assertForbidden();
 
-        $this->actingAs($staff)
+        $this->actingAs($admin)
             ->post(route('artists.songs.store', $artist), [
                 'name' => 'Test Song',
                 'key' => 'C',
@@ -82,10 +82,10 @@ class SongControllerTest extends TestCase
 
     public function test_song_creation_requires_valid_data()
     {
-        $staff = User::factory()->create(['role_id' => Role::STAFF]);
+        $admin = User::factory()->create(['role_id' => Role::ADMIN]);
         $artist = Artist::factory()->create();
 
-        $response = $this->actingAs($staff)
+        $response = $this->actingAs($admin)
             ->post(route('artists.songs.store', $artist), [
                 'name' => '',
                 'key' => 'InvalidKey',
@@ -97,10 +97,10 @@ class SongControllerTest extends TestCase
 
     public function test_song_content_must_have_valid_chord_format()
     {
-        $staff = User::factory()->create(['role_id' => Role::STAFF]);
+        $admin = User::factory()->create(['role_id' => Role::ADMIN]);
         $artist = Artist::factory()->create();
 
-        $response = $this->actingAs($staff)
+        $response = $this->actingAs($admin)
             ->post(route('artists.songs.store', $artist), [
                 'name' => 'Test Song',
                 'key' => 'C',
@@ -126,25 +126,25 @@ class SongControllerTest extends TestCase
         );
     }
 
-    public function test_staff_can_access_edit_page()
+    public function test_admin_can_access_edit_page()
     {
-        $staff = User::factory()->create(['role_id' => Role::STAFF]);
+        $admin = User::factory()->create(['role_id' => Role::ADMIN]);
         $artist = Artist::factory()->create();
         $song = Song::factory()->create(['artist_id' => $artist->id]);
 
-        $response = $this->actingAs($staff)
+        $response = $this->actingAs($admin)
             ->get(route('artists.songs.edit', [$artist, $song]));
 
         $response->assertOk();
     }
 
-    public function test_staff_can_update_song()
+    public function test_admin_can_update_song()
     {
-        $staff = User::factory()->create(['role_id' => Role::STAFF]);
+        $admin = User::factory()->create(['role_id' => Role::ADMIN]);
         $artist = Artist::factory()->create();
         $song = Song::factory()->create(['artist_id' => $artist->id]);
 
-        $response = $this->actingAs($staff)
+        $response = $this->actingAs($admin)
             ->patch(route('artists.songs.update', [$artist, $song]), [
                 'name' => 'Updated Song',
                 'key' => 'Am',
@@ -193,7 +193,7 @@ class SongControllerTest extends TestCase
 
         $response = $this->post(route('songs.favorite', [$artist, $song]));
 
-        $response->assertRedirect('/login');
+        $response->assertRedirect(route('google.redirect'));
     }
 
     public function test_users_can_favorite_songs()

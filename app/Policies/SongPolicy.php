@@ -8,11 +8,11 @@ class SongPolicy
 {
     public function create(User $user): bool
     {
-        return $user->isAdmin() || $user->isStaff();
+        return $user->isAdmin();
     }
 
     public function update(User $user): bool
     {
-        return $user->isAdmin() || $user->isStaff();
+        return $user->isAdmin();
     }
 }

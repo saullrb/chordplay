@@ -22,21 +22,6 @@ class SongPolicyTest extends TestCase
         $this->policy = new SongPolicy;
     }
 
-    public function test_staff_can_create()
-    {
-        $staff = User::factory()->create(['role_id' => Role::STAFF]);
-        $this->assertTrue($this->policy->create($staff));
-    }
-
-    public function test_staff_can_update()
-    {
-        $staff = User::factory()->create(['role_id' => Role::STAFF]);
-        $artist = Artist::factory()->create();
-        $song = Song::factory()->create(['artist_id' => $artist->id]);
-
-        $this->assertTrue($this->policy->update($staff, $song));
-    }
-
     public function test_regular_users_cannot_create()
     {
         $user = User::factory()->create(['role_id' => Role::USER]);

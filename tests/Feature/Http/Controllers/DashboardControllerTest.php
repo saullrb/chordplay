@@ -49,7 +49,7 @@ class DashboardControllerTest extends TestCase
     public function test_guests_cannot_access_dashboard()
     {
         $response = $this->get(route('dashboard'));
-        $response->assertRedirect('/login');
+        $response->assertRedirect(route('google.redirect'));
     }
 
     public function test_dashboard_shows_favorite_artists()

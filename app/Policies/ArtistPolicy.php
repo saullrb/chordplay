@@ -8,6 +8,6 @@ class ArtistPolicy
 {
     public function create(User $user): bool
     {
-        return $user->isAdmin() || $user->isStaff();
+        return $user->isAdmin();
     }
 }

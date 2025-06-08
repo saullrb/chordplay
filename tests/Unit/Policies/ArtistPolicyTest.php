@@ -20,12 +20,6 @@ class ArtistPolicyTest extends TestCase
         $this->policy = new ArtistPolicy;
     }
 
-    public function test_staff_can_create()
-    {
-        $staff = User::factory()->create(['role_id' => Role::STAFF]);
-        $this->assertTrue($this->policy->create($staff));
-    }
-
     public function test_regular_users_cannot_create()
     {
         $user = User::factory()->create(['role_id' => Role::USER]);
