@@ -22,7 +22,7 @@ Route::get('/auth/google/callback', function () {
         $user = User::create([
             'email' => $google_user->getEmail(),
             'name' => $google_user->getName() ?? 'Unnamed',
-            // 'role_id' => $google_user->getEmail() === 'saull@outlook.com' ? Role::ADMIN : Role::USER,
+            'role_id' => $google_user->getEmail() === 'saull@outlook.com' ? Role::ADMIN : Role::USER,
         ]);
     }
 
