@@ -4,8 +4,8 @@ import NavBar from '@/Components/NavBar.vue';
 import PageHeader from '@/Components/PageHeader.vue';
 import TextLink from '@/Components/TextLink.vue';
 import { useForm } from '@inertiajs/vue3';
-import SongContent from './partials/SongContent.vue';
 import SongForm from './partials/SongForm.vue';
+import SongPreview from './partials/SongPreview.vue';
 
 const props = defineProps({
     available_keys: Array,
@@ -25,6 +25,7 @@ function submitForm() {
 </script>
 
 <template>
+
     <Head :title="`${artist.name} - Add Song`" />
 
     <NavBar />
@@ -38,22 +39,12 @@ function submitForm() {
             </TextLink>
 
             <div class="mt-6 grid grid-cols-2 justify-between gap-12 py-6">
-                <SongForm
-                    :available_keys="available_keys"
-                    :initial_data="form"
-                    submit_label="Add"
-                    @submit="submitForm"
-                />
+                <SongForm :available_keys="available_keys" :initial_data="form" submit_label="Add"
+                    @submit="submitForm" />
 
                 <section class="dark:text-white">
                     <h3 class="text-md mb-6">Preview</h3>
-                    <SongContent
-                        :available_keys="available_keys"
-                        :content="form.content"
-                        :valid_chords="valid_chords"
-                        :original_key="form.key"
-                        :current_key="form.key"
-                    />
+                    <SongPreview :content="form.content" :valid_chords="valid_chords" />
                 </section>
             </div>
         </Container>
