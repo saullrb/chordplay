@@ -79,6 +79,10 @@ class SongController extends Controller
     {
         $this->authorize('update', Song::class);
 
+        $lines = $song->lines()->get(['content']);
+        $song->unsetRelation('lines');
+        $song->content = $lines->pluck('content')->implode("\n");
+
         return Inertia::render('Songs/Edit', [
             'available_keys' => array_map(fn ($key) => $key->value, SongKeyEnum::cases()),
             'artist' => $artist,
