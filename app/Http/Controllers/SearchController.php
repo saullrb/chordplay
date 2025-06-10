@@ -43,13 +43,13 @@ class SearchController extends Controller
         }
 
         $song_query = Song::query()
-            ->where('name', 'LIKE', "%{$query}%")
+            ->where('name', 'ILIKE', "%{$query}%")
             ->with('artist:id,name,slug')
             ->orderBy('views', 'desc')
             ->select('songs.name', 'songs.slug', 'songs.artist_id');
 
         $artist_query = Artist::query()
-            ->where('name', 'LIKE', "%{$query}%")
+            ->where('name', 'ILIKE', "%{$query}%")
             ->orderBy('views', 'desc')
             ->select('name', 'slug');
 
