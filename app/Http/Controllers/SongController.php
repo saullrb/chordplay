@@ -7,7 +7,6 @@ use App\Models\Artist;
 use App\Models\Chord;
 use App\Models\Song;
 use App\Rules\ValidContent;
-use App\Services\SongService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,9 +17,7 @@ class SongController extends Controller
 {
     use AuthorizesRequests;
 
-    public function __construct(protected \App\Services\SongService $songService)
-    {
-    }
+    public function __construct(protected \App\Services\SongService $songService) {}
 
     public function show(Artist $artist, Song $song): Response
     {

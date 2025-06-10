@@ -47,6 +47,6 @@ class Chord extends Model
     {
         return self::get()
             ->groupBy('variation')
-            ->map(fn($chords) => $chords->pluck('name'));
+            ->map(fn ($chords) => $chords->pluck('name'));
     }
 }
