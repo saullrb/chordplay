@@ -19,6 +19,8 @@ function separateLines() {
         const trimmed_line = line.trim();
         if (trimmed_line.startsWith('[')) {
             return { content_type: 'chords', content: line }
+        } else if (trimmed_line === '') {
+            return { content_type: 'empty', content: trimmed_line }
         } else {
             return { content_type: 'lyrics', content: trimmed_line }
         }
