@@ -81,6 +81,7 @@ class SongController extends Controller
 
         $lines = $song->lines()->get(['content']);
         $song->unsetRelation('lines');
+        /** @phpstan-ignore-next-line */
         $song->content = $lines->pluck('content')->implode("\n");
 
         return Inertia::render('Songs/Edit', [
