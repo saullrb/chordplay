@@ -5,14 +5,12 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth')->group(function (): void {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
 });
 
-Route::get('/auth/google/redirect', function () {
-    return Socialite::driver('google')->redirect();
-})->name('google.redirect');
+Route::get('/auth/google/redirect', fn() => Socialite::driver('google')->redirect())->name('google.redirect');
 
 Route::get('/auth/google/callback', function () {
     $google_user = Socialite::driver('google')->stateless()->user();

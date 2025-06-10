@@ -11,7 +11,7 @@ class SongTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_song_belongs_to_artist()
+    public function test_song_belongs_to_artist(): void
     {
         $artist = Artist::factory()->create();
         $song = Song::factory()->create(['artist_id' => $artist->id]);
@@ -19,7 +19,7 @@ class SongTest extends TestCase
         $this->assertTrue($song->artist->is($artist));
     }
 
-    public function test_song_generates_slug()
+    public function test_song_generates_slug(): void
     {
         $artist = Artist::factory()->create();
         $song = Song::factory()->create([

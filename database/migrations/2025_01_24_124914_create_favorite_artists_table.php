@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('favorite_artists', function (Blueprint $table) {
+        Schema::create('favorite_artists', function (Blueprint $table): void {
             $table->id();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Artist::class)->constrained()->cascadeOnDelete();

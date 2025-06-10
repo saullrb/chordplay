@@ -12,7 +12,7 @@ class DashboardControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_dashboard_shows_favorite_songs()
+    public function test_dashboard_shows_favorite_songs(): void
     {
         $user = User::factory()->create();
         $artist = Artist::factory()->create();
@@ -32,7 +32,7 @@ class DashboardControllerTest extends TestCase
         );
     }
 
-    public function test_dashboard_shows_empty_state_for_new_users()
+    public function test_dashboard_shows_empty_state_for_new_users(): void
     {
         $user = User::factory()->create();
 
@@ -46,13 +46,13 @@ class DashboardControllerTest extends TestCase
         );
     }
 
-    public function test_guests_cannot_access_dashboard()
+    public function test_guests_cannot_access_dashboard(): void
     {
         $response = $this->get(route('dashboard'));
         $response->assertRedirect(route('google.redirect'));
     }
 
-    public function test_dashboard_shows_favorite_artists()
+    public function test_dashboard_shows_favorite_artists(): void
     {
         $user = User::factory()->create();
         $artist = Artist::factory()->create(['name' => 'Favorite Artist']);

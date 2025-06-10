@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('chords', function (Blueprint $table) {
+        Schema::create('chords', function (Blueprint $table): void {
             $table->id();
             $table->string('name')->unique();
             $table->enum('variation', Chord::VARIATIONS);

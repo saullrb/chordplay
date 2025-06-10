@@ -10,7 +10,7 @@ class ProfileControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_profile_page_is_displayed()
+    public function test_profile_page_is_displayed(): void
     {
         $user = User::factory()->create();
 
@@ -20,7 +20,7 @@ class ProfileControllerTest extends TestCase
         $response->assertOk();
     }
 
-    public function test_user_can_delete_their_account()
+    public function test_user_can_delete_their_account(): void
     {
         $user = User::factory()->create();
 

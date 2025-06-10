@@ -14,19 +14,20 @@ class ArtistPolicyTest extends TestCase
 
     private ArtistPolicy $policy;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
         $this->policy = new ArtistPolicy;
     }
 
-    public function test_regular_users_cannot_create()
+    public function test_regular_users_cannot_create(): void
     {
         $user = User::factory()->create(['role_id' => Role::USER]);
         $this->assertFalse($this->policy->create($user));
     }
 
-    public function test_admin_can_create()
+    public function test_admin_can_create(): void
     {
         $admin = User::factory()->create(['role_id' => Role::ADMIN]);
         $this->assertTrue($this->policy->create($admin));

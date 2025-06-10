@@ -13,13 +13,13 @@ class ArtistControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_anyone_can_view_artists_index()
+    public function test_anyone_can_view_artists_index(): void
     {
         $response = $this->get(route('artists.index'));
         $response->assertOk();
     }
 
-    public function test_artists_index_displays_all_artists()
+    public function test_artists_index_displays_all_artists(): void
     {
         Artist::factory()->count(3)->create();
 
@@ -31,7 +31,7 @@ class ArtistControllerTest extends TestCase
         );
     }
 
-    public function test_only_admin_can_access_create_page()
+    public function test_only_admin_can_access_create_page(): void
     {
         $user = User::factory()->create(['role_id' => Role::USER]);
         $admin = User::factory()->create(['role_id' => Role::ADMIN]);
@@ -45,7 +45,7 @@ class ArtistControllerTest extends TestCase
             ->assertOk();
     }
 
-    public function test_admin_can_store_artist()
+    public function test_admin_can_store_artist(): void
     {
         $admin = User::factory()->create(['role_id' => Role::ADMIN]);
 
@@ -58,7 +58,7 @@ class ArtistControllerTest extends TestCase
         $this->assertDatabaseHas('artists', ['name' => 'New Artist']);
     }
 
-    public function test_artist_show_page_includes_songs()
+    public function test_artist_show_page_includes_songs(): void
     {
         $artist = Artist::factory()->create();
         Song::factory()->count(3)->create(['artist_id' => $artist->id]);
@@ -71,7 +71,7 @@ class ArtistControllerTest extends TestCase
         );
     }
 
-    public function test_artist_show_page_includes_favorite_status()
+    public function test_artist_show_page_includes_favorite_status(): void
     {
         $user = User::factory()->create();
         $artist = Artist::factory()->create();
@@ -85,7 +85,7 @@ class ArtistControllerTest extends TestCase
         );
     }
 
-    public function test_artist_creation_requires_valid_data()
+    public function test_artist_creation_requires_valid_data(): void
     {
         $admin = User::factory()->create(['role_id' => Role::ADMIN]);
 
@@ -97,7 +97,7 @@ class ArtistControllerTest extends TestCase
         $response->assertSessionHasErrors(['name']);
     }
 
-    public function test_guests_cannot_favorite_artists()
+    public function test_guests_cannot_favorite_artists(): void
     {
         $artist = Artist::factory()->create();
 
@@ -106,7 +106,7 @@ class ArtistControllerTest extends TestCase
         $response->assertRedirect(route('google.redirect'));
     }
 
-    public function test_users_can_favorite_artists()
+    public function test_users_can_favorite_artists(): void
     {
         $user = User::factory()->create();
         $artist = Artist::factory()->create();
@@ -121,7 +121,7 @@ class ArtistControllerTest extends TestCase
         ]);
     }
 
-    public function test_users_can_unfavorite_artists()
+    public function test_users_can_unfavorite_artists(): void
     {
         $user = User::factory()->create();
         $artist = Artist::factory()->create();
@@ -137,7 +137,7 @@ class ArtistControllerTest extends TestCase
         ]);
     }
 
-    public function test_regular_users_cannot_store_artist()
+    public function test_regular_users_cannot_store_artist(): void
     {
         $user = User::factory()->create(['role_id' => Role::USER]);
 

@@ -13,14 +13,14 @@ class SongControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_guests_cannot_view_song_create_form()
+    public function test_guests_cannot_view_song_create_form(): void
     {
         $artist = Artist::factory()->create();
         $this->get(route('artists.songs.create', $artist))
             ->assertRedirect(route('google.redirect'));
     }
 
-    public function test_only_admin_can_access_create_page()
+    public function test_only_admin_can_access_create_page(): void
     {
         $user = User::factory()->create(['role_id' => Role::USER]);
         $admin = User::factory()->create(['role_id' => Role::ADMIN]);
@@ -35,7 +35,7 @@ class SongControllerTest extends TestCase
             ->assertOk();
     }
 
-    public function test_only_admin_can_store_song()
+    public function test_only_admin_can_store_song(): void
     {
         $user = User::factory()->create(['role_id' => Role::USER]);
         $admin = User::factory()->create(['role_id' => Role::ADMIN]);
@@ -58,7 +58,7 @@ class SongControllerTest extends TestCase
             ->assertRedirect();
     }
 
-    public function test_anyone_can_view_songs()
+    public function test_anyone_can_view_songs(): void
     {
         $artist = Artist::factory()->create();
         $song = Song::factory()->create(['artist_id' => $artist->id]);
@@ -67,7 +67,7 @@ class SongControllerTest extends TestCase
         $response->assertOk();
     }
 
-    public function test_viewing_song_increments_view_count()
+    public function test_viewing_song_increments_view_count(): void
     {
         $artist = Artist::factory()->create();
         $song = Song::factory()->create([
@@ -80,7 +80,7 @@ class SongControllerTest extends TestCase
         $this->assertEquals(1, $song->fresh()->views);
     }
 
-    public function test_song_creation_requires_valid_data()
+    public function test_song_creation_requires_valid_data(): void
     {
         $admin = User::factory()->create(['role_id' => Role::ADMIN]);
         $artist = Artist::factory()->create();
@@ -95,7 +95,7 @@ class SongControllerTest extends TestCase
         $response->assertSessionHasErrors(['name', 'key', 'content']);
     }
 
-    public function test_song_content_must_have_valid_chord_format()
+    public function test_song_content_must_have_valid_chord_format(): void
     {
         $admin = User::factory()->create(['role_id' => Role::ADMIN]);
         $artist = Artist::factory()->create();
@@ -110,7 +110,7 @@ class SongControllerTest extends TestCase
         $response->assertSessionHasErrors(['content']);
     }
 
-    public function test_song_show_page_includes_favorite_status()
+    public function test_song_show_page_includes_favorite_status(): void
     {
         $user = User::factory()->create(['role_id' => Role::USER]);
         $artist = Artist::factory()->create();
@@ -126,7 +126,7 @@ class SongControllerTest extends TestCase
         );
     }
 
-    public function test_admin_can_access_edit_page()
+    public function test_admin_can_access_edit_page(): void
     {
         $admin = User::factory()->create(['role_id' => Role::ADMIN]);
         $artist = Artist::factory()->create();
@@ -138,7 +138,7 @@ class SongControllerTest extends TestCase
         $response->assertOk();
     }
 
-    public function test_admin_can_update_song()
+    public function test_admin_can_update_song(): void
     {
         $admin = User::factory()->create(['role_id' => Role::ADMIN]);
         $artist = Artist::factory()->create();
@@ -158,7 +158,7 @@ class SongControllerTest extends TestCase
         ]);
     }
 
-    public function test_regular_users_cannot_access_edit_page()
+    public function test_regular_users_cannot_access_edit_page(): void
     {
         $user = User::factory()->create(['role_id' => Role::USER]);
         $artist = Artist::factory()->create();
@@ -170,7 +170,7 @@ class SongControllerTest extends TestCase
         $response->assertForbidden();
     }
 
-    public function test_regular_users_cannot_update_song()
+    public function test_regular_users_cannot_update_song(): void
     {
         $user = User::factory()->create(['role_id' => Role::USER]);
         $artist = Artist::factory()->create();
@@ -186,7 +186,7 @@ class SongControllerTest extends TestCase
         $response->assertForbidden();
     }
 
-    public function test_guests_cannot_favorite_songs()
+    public function test_guests_cannot_favorite_songs(): void
     {
         $artist = Artist::factory()->create();
         $song = Song::factory()->create(['artist_id' => $artist->id]);
@@ -196,7 +196,7 @@ class SongControllerTest extends TestCase
         $response->assertRedirect(route('google.redirect'));
     }
 
-    public function test_users_can_favorite_songs()
+    public function test_users_can_favorite_songs(): void
     {
         $user = User::factory()->create();
         $artist = Artist::factory()->create();
@@ -212,7 +212,7 @@ class SongControllerTest extends TestCase
         ]);
     }
 
-    public function test_users_can_unfavorite_songs()
+    public function test_users_can_unfavorite_songs(): void
     {
         $user = User::factory()->create();
         $artist = Artist::factory()->create();

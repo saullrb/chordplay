@@ -18,26 +18,23 @@ class SongController extends Controller
 {
     use AuthorizesRequests;
 
-    protected $songService;
-
-    public function __construct(SongService $songService)
+    public function __construct(protected \App\Services\SongService $songService)
     {
-        $this->songService = $songService;
     }
 
     public function show(Artist $artist, Song $song): Response
     {
         $song->increment('views');
-        $song->load(['lines' => function ($query) {
+        $song->load(['lines' => function ($query): void {
             $query->orderBy('line_number');
         }]);
 
         $available_keys = [];
 
         if (str_ends_with($song->key, 'm')) {
-            $available_keys = array_values(array_filter(SongKeyEnum::cases(), fn ($key) => str_ends_with($key->value, 'm')));
+            $available_keys = array_values(array_filter(SongKeyEnum::cases(), fn ($key): bool => str_ends_with((string) $key->value, 'm')));
         } else {
-            $available_keys = array_values(array_filter(SongKeyEnum::cases(), fn ($key) => ! str_ends_with($key->value, 'm')));
+            $available_keys = array_values(array_filter(SongKeyEnum::cases(), fn ($key): bool => ! str_ends_with((string) $key->value, 'm')));
         }
 
         $is_favorited = Auth::user()?->favoriteSongs()->where('song_id', $song->id)->exists() ?? false;

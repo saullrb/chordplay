@@ -2,7 +2,7 @@
 
 use App\Models\User;
 
-test('users can logout', function () {
+test('users can logout', function (): void {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->post('/logout');

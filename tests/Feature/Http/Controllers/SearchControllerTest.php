@@ -11,7 +11,7 @@ class SearchControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_search_index_returns_limited_results()
+    public function test_search_index_returns_limited_results(): void
     {
         $artist = Artist::factory()->create(['name' => 'Test Artist']);
         Artist::factory()->count(5)->create();
@@ -35,7 +35,7 @@ class SearchControllerTest extends TestCase
         );
     }
 
-    public function test_search_with_empty_query_returns_empty_results()
+    public function test_search_with_empty_query_returns_empty_results(): void
     {
         $response = $this->get(route('search'));
 

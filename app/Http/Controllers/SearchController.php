@@ -33,7 +33,7 @@ class SearchController extends Controller
         ]);
     }
 
-    private function getSearchResults($query, $limit = null)
+    private function getSearchResults($query, $limit = null): array
     {
         if (! $query) {
             return [

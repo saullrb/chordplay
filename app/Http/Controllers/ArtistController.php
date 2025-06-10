@@ -30,7 +30,7 @@ class ArtistController extends Controller
 
     public function show(string $slug): Response
     {
-        $artist = Artist::with(['songs' => function ($query) {
+        $artist = Artist::with(['songs' => function ($query): void {
             $query->orderBy('name', 'asc');
         }])->where('slug', $slug)->firstOrFail();
 

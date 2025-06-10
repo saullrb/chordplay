@@ -20,7 +20,7 @@ class ValidContent implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $lines = explode(PHP_EOL, $value);
+        $lines = explode(PHP_EOL, (string) $value);
         $chord_lines = [];
         $processed_lines = [];
         $line_number = 0;
@@ -54,7 +54,7 @@ class ValidContent implements ValidationRule
                 $processed_lines[] = [
                     'line_number' => $line_number,
                     'content' => $trimmed_line,
-                    'content_type' => empty($trimmed_line) ? SongLineContentType::EMPTY : SongLineContentType::LYRICS,
+                    'content_type' => $trimmed_line === '' || $trimmed_line === '0' ? SongLineContentType::EMPTY : SongLineContentType::LYRICS,
                 ];
             }
 
@@ -69,7 +69,7 @@ class ValidContent implements ValidationRule
 
         $this->invalid_chords = array_diff($chords, $valid_chords);
 
-        if (! empty($this->invalid_chords)) {
+        if ($this->invalid_chords !== []) {
             $fail($this->message());
         }
     }
@@ -82,7 +82,7 @@ class ValidContent implements ValidationRule
             $token = '';
             $inside_brackets = false;
 
-            for ($i = 0; $i < strlen($line); $i++) {
+            for ($i = 0; $i < strlen((string) $line); $i++) {
                 $char = $line[$i];
 
                 if ($char === '[') {
@@ -100,7 +100,7 @@ class ValidContent implements ValidationRule
         return array_keys($chords);
     }
 
-    private function message()
+    private function message(): string
     {
         return 'These chords are invalid: '.implode(', ', $this->invalid_chords);
     }

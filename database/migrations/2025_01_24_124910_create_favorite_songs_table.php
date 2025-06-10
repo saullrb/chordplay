@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('favorite_songs', function (Blueprint $table) {
+        Schema::create('favorite_songs', function (Blueprint $table): void {
             $table->id();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Song::class)->constrained()->cascadeOnDelete();

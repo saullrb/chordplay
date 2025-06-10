@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('song_lines', function (Blueprint $table) {
+        Schema::create('song_lines', function (Blueprint $table): void {
             $table->id();
             $table->foreignIdFor(Song::class)->constrained()->onDelete('cascade');
             $table->integer('line_number');
