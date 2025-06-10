@@ -10,7 +10,7 @@ Route::middleware('auth')->group(function (): void {
         ->name('logout');
 });
 
-Route::get('/auth/google/redirect', fn() => Socialite::driver('google')->redirect())->name('google.redirect');
+Route::get('/auth/google/redirect', fn () => Socialite::driver('google')->redirect())->name('google.redirect');
 
 Route::get('/auth/google/callback', function () {
     $google_user = Socialite::driver('google')->stateless()->user();
@@ -20,7 +20,7 @@ Route::get('/auth/google/callback', function () {
         $user = User::create([
             'email' => $google_user->getEmail(),
             'name' => $google_user->getName() ?? 'Unnamed',
-            'role_id' => $google_user->getEmail() === 'saull@outlook.com' ? Role::ADMIN : Role::USER,
+            'role_id' => Role::USER,
         ]);
     }
 
