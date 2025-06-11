@@ -49,6 +49,10 @@ class Artist extends Model
                 $artist->slug = static::generateSlug($artist->name);
             }
         });
+
+        static::saving(function (Artist $artist): void {
+            $artist->name = trim($artist->name);
+        });
     }
 
     protected static function generateSlug(string $name): string

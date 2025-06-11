@@ -73,6 +73,10 @@ class Song extends Model
                 $song->slug = static::generateSlug($song);
             }
         });
+
+        static::saving(function (Song $song): void {
+            $song->name = trim($song->name);
+        });
     }
 
     protected static function generateSlug(Song $song): string

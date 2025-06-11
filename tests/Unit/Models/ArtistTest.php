@@ -19,6 +19,12 @@ class ArtistTest extends TestCase
         $this->assertCount(3, $artist->songs);
     }
 
+    public function test_artist_name_is_trimmed(): void
+    {
+        $artist = Artist::factory()->create(['name' => '   Test Artist    ']);
+        $this->assertEquals('Test Artist', $artist->name);
+    }
+
     public function test_artist_generates_slug(): void
     {
         $artist = Artist::factory()->create(['name' => 'Test Artist']);

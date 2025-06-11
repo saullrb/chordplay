@@ -9,10 +9,16 @@ use Inertia\Inertia;
 
 class SearchController extends Controller
 {
+    private const DEFAULT_LIMIT = 5;
+
     public function index(Request $request)
     {
-        $query = $request->input('query', '');
-        $results = $this->getSearchResults($query, 5);
+        $validated = $request->validate([
+            'query' => 'nullable|string|max:255',
+        ]);
+
+        $query = $validated['query'] ?? '';
+        $results = $this->getSearchResults($query, self::DEFAULT_LIMIT);
 
         return Inertia::render('Home', [
             'results' => $results,
@@ -24,7 +30,11 @@ class SearchController extends Controller
 
     public function show(Request $request)
     {
-        $query = $request->input('query', '');
+        $validated = $request->validate([
+            'query' => 'nullable|string|max:255',
+        ]);
+
+        $query = $validated['query'] ?? '';
         $results = $this->getSearchResults($query);
 
         return Inertia::render('Search', [
@@ -42,14 +52,16 @@ class SearchController extends Controller
             ];
         }
 
+        $query = trim(strtolower($query));
+
         $song_query = Song::query()
-            ->where('name', 'ILIKE', "%{$query}%")
+            ->whereRaw('LOWER(name) LIKE ?', ['%'.$query.'%'])
             ->with('artist:id,name,slug')
             ->orderBy('views', 'desc')
             ->select('songs.name', 'songs.slug', 'songs.artist_id');
 
         $artist_query = Artist::query()
-            ->where('name', 'ILIKE', "%{$query}%")
+            ->whereRaw('LOWER(name) LIKE ?', ['%'.$query.'%'])
             ->orderBy('views', 'desc')
             ->select('name', 'slug');
 
