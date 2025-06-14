@@ -12,6 +12,7 @@ Route::middleware('auth')->group(function (): void {
 
 Route::get('/auth/google/redirect', fn () => Socialite::driver('google')->redirect())->name('google.redirect');
 
+// TODO: redirect the user back to the page they were on before they logged in
 Route::get('/auth/google/callback', function () {
     $google_user = Socialite::driver('google')->stateless()->user();
     $user = User::where('email', $google_user->getEmail())->first();

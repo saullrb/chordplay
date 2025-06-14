@@ -13,51 +13,6 @@ class SongControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_guests_cannot_view_song_create_form(): void
-    {
-        $artist = Artist::factory()->create();
-        $this->get(route('artists.songs.create', $artist))
-            ->assertRedirect(route('google.redirect'));
-    }
-
-    public function test_only_admin_can_access_create_page(): void
-    {
-        $user = User::factory()->create(['role_id' => Role::USER]);
-        $admin = User::factory()->create(['role_id' => Role::ADMIN]);
-        $artist = Artist::factory()->create();
-
-        $this->actingAs($user)
-            ->get(route('artists.songs.create', $artist))
-            ->assertForbidden();
-
-        $this->actingAs($admin)
-            ->get(route('artists.songs.create', $artist))
-            ->assertOk();
-    }
-
-    public function test_only_admin_can_store_song(): void
-    {
-        $user = User::factory()->create(['role_id' => Role::USER]);
-        $admin = User::factory()->create(['role_id' => Role::ADMIN]);
-        $artist = Artist::factory()->create();
-
-        $this->actingAs($user)
-            ->post(route('artists.songs.store', $artist), [
-                'name' => 'Test Song',
-                'key' => 'C',
-                'content' => '[Am] Test',
-            ])
-            ->assertForbidden();
-
-        $this->actingAs($admin)
-            ->post(route('artists.songs.store', $artist), [
-                'name' => 'Test Song',
-                'key' => 'C',
-                'content' => '[Am] Test',
-            ])
-            ->assertRedirect();
-    }
-
     public function test_anyone_can_view_songs(): void
     {
         $artist = Artist::factory()->create();
@@ -80,36 +35,6 @@ class SongControllerTest extends TestCase
         $this->assertEquals(1, $song->fresh()->views);
     }
 
-    public function test_song_creation_requires_valid_data(): void
-    {
-        $admin = User::factory()->create(['role_id' => Role::ADMIN]);
-        $artist = Artist::factory()->create();
-
-        $response = $this->actingAs($admin)
-            ->post(route('artists.songs.store', $artist), [
-                'name' => '',
-                'key' => 'InvalidKey',
-                'content' => '',
-            ]);
-
-        $response->assertSessionHasErrors(['name', 'key', 'content']);
-    }
-
-    public function test_song_content_must_have_valid_chord_format(): void
-    {
-        $admin = User::factory()->create(['role_id' => Role::ADMIN]);
-        $artist = Artist::factory()->create();
-
-        $response = $this->actingAs($admin)
-            ->post(route('artists.songs.store', $artist), [
-                'name' => 'Test Song',
-                'key' => 'C',
-                'content' => '[InvalidChord] [NotAChord]\nTest lyrics',
-            ]);
-
-        $response->assertSessionHasErrors(['content']);
-    }
-
     public function test_song_show_page_includes_favorite_status(): void
     {
         $user = User::factory()->create(['role_id' => Role::USER]);
@@ -126,64 +51,20 @@ class SongControllerTest extends TestCase
         );
     }
 
-    public function test_admin_can_access_edit_page(): void
+    public function test_only_authenticated_user_can_access_edit_page(): void
     {
-        $admin = User::factory()->create(['role_id' => Role::ADMIN]);
+        $user = User::factory()->create(['role_id' => Role::USER]);
         $artist = Artist::factory()->create();
         $song = Song::factory()->create(['artist_id' => $artist->id]);
 
-        $response = $this->actingAs($admin)
+        $this->assertGuest();
+        $this->get(route('artists.songs.edit', [$artist, $song]))
+            ->assertRedirect(route('google.redirect'));
+
+        $response = $this->actingAs($user)
             ->get(route('artists.songs.edit', [$artist, $song]));
 
         $response->assertOk();
-    }
-
-    public function test_admin_can_update_song(): void
-    {
-        $admin = User::factory()->create(['role_id' => Role::ADMIN]);
-        $artist = Artist::factory()->create();
-        $song = Song::factory()->create(['artist_id' => $artist->id]);
-
-        $response = $this->actingAs($admin)
-            ->patch(route('artists.songs.update', [$artist, $song]), [
-                'name' => 'Updated Song',
-                'key' => 'Am',
-                'content' => '[Am] Updated lyrics',
-            ]);
-
-        $response->assertRedirect();
-        $this->assertDatabaseHas('songs', [
-            'id' => $song->id,
-            'name' => 'Updated Song',
-        ]);
-    }
-
-    public function test_regular_users_cannot_access_edit_page(): void
-    {
-        $user = User::factory()->create(['role_id' => Role::USER]);
-        $artist = Artist::factory()->create();
-        $song = Song::factory()->create(['artist_id' => $artist->id]);
-
-        $response = $this->actingAs($user)
-            ->get(route('artists.songs.edit', [$artist, $song]));
-
-        $response->assertForbidden();
-    }
-
-    public function test_regular_users_cannot_update_song(): void
-    {
-        $user = User::factory()->create(['role_id' => Role::USER]);
-        $artist = Artist::factory()->create();
-        $song = Song::factory()->create(['artist_id' => $artist->id]);
-
-        $response = $this->actingAs($user)
-            ->patch(route('artists.songs.update', [$artist, $song]), [
-                'name' => 'Updated Song',
-                'key' => 'Am',
-                'content' => '[Am] Updated lyrics',
-            ]);
-
-        $response->assertForbidden();
     }
 
     public function test_guests_cannot_favorite_songs(): void

@@ -7,6 +7,7 @@ use App\Models\Song;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
+// TODO: make favorites display first
 class SearchController extends Controller
 {
     private const DEFAULT_LIMIT = 5;
@@ -28,6 +29,7 @@ class SearchController extends Controller
         ]);
     }
 
+    // TODO: pagination
     public function show(Request $request)
     {
         $validated = $request->validate([
@@ -52,7 +54,7 @@ class SearchController extends Controller
             ];
         }
 
-        $query = trim(strtolower($query));
+        $query = trim(strtolower((string) $query));
 
         $song_query = Song::query()
             ->whereRaw('LOWER(name) LIKE ?', ['%'.$query.'%'])

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Role;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,5 +21,10 @@ class UserFactory extends Factory
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
         ];
+    }
+
+    public function admin(): self
+    {
+        return $this->state(fn (): array => ['role_id' => Role::ADMIN]);
     }
 }
