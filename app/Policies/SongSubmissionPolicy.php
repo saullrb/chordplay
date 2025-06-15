@@ -7,11 +7,6 @@ use App\Models\User;
 
 class SongSubmissionPolicy
 {
-    public function index(User $user): bool
-    {
-        return $user->isAdmin();
-    }
-
     public function view(User $user, SongSubmission $songSubmission): bool
     {
         if ($user->isAdmin()) {

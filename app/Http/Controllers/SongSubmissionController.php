@@ -19,6 +19,20 @@ class SongSubmissionController extends Controller
 {
     use AuthorizesRequests;
 
+    public function index(): Response
+    {
+        $user = Auth::user();
+
+        $query = SongSubmission::with(['artist', 'user'])
+            ->orderBy('updated_at', 'desc');
+
+        if (! $user->isAdmin()) {
+            $query->where('user_id', $user->id);
+        }
+
+        return Inertia::render('SongSubmissions/Index', ['submissions' => $query->paginate(10)]);
+    }
+
     public function show(SongSubmission $song_submission): Response
     {
         $this->authorize('view', $song_submission);
@@ -99,8 +113,7 @@ class SongSubmissionController extends Controller
 
         $song_submission->delete();
 
-        // TODO: maybe later redirect to the submissions page
-        return redirect()->route('artists.show', $song_submission->artist->slug);
+        return redirect()->route('song_submissions.index');
     }
 
     public function approve(SongSubmission $song_submission): RedirectResponse

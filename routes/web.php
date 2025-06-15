@@ -33,6 +33,7 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/artists/{artist:slug}/{song:slug}/favorite', [SongController::class,  'favorite'])->name('songs.favorite');
     Route::delete('/artists/{artist:slug}/{song:slug}/favorite', [SongController::class,  'unfavorite'])->name('songs.unfavorite');
 
+    Route::get('/song-submissions', [SongSubmissionController::class, 'index'])->name('song_submissions.index');
     Route::get('/song-submissions/{song_submission}', [SongSubmissionController::class, 'show'])->name('song_submissions.show');
     Route::post('/artists/{artist:slug}/song-submissions', [SongSubmissionController::class, 'store'])->name('song_submissions.store');
     Route::get('/artists/{artist:slug}/songs/create', [SongSubmissionController::class, 'create'])->name('artists.songs.create');

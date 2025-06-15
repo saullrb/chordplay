@@ -28,6 +28,42 @@ class SongSubmissionControllerTest extends TestCase
         $this->regular_user = User::factory()->create();
     }
 
+    public function test_guest_user_cannot_visit_submissions_page(): void
+    {
+        $this->get(route('song_submissions.index'))->assertRedirect(route('google.redirect'));
+    }
+
+    public function test_admin_sees_all_submissions(): void
+    {
+        $artist = Artist::factory()->create();
+        SongSubmission::factory(25)->create([
+            'artist_id' => $artist->id, 'user_id' => $this->author->id,
+        ]);
+
+        $this->actingAs($this->admin)
+            ->get(route('song_submissions.index'))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('SongSubmissions/Index')
+                ->has('submissions.data', 10)
+                ->where('submissions.total', 25)
+            );
+    }
+
+    public function test_user_sees_own_submissions(): void
+    {
+        $artist = Artist::factory()->create();
+        SongSubmission::factory()->count(5)->create(['user_id' => $this->author->id, 'artist_id' => $artist->id]);
+        SongSubmission::factory()->count(5)->create(['user_id' => $this->admin->id, 'artist_id' => $artist->id]);
+
+        $this->actingAs($this->author)
+            ->get(route('song_submissions.index'))
+            ->assertStatus(200)
+            ->assertInertia(fn ($page) => $page->component('SongSubmissions/Index')
+                ->has('submissions.data', 5)
+            );
+    }
+
     public function test_only_admin_or_author_can_view_submission(): void
     {
         $artist = Artist::factory()->create();
@@ -257,7 +293,7 @@ class SongSubmissionControllerTest extends TestCase
 
         $this->actingAs($user)
             ->delete(route('song_submissions.destroy', $submission))
-            ->assertRedirect(route('artists.show', $artist->slug));
+            ->assertRedirect(route('song_submissions.index'));
 
         $this->assertDatabaseMissing('song_submissions', ['id' => $submission->id]);
     }

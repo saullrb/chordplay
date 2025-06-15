@@ -4,6 +4,7 @@ import IconLink from '@/Components/IconLink.vue';
 import NavBar from '@/Components/NavBar.vue';
 import PageHeader from '@/Components/PageHeader.vue';
 import { Head, Link } from '@inertiajs/vue3';
+import SongSubmissionTable from './SongSubmissions/partials/SongSubmissionTable.vue';
 
 const props = defineProps({
     favorite_artists: Array,
@@ -22,7 +23,6 @@ const props = defineProps({
             <PageHeader title="Dashboard" />
 
             <div
-                v-if="submissions?.length"
                 class="mt-6 overflow-hidden border border-gray-700 p-4 sm:rounded-lg"
             >
                 <div class="mb-4 flex items-center justify-between">
@@ -30,65 +30,12 @@ const props = defineProps({
                         href="/song-submissions"
                         class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-xl font-semibold hover:bg-gray-500 hover:text-white dark:text-white dark:hover:bg-gray-800"
                     >
-                        <h2>
-                            User Submissions (Latest {{ submissions.length }})
-                        </h2>
+                        <h2>User Submissions</h2>
                         <i class="fa-solid fa-arrow-right"></i>
                     </Link>
                 </div>
                 <div class="max-h-80 overflow-x-auto">
-                    <table
-                        class="min-w-full divide-y-2 divide-gray-400 dark:divide-gray-700"
-                    >
-                        <thead
-                            class="sticky top-0 bg-gray-300 ltr:text-left rtl:text-right dark:bg-gray-950"
-                        >
-                            <tr
-                                class="*:font-medium *:text-gray-900 dark:*:text-white"
-                            >
-                                <th class="px-3 py-2 whitespace-nowrap">
-                                    Song
-                                </th>
-                                <th class="px-3 py-2 whitespace-nowrap">
-                                    Artist
-                                </th>
-                                <th class="px-3 py-2 whitespace-nowrap">
-                                    User
-                                </th>
-                                <th class="px-3 py-2 whitespace-nowrap"></th>
-                            </tr>
-                        </thead>
-
-                        <tbody
-                            class="divide-y divide-gray-400 dark:divide-gray-700"
-                        >
-                            <tr
-                                class="*:text-gray-900 *:first:font-medium dark:*:text-white"
-                                v-for="submission in submissions"
-                            >
-                                <td class="px-3 py-2 whitespace-nowrap">
-                                    {{ submission.name }}
-                                </td>
-                                <td class="px-3 py-2 whitespace-nowrap">
-                                    {{ submission.artist.name }}
-                                </td>
-                                <td class="px-3 py-2 whitespace-nowrap">
-                                    {{ submission.user.name }}
-                                </td>
-                                <td class="px-3 py-2 whitespace-nowrap">
-                                    <IconLink
-                                        :href="
-                                            route(
-                                                'song_submissions.show',
-                                                submission,
-                                            )
-                                        "
-                                        ><i class="fa-solid fa-eye"></i
-                                    ></IconLink>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <SongSubmissionTable :submissions="submissions" />
                 </div>
             </div>
             <div
