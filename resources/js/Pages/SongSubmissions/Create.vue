@@ -9,7 +9,6 @@ import SongPreview from './partials/SongPreview.vue';
 
 const props = defineProps({
     available_keys: Array,
-    valid_chords: Object,
     artist: Object,
 });
 
@@ -20,7 +19,7 @@ const form = useForm({
 });
 
 function submitForm() {
-    form.post(route('artists.songs.store', props.artist));
+    form.post(route('song_submissions.store', { artist: props.artist.slug }));
 }
 </script>
 
@@ -44,7 +43,7 @@ function submitForm() {
 
                 <section class="dark:text-white">
                     <h3 class="text-md mb-6">Preview</h3>
-                    <SongPreview :content="form.content" :valid_chords="valid_chords" />
+                    <SongPreview :content="form.content" />
                 </section>
             </div>
         </Container>

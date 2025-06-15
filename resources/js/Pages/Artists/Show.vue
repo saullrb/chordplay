@@ -5,23 +5,16 @@ import IconLink from '@/Components/IconLink.vue';
 import ItemList from '@/Components/ItemList.vue';
 import NavBar from '@/Components/NavBar.vue';
 import PageHeader from '@/Components/PageHeader.vue';
-import { router } from '@inertiajs/vue3';
+import { router, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const props = defineProps({
     artist: Object,
     is_favorited: Boolean,
-    can: {
-        type: Object,
-        default: () => ({
-            create_song: {
-                type: Boolean,
-                default: false,
-            },
-        }),
-    },
 });
 
+const page = usePage();
+const user = page.props.auth.user;
 const is_loading = ref(false);
 
 function handleFavorite() {
@@ -44,7 +37,6 @@ function handleFavorite() {
 </script>
 
 <template>
-
     <Head :title="artist.name" />
 
     <NavBar />
@@ -54,14 +46,24 @@ function handleFavorite() {
             <div class="flex justify-between">
                 <div class="flex items-center gap-4">
                     <PageHeader :title="artist.name" />
-                    <FavoriteButton @favorite="handleFavorite" :is_favorited="is_favorited" :disabled="is_loading" />
+                    <FavoriteButton
+                        @favorite="handleFavorite"
+                        :is_favorited="is_favorited"
+                        :disabled="is_loading"
+                    />
                 </div>
 
-                <IconLink v-if="can.create_song" :href="route('artists.songs.create', artist)"><i
-                        class="fa-solid fa-plus"></i>
+                <IconLink
+                    v-if="user"
+                    :href="route('artists.songs.create', artist)"
+                    ><i class="fa-solid fa-plus"></i>
                 </IconLink>
             </div>
-            <ItemList :items="artist.songs" :parent="{ slug: artist.slug }" showRouteName="artists.songs.show" />
+            <ItemList
+                :items="artist.songs"
+                :parent="{ slug: artist.slug }"
+                showRouteName="artists.songs.show"
+            />
         </Container>
     </main>
 </template>

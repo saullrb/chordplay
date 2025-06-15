@@ -7,7 +7,7 @@ import { ref, watch } from 'vue';
 import SongContent from './partials/SongContent.vue';
 import IconLink from '@/Components/IconLink.vue';
 import FavoriteButton from '@/Components/FavoriteButton.vue';
-import { router } from '@inertiajs/vue3';
+import { router, usePage } from '@inertiajs/vue3';
 
 const props = defineProps({
     song: Object,
@@ -15,17 +15,10 @@ const props = defineProps({
     artist: Object,
     valid_chords: Object,
     available_keys: Array,
-    can: {
-        type: Object,
-        default: () => ({
-            update_song: {
-                type: Boolean,
-                default: false,
-            },
-        }),
-    },
 });
 
+const page = usePage();
+const user = page.props.auth.user;
 const song_key = ref(props.song.key);
 const is_dual_column = ref(false);
 const capo_position = ref(0);
@@ -90,7 +83,7 @@ function handleFavorite() {
         <header>
             <div class="flex items-center gap-2">
                 <PageHeader :title="song.name" />
-                <IconLink v-if="can.update_song" :href="route('artists.songs.edit', { artist, song })">
+                <IconLink v-if="user" :href="route('artists.songs.edit', { artist, song })">
                     <i class="fa-solid fa-pencil"></i>
                 </IconLink>
                 <FavoriteButton :is_favorited="is_favorited" @favorite="handleFavorite" :disabled="is_loading" />

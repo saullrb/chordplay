@@ -67,9 +67,10 @@ class User extends Authenticatable
     public function favoriteSongs(): BelongsToMany
     {
         return $this->belongsToMany(Song::class, 'favorite_songs')
+            ->withTimestamps()
             ->with('artist:id,name,slug')
-            ->select('songs.id', 'songs.name', 'songs.slug', 'songs.artist_id');
-
+            ->select('songs.id', 'songs.name', 'songs.slug', 'songs.artist_id')
+            ->orderBy('favorite_songs.created_at', 'desc');
     }
 
     /**
@@ -77,7 +78,10 @@ class User extends Authenticatable
      */
     public function favoriteArtists(): BelongsToMany
     {
-        return $this->belongsToMany(Artist::class, 'favorite_artists')->select('artists.id', 'artists.name', 'artists.slug');
+        return $this->belongsToMany(Artist::class, 'favorite_artists')
+            ->withTimestamps()
+            ->select('artists.id', 'artists.name', 'artists.slug')
+            ->orderBy('favorite_artists.created_at', 'desc');
     }
 
     public function addFavoriteArtist(Artist $artist): void
