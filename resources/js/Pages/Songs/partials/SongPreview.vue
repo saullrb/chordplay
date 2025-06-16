@@ -3,20 +3,19 @@ const props = defineProps({
     content: String,
 });
 
-
 function separateLines() {
     const lines = props.content.split('\n').map((line) => {
         const trimmed_line = line.trim();
         if (trimmed_line.startsWith('[')) {
-            return { content_type: 'chords', content: line }
+            return { content_type: 'chords', content: line };
         } else if (trimmed_line === '') {
-            return { content_type: 'empty', content: trimmed_line }
+            return { content_type: 'empty', content: trimmed_line };
         } else {
-            return { content_type: 'lyrics', content: trimmed_line }
+            return { content_type: 'lyrics', content: trimmed_line };
         }
-    })
+    });
 
-    return lines
+    return lines;
 }
 
 function extractBrackets(line) {
@@ -41,16 +40,22 @@ function extractBrackets(line) {
 
     return new_line;
 }
-
 </script>
 
 <template>
-    <div v-for="(line, line_index) in separateLines()" :key="line_index"
-        class="w-full font-mono text-sm leading-5 tracking-tighter" :class="{
+    <div
+        v-for="(line, line_index) in separateLines()"
+        :key="line_index"
+        class="w-full font-mono text-sm leading-5 tracking-tighter"
+        :class="{
             'break-after-avoid': line.content_type === 'chords',
-            'break-after-auto': line.content_type !== 'chords'
-        }">
-        <p v-if="line.content_type === 'chords'" class="whitespace-pre text-yellow-600">
+            'break-after-auto': line.content_type !== 'chords',
+        }"
+    >
+        <p
+            v-if="line.content_type === 'chords'"
+            class="whitespace-pre text-yellow-600"
+        >
             {{ extractBrackets(line.content) }}
         </p>
         <p v-else-if="line.content_type === 'lyrics'" class="whitespace-pre">

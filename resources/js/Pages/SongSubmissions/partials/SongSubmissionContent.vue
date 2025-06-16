@@ -1,5 +1,5 @@
 <script setup>
-const props = defineProps({
+defineProps({
     content: Array,
     original_key: String,
 });
@@ -28,16 +28,22 @@ function extractBrackets(line) {
 
     return new_line;
 }
-
 </script>
 
 <template>
-    <div v-for="(line, line_index) in content" :key="line_index"
-        class="w-full font-mono text-sm leading-5 tracking-tighter" :class="{
+    <div
+        v-for="(line, line_index) in content"
+        :key="line_index"
+        class="w-full font-mono text-sm leading-5 tracking-tighter"
+        :class="{
             'break-after-avoid': line.content_type === 'chords',
-            'break-after-auto': line.content_type !== 'chords'
-        }">
-        <p v-if="line.content_type === 'chords'" class="whitespace-pre text-yellow-600">
+            'break-after-auto': line.content_type !== 'chords',
+        }"
+    >
+        <p
+            v-if="line.content_type === 'chords'"
+            class="whitespace-pre text-yellow-600"
+        >
             {{ extractBrackets(line.content) }}
         </p>
         <p v-else-if="line.content_type === 'lyrics'" class="whitespace-pre">

@@ -26,6 +26,7 @@ defineProps({
             <tr
                 class="*:text-gray-900 *:first:font-medium dark:*:text-white"
                 v-for="submission in submissions"
+                :key="submission.id"
             >
                 <td class="px-3 py-2 whitespace-nowrap">
                     {{ submission.name }}

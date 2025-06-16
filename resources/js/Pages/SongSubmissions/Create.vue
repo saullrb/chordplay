@@ -24,7 +24,6 @@ function submitForm() {
 </script>
 
 <template>
-
     <Head :title="`${artist.name} - Add Song`" />
 
     <NavBar />
@@ -38,8 +37,12 @@ function submitForm() {
             </TextLink>
 
             <div class="mt-6 grid grid-cols-2 justify-between gap-12 py-6">
-                <SongForm :available_keys="available_keys" :initial_data="form" submit_label="Add"
-                    @submit="submitForm" />
+                <SongForm
+                    :available_keys="available_keys"
+                    :initial_data="form"
+                    submit_label="Add"
+                    @submit="submitForm"
+                />
 
                 <section class="dark:text-white">
                     <h3 class="text-md mb-6">Preview</h3>
