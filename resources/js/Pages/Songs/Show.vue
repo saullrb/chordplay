@@ -1,6 +1,4 @@
 <script setup>
-import Container from '@/Components/Container.vue';
-import NavBar from '@/Components/NavBar.vue';
 import PageHeader from '@/Components/PageHeader.vue';
 import TextLink from '@/Components/TextLink.vue';
 import { ref, watch } from 'vue';
@@ -8,6 +6,7 @@ import SongContent from './partials/SongContent.vue';
 import IconLink from '@/Components/IconLink.vue';
 import FavoriteButton from '@/Components/FavoriteButton.vue';
 import { router, usePage } from '@inertiajs/vue3';
+import AppLayout from '@/Layouts/AppLayout.vue';
 
 const props = defineProps({
     song: Object,
@@ -76,10 +75,9 @@ function handleFavorite() {
 
 <template>
     <Head :title="`${song.name} - ${artist.name}`" />
-    <NavBar />
 
-    <Container>
-        <header>
+    <AppLayout>
+        <template #header>
             <div class="flex items-center gap-2">
                 <PageHeader :title="song.name" />
                 <IconLink
@@ -157,8 +155,8 @@ function handleFavorite() {
                 <i class="fa-solid fa-table-columns mr-1"></i>
                 Dual Column
             </button>
-        </header>
-        <main
+        </template>
+        <div
             class="py-6 dark:text-white"
             :class="{
                 'columns-2 gap-8': is_dual_column,
@@ -171,6 +169,6 @@ function handleFavorite() {
                 :content="song.lines"
                 :valid_chords="valid_chords"
             />
-        </main>
-    </Container>
+        </div>
+    </AppLayout>
 </template>

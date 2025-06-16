@@ -1,10 +1,9 @@
 <script setup>
-import Container from '@/Components/Container.vue';
 import IconLink from '@/Components/IconLink.vue';
 import ItemList from '@/Components/ItemList.vue';
 import LoadMoreButton from '@/Components/LoadMoreButton.vue';
-import NavBar from '@/Components/NavBar.vue';
 import PageHeader from '@/Components/PageHeader.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 import { ref } from 'vue';
 
 const props = defineProps({
@@ -41,10 +40,8 @@ const loadMoreArtists = async () => {
 <template>
     <Head title="Artists" />
 
-    <NavBar />
-
-    <main class="mt-6">
-        <Container>
+    <AppLayout>
+        <template #header>
             <div class="flex justify-between">
                 <PageHeader title="All Artists" />
 
@@ -54,16 +51,16 @@ const loadMoreArtists = async () => {
                     ><i class="fa-solid fa-plus"></i>
                 </IconLink>
             </div>
+        </template>
 
-            <ItemList showRouteName="artists.show" :items="artists" />
+        <ItemList showRouteName="artists.show" :items="artists" />
 
-            <div class="my-6 flex justify-center">
-                <LoadMoreButton
-                    v-if="next_url"
-                    :onLoadMore="loadMoreArtists"
-                    :loading="loading"
-                />
-            </div>
-        </Container>
-    </main>
+        <div class="my-6 flex justify-center">
+            <LoadMoreButton
+                v-if="next_url"
+                :onLoadMore="loadMoreArtists"
+                :loading="loading"
+            />
+        </div>
+    </AppLayout>
 </template>

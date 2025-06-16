@@ -1,10 +1,9 @@
 <script setup>
-import Container from '@/Components/Container.vue';
 import FavoriteButton from '@/Components/FavoriteButton.vue';
 import IconLink from '@/Components/IconLink.vue';
 import ItemList from '@/Components/ItemList.vue';
-import NavBar from '@/Components/NavBar.vue';
 import PageHeader from '@/Components/PageHeader.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 import { router, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
@@ -39,10 +38,8 @@ function handleFavorite() {
 <template>
     <Head :title="artist.name" />
 
-    <NavBar />
-
-    <main class="mt-6">
-        <Container>
+    <AppLayout>
+        <template #header>
             <div class="flex justify-between">
                 <div class="flex items-center gap-4">
                     <PageHeader :title="artist.name" />
@@ -59,11 +56,11 @@ function handleFavorite() {
                     ><i class="fa-solid fa-plus"></i>
                 </IconLink>
             </div>
-            <ItemList
-                :items="artist.songs"
-                :parent="{ slug: artist.slug }"
-                showRouteName="artists.songs.show"
-            />
-        </Container>
-    </main>
+        </template>
+        <ItemList
+            :items="artist.songs"
+            :parent="{ slug: artist.slug }"
+            showRouteName="artists.songs.show"
+        />
+    </AppLayout>
 </template>
