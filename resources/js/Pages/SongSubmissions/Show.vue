@@ -1,6 +1,4 @@
 <script setup>
-import Container from '@/Components/Container.vue';
-import NavBar from '@/Components/NavBar.vue';
 import PageHeader from '@/Components/PageHeader.vue';
 import TextLink from '@/Components/TextLink.vue';
 import { ref } from 'vue';
@@ -11,6 +9,7 @@ import FormButtonIcon from './partials/FormButtonIcon.vue';
 import Modal from '@/Components/Modal.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import DangerButton from '@/Components/DangerButton.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 
 const props = defineProps({
     song_submission: Object,
@@ -51,10 +50,9 @@ function reject() {
     <Head
         :title="`[Preview] ${song_submission.name} - ${song_submission.artist.name}`"
     />
-    <NavBar />
 
-    <Container>
-        <header>
+    <AppLayout>
+        <template #header>
             <div
                 class="mb-4 rounded bg-yellow-100 px-4 py-2 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
             >
@@ -100,7 +98,7 @@ function reject() {
                 <i class="fa-solid fa-table-columns mr-1"></i>
                 Dual Column
             </button>
-        </header>
+        </template>
         <main
             class="py-6 dark:text-white"
             :class="{
@@ -135,5 +133,5 @@ function reject() {
                 </DangerButton>
             </div>
         </Modal>
-    </Container>
+    </AppLayout>
 </template>
