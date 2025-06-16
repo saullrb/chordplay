@@ -37,8 +37,8 @@ class DashboardControllerTest extends TestCase
 
         $response->assertInertia(fn ($page) => $page
             ->component('Dashboard')
-            ->has('favorite_songs', 0)
-            ->has('favorite_artists', 0)
+            ->has('favorite_songs.data', 0)
+            ->has('favorite_artists.data', 0)
             ->has('submissions', 0)
         );
     }
@@ -57,8 +57,8 @@ class DashboardControllerTest extends TestCase
 
         $response->assertInertia(fn ($page) => $page
             ->component('Dashboard')
-            ->has('favorite_songs', 1)
-            ->where('favorite_songs.0.name', 'Favorite Song')
+            ->has('favorite_songs.data', 1)
+            ->where('favorite_songs.data.0.name', 'Favorite Song')
         );
     }
 
@@ -71,8 +71,8 @@ class DashboardControllerTest extends TestCase
             ->get(route('dashboard'))
             ->assertInertia(fn ($page) => $page
                 ->component('Dashboard')
-                ->has('favorite_artists', 1)
-                ->where('favorite_artists.0.name', 'Favorite Artist')
+                ->has('favorite_artists.data', 1)
+                ->where('favorite_artists.data.0.name', 'Favorite Artist')
             );
     }
 
