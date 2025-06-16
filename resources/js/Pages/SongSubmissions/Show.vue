@@ -8,6 +8,9 @@ import SongSubmissionContent from './partials/SongSubmissionContent.vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import IconLink from '@/Components/IconLink.vue';
 import FormButtonIcon from './partials/FormButtonIcon.vue';
+import Modal from '@/Components/Modal.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
+import DangerButton from '@/Components/DangerButton.vue';
 
 const props = defineProps({
     song_submission: Object,
@@ -20,6 +23,16 @@ const is_dual_column = ref(false);
 
 const approve_form = useForm();
 const reject_form = useForm();
+
+const confirmingRejection = ref(false);
+
+const confirmSubmissionRejection = () => {
+    confirmingRejection.value = true;
+};
+
+const closeModal = () => {
+    confirmingRejection.value = false;
+};
 
 function approve() {
     approve_form.post(
@@ -59,7 +72,7 @@ function reject() {
                 >
                     <i class="fa-solid fa-pencil"></i>
                 </IconLink>
-                <FormButtonIcon :handleSubmit="reject">
+                <FormButtonIcon :handleSubmit="confirmSubmissionRejection">
                     <i class="fa-solid fa-trash"></i>
                 </FormButtonIcon>
             </div>
@@ -99,5 +112,28 @@ function reject() {
                 :content="song_submission.lines"
             />
         </main>
+
+        <Modal :show="confirmingRejection" @close="closeModal">
+            <div class="p-6">
+                <h2
+                    class="text-lg font-medium text-gray-900 dark:text-gray-100"
+                >
+                    Are you sure you want to reject this submission?
+                </h2>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+                <SecondaryButton @click="closeModal">Cancel</SecondaryButton>
+
+                <DangerButton
+                    class="ms-3"
+                    :class="{ 'opacity-25': reject_form.processing }"
+                    :disabled="reject_form.processing"
+                    @click="reject"
+                >
+                    Reject Submission
+                </DangerButton>
+            </div>
+        </Modal>
     </Container>
 </template>
