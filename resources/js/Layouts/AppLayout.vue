@@ -1,11 +1,13 @@
 <script setup>
 import Container from '@/Components/Container.vue';
+import FlashMessage from '@/Components/FlashMessage.vue';
 import NavBar from '@/Components/NavBar.vue';
 </script>
 
 <template>
     <div class="min-h-screen">
         <NavBar />
+        <FlashMessage />
 
         <Container>
             <header class="mt-6">
