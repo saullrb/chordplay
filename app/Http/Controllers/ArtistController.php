@@ -61,7 +61,12 @@ class ArtistController extends Controller
 
         $artist = Artist::create($validated);
 
-        return redirect()->route('artists.show', $artist);
+        return redirect()
+            ->route('artists.show', $artist)
+            ->with([
+                'flash_message' => 'Artist created successfully.',
+                'flash_type' => 'success',
+            ]);
     }
 
     public function favorite(Artist $artist)

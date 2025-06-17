@@ -72,7 +72,11 @@ class SongSubmissionController extends Controller
             $submission->lines()->create($line);
         }
 
-        return redirect()->route('song_submissions.show', $submission);
+        return redirect()->route('song_submissions.show', $submission)
+            ->with([
+                'flash_message' => 'Your song was submited for review.',
+                'flash_type' => 'success',
+            ]);
     }
 
     public function edit(SongSubmission $song_submission): Response
@@ -104,7 +108,11 @@ class SongSubmissionController extends Controller
             }
         });
 
-        return redirect()->route('song_submissions.show', $song_submission);
+        return redirect()->route('song_submissions.show', $song_submission)
+            ->with([
+                'flash_message' => 'Submission updated successfully.',
+                'flash_type' => 'success',
+            ]);
     }
 
     public function destroy(SongSubmission $song_submission): RedirectResponse
@@ -113,7 +121,10 @@ class SongSubmissionController extends Controller
 
         $song_submission->delete();
 
-        return redirect()->route('song_submissions.index');
+        return redirect()->route('song_submissions.index')->with([
+            'flash_message' => 'Submission was rejected.',
+            'flash_type' => 'success',
+        ]);
     }
 
     public function approve(SongSubmission $song_submission): RedirectResponse
@@ -146,10 +157,16 @@ class SongSubmissionController extends Controller
                 return $song;
             });
         } catch (\Throwable) {
-            // TODO: show a message to the user informing of the error
-            return back()->withErrors('Failed to approve submission.');
+            return back()->with([
+                'flash_message' => 'Failed to approve submission.',
+                'flash_type' => 'error',
+            ]);
         }
 
-        return redirect()->route('artists.songs.show', [$song->artist->slug, $song->slug]);
+        return redirect()->route('artists.songs.show', [$song->artist->slug, $song->slug])
+            ->with([
+                'flash_message' => 'Submission approved successfully.',
+                'flash_type' => 'success',
+            ]);
     }
 }
