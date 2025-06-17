@@ -25,9 +25,7 @@ class ProfileControllerTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)
-            ->delete(route('profile.destroy'), [
-                'password' => 'password',
-            ]);
+            ->delete(route('profile.destroy'));
 
         $response->assertSessionHasNoErrors();
         $response->assertRedirect('/');
