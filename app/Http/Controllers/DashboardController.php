@@ -18,10 +18,8 @@ class DashboardController extends Controller
     {
         // Redirect to the dashboard without the page parameter if the request is not from inertia
         // The only way to get the next page of favorite artists/songs is to use the inertia method
-        $page = (int) $request->input('page', 1);
-        if (! $request->inertia() && $page !== 1) {
+        if (! $request->inertia() && $request->has('page')) {
             return redirect()->route('dashboard');
-
         }
         $user = Auth::user();
 

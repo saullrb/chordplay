@@ -30,6 +30,13 @@ class DashboardControllerTest extends TestCase
         $response->assertRedirect(route('google.redirect'));
     }
 
+    public function test_redirects_the_user_if_trying_to_use_page_parameter(): void
+    {
+        $this->actingAs($this->regular_user)
+            ->get(route('dashboard', ['page' => 1]))
+            ->assertRedirect(route('dashboard'));
+    }
+
     public function test_dashboard_shows_empty_state_for_new_users(): void
     {
         $response = $this->actingAs($this->regular_user)
