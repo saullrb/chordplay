@@ -100,8 +100,8 @@ const user = computed(() => page.props.auth.user);
                     <div v-if="!user" class="flex">
                         <a
                             class="block rounded-lg px-4 py-2 text-sm font-semibold text-gray-500 hover:bg-gray-500 hover:text-white dark:text-gray-400 dark:hover:bg-gray-800"
-                            :href="route('google.redirect')"
-                            >Login with Google</a
+                            :href="route('login')"
+                            >Login</a
                         >
                     </div>
                     <div v-else class="ml-3 flex items-center">

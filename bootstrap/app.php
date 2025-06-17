@@ -13,7 +13,6 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->redirectGuestsTo(fn () => route('google.redirect'));
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
@@ -21,9 +20,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         //
     })
-    ->withExceptions(fn (Exceptions $exceptions) => $exceptions->render(fn (HttpException $exception, Request $request) => Inertia::render('Error', ['status' => $exception->getStatusCode()])
-        ->toResponse($request)
-        ->setStatusCode($exception->getStatusCode())
-
-    )
-    )->create();
+    ->withExceptions(fn (Exceptions $exceptions) => $exceptions
+        ->render(fn (HttpException $exception, Request $request) => Inertia::render('Error', ['status' => $exception->getStatusCode()])
+            ->toResponse($request)
+            ->setStatusCode($exception->getStatusCode())))
+    ->create();

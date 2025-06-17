@@ -1,31 +1,14 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Models\Role;
-use App\Models\User;
+use App\Http\Controllers\Auth\SocialAuthController;
 use Illuminate\Support\Facades\Route;
+
+Route::get('login', fn () => [AuthenticatedSessionController::class, 'create'])->name('login');
 
 Route::middleware('auth')->group(function (): void {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
 });
-
 Route::get('/auth/google/redirect', fn () => Socialite::driver('google')->redirect())->name('google.redirect');
-
-// TODO: redirect the user back to the page they were on before they logged in
-Route::get('/auth/google/callback', function () {
-    $google_user = Socialite::driver('google')->stateless()->user();
-    $user = User::where('email', $google_user->getEmail())->first();
-
-    if (! $user) {
-        $user = User::create([
-            'email' => $google_user->getEmail(),
-            'name' => $google_user->getName() ?? 'Unnamed',
-            'role_id' => Role::USER,
-        ]);
-    }
-
-    Auth::login($user);
-
-    return redirect('/');
-})->name('google.callback');
+Route::get('/auth/google/callback', [SocialAuthController::class, 'googleCallback'])->name('google.callback');
