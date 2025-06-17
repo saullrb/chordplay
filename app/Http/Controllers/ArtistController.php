@@ -20,7 +20,7 @@ class ArtistController extends Controller
         return Inertia::render(
             'Artists/Index',
             [
-                'artists' => $artists,
+                'artists' => Inertia::deepMerge($artists),
                 'can' => [
                     'create_artist' => Auth::user()?->can('create', Artist::class) ?? false,
                 ],
