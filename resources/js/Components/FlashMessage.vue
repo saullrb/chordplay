@@ -28,7 +28,6 @@ function close() {
 </script>
 
 <template>
-    {{ console.log(message) }}
     <Transition
         enter-active-class="ease-out duration-300"
         enter-from-class="opacity-0 translate-y-4"
