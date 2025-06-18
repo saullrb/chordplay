@@ -27,7 +27,7 @@ class DashboardControllerTest extends TestCase
     public function test_guests_cannot_access_dashboard(): void
     {
         $response = $this->get(route('dashboard'));
-        $response->assertRedirect(route('google.redirect'));
+        $response->assertRedirect(route('login'));
     }
 
     public function test_redirects_the_user_if_trying_to_use_page_parameter(): void

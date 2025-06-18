@@ -30,7 +30,7 @@ class SongSubmissionControllerTest extends TestCase
 
     public function test_guest_user_cannot_visit_submissions_page(): void
     {
-        $this->get(route('song_submissions.index'))->assertRedirect(route('google.redirect'));
+        $this->get(route('song_submissions.index'))->assertRedirect(route('login'));
     }
 
     public function test_admin_sees_all_submissions(): void
@@ -73,7 +73,7 @@ class SongSubmissionControllerTest extends TestCase
 
         // Guest user
         $this->get(route('song_submissions.show', $submission))
-            ->assertRedirect(route('google.redirect'));
+            ->assertRedirect(route('login'));
 
         // Regular user
         $this->actingAs($this->regular_user)
@@ -124,7 +124,7 @@ class SongSubmissionControllerTest extends TestCase
         $artist = Artist::factory()->create();
 
         // Guest user
-        $this->get(route('artists.songs.create', $artist))->assertRedirect(route('google.redirect'));
+        $this->get(route('artists.songs.create', $artist))->assertRedirect(route('login'));
 
         // Authenticated user
         $this->actingAs($auth_user)->get(route('artists.songs.create', $artist))->assertOk();
@@ -151,7 +151,7 @@ class SongSubmissionControllerTest extends TestCase
         $artist = Artist::factory()->create();
 
         $this->post(route('song_submissions.store', $artist))
-            ->assertRedirect(route('google.redirect'));
+            ->assertRedirect(route('login'));
 
         $response = $this->actingAs($auth_user)
             ->post(route('song_submissions.store', $artist), [
@@ -203,7 +203,7 @@ class SongSubmissionControllerTest extends TestCase
 
         // Guest user
         $this->get(route('song_submissions.edit', $submission))
-            ->assertRedirect(route('google.redirect'));
+            ->assertRedirect(route('login'));
 
         // Regular user
         $this->actingAs($this->regular_user)
@@ -238,7 +238,7 @@ class SongSubmissionControllerTest extends TestCase
 
         // Guest user
         $this->patch(route('song_submissions.update', $submission), $requestData)
-            ->assertRedirect(route('google.redirect'));
+            ->assertRedirect(route('login'));
 
         // Authenticated user
         $this->actingAs($user)
@@ -267,7 +267,7 @@ class SongSubmissionControllerTest extends TestCase
 
         // Guest user
         $this->get(route('song_submissions.destroy', $submission))
-            ->assertRedirect(route('google.redirect'));
+            ->assertRedirect(route('login'));
 
         // Regular user
         $this->actingAs($this->regular_user)
@@ -309,7 +309,7 @@ class SongSubmissionControllerTest extends TestCase
 
         // Guest user
         $this->post(route('song_submissions.approve', $submission))
-            ->assertRedirect(route('google.redirect'));
+            ->assertRedirect(route('login'));
 
         // Regular user
         $this->actingAs($this->regular_user)

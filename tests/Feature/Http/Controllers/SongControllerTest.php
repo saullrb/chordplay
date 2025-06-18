@@ -59,7 +59,7 @@ class SongControllerTest extends TestCase
 
         $this->assertGuest();
         $this->get(route('artists.songs.edit', [$artist, $song]))
-            ->assertRedirect(route('google.redirect'));
+            ->assertRedirect(route('login'));
 
         $response = $this->actingAs($user)
             ->get(route('artists.songs.edit', [$artist, $song]));
@@ -74,7 +74,7 @@ class SongControllerTest extends TestCase
 
         $response = $this->post(route('songs.favorite', [$artist, $song]));
 
-        $response->assertRedirect(route('google.redirect'));
+        $response->assertRedirect(route('login'));
     }
 
     public function test_users_can_favorite_songs(): void

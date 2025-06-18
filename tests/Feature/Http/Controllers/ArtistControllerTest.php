@@ -103,7 +103,7 @@ class ArtistControllerTest extends TestCase
 
         $response = $this->post(route('artists.favorite', $artist));
 
-        $response->assertRedirect(route('google.redirect'));
+        $response->assertRedirect(route('login'));
     }
 
     public function test_users_can_favorite_artists(): void
