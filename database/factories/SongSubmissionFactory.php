@@ -3,6 +3,8 @@
 namespace Database\Factories;
 
 use App\Enums\SongKeyEnum;
+use App\Models\Artist;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,6 +22,8 @@ class SongSubmissionFactory extends Factory
         return [
             'name' => fake()->word().' '.fake()->word,
             'key' => fake()->randomElement(array_column(SongKeyEnum::cases(), 'value')),
+            'artist_id' => Artist::factory(),
+            'user_id' => User::factory(),
         ];
     }
 }

@@ -4,6 +4,7 @@ namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Artist;
 use App\Models\Song;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -11,39 +12,50 @@ class SearchControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_search_index_returns_limited_results(): void
+    public function test_search_validates_query(): void
     {
-        $artist = Artist::factory()->create(['name' => 'Test Artist']);
-        Artist::factory()->count(5)->create();
-        Song::factory()->create([
-            'name' => 'Test Song',
-            'artist_id' => $artist->id,
-        ]);
-        Song::factory()->count(5)->create([
-            'artist_id' => $artist->id,
-        ]);
+        $response = $this->get('/search?query=');
 
-        $response = $this->get(route('search', ['query' => 'test']));
-
-        $response->assertInertia(fn ($page) => $page
-            ->component('Home')
-            ->has('results.songs', 1)
-            ->has('results.artists', 1)
-            ->where('query', 'test')
-            ->where('has_more_songs', false)
-            ->where('has_more_artists', false)
-        );
+        $response->assertSessionHasErrors(['query' => 'The query field is required.']);
     }
 
-    public function test_search_with_empty_query_returns_empty_results(): void
+    public function test_search_unauthenticated_returns_results_without_favorites(): void
     {
-        $response = $this->get(route('search'));
+        Artist::factory()->create(['name' => 'Artist1']);
+        Song::factory()->create([
+            'name' => 'Test Song',
+        ]);
 
-        $response->assertInertia(fn ($page) => $page
-            ->component('Home')
-            ->has('results.songs', 0)
-            ->has('results.artists', 0)
-            ->where('query', '')
-        );
+        $this->get('/search?query=test')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Search')
+                ->has('songs.data', 1)
+                ->has('artists.data', 0)
+                ->where('songs.data.0.name', 'Test Song')
+                ->where('songs.data.0.is_favorited', false)
+                ->where('query', 'test')
+            );
+    }
+
+    public function test_search_authenticated_returns_favorited_results(): void
+    {
+        $user = User::factory()->create();
+        Artist::factory()->create(['name' => 'Artist1']);
+        $song = Song::factory()->create([
+            'name' => 'Test Song',
+        ]);
+        $user->favoriteSongs()->attach($song);
+
+        $this->actingAs($user)->get('/search?query=test')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Search')
+                ->has('songs.data', 1)
+                ->has('artists.data', 0)
+                ->where('songs.data.0.name', 'Test Song')
+                ->where('songs.data.0.is_favorited', true)
+                ->where('query', 'test')
+            );
     }
 }

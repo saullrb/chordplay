@@ -11,8 +11,7 @@ use Inertia\Inertia;
 
 Route::get('/', fn () => Inertia::render('Home'))->name('home');
 
-Route::get('/search', [SearchController::class, 'index'])->name('search');
-Route::get('/search/results', [SearchController::class, 'show'])->name('search.show');
+Route::get('/search', SearchController::class)->name('search');
 
 Route::middleware('auth')->group(function (): void {
     Route::get('/dashboard', [DashboardController::class, 'show'])->name('dashboard');
