@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -41,6 +42,10 @@ class Song extends Model
         'pivot',
     ];
 
+    protected $casts = [
+        'is_favorited' => 'boolean',
+    ];
+
     /**
      * @return BelongsTo<Artist, Song>
      */
@@ -57,6 +62,32 @@ class Song extends Model
     {
         /** @var HasMany<SongLine, Song> */
         return $this->hasMany(SongLine::class)->orderBy('line_number');
+    }
+
+    public function scopeSearchByName(Builder $query, string $search): Builder
+    {
+        return $query->whereRaw('LOWER(name) LIKE ?', ['%'.strtolower($search).'%']);
+    }
+
+    public function scopeWithFavoriteStatus(Builder $query, ?int $user_id): Builder
+    {
+        return $query
+            ->leftJoin('favorite_songs', function ($join) use ($user_id): void {
+                $join
+                    ->on('songs.id', '=', 'favorite_songs.song_id')
+                    ->where('favorite_songs.user_id', '=', $user_id);
+            })->select(
+                'songs.name',
+                'songs.slug',
+                'songs.artist_id',
+                \DB::raw('CASE WHEN favorite_songs.song_id IS NOT NULL THEN 1 ELSE 0 END as is_favorited')
+            );
+    }
+
+    public function scopeOrderByFavoritesAndViews(Builder $query): Builder
+    {
+        return $query->orderByRaw('CASE WHEN favorite_songs.song_id IS NOT NULL THEN 0 ELSE 1 END')
+            ->orderBy('views', 'desc');
     }
 
     #[\Override]

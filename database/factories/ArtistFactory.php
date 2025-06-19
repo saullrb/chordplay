@@ -18,7 +18,7 @@ class ArtistFactory extends Factory
     {
         return [
             'name' => fake()->company(),
-            'views' => fake()->randomNumber(3),
+            'views' => fake()->numberBetween(0, 1000),
         ];
     }
 }
