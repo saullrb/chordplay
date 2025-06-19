@@ -125,14 +125,14 @@ function handleSubmit() {
                                 ])
                             "
                         >
-                            {{ song.name }} <span>-</span>
-                            <span class="text-sm text-gray-500">{{
-                                song.artist.name
-                            }}</span>
                             <i
                                 v-if="song.is_favorited"
                                 class="fa-solid fa-star text-sm text-yellow-600"
                             ></i>
+                            {{ song.name }} <span>-</span>
+                            <span class="text-sm text-gray-500">{{
+                                song.artist.name
+                            }}</span>
                         </Link>
                     </li>
                 </ul>
@@ -164,11 +164,11 @@ function handleSubmit() {
                             class="flex grow items-center gap-2"
                             :href="route('artists.show', artist)"
                         >
-                            {{ artist.name }}
                             <i
                                 v-if="artist.is_favorited"
                                 class="fa-solid fa-star text-sm text-yellow-600"
                             ></i>
+                            {{ artist.name }}
                         </Link>
                     </li>
                 </ul>
