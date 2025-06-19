@@ -18,6 +18,7 @@ class SongController extends Controller
     public function show(Artist $artist, Song $song): Response
     {
         $song->increment('views');
+        $artist->increment('views');
         $song->load(['lines' => function ($query): void {
             $query->orderBy('line_number');
         }]);

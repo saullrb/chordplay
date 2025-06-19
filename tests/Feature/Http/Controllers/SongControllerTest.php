@@ -24,7 +24,7 @@ class SongControllerTest extends TestCase
 
     public function test_viewing_song_increments_view_count(): void
     {
-        $artist = Artist::factory()->create();
+        $artist = Artist::factory()->create(['views' => 0]);
         $song = Song::factory()->create([
             'artist_id' => $artist->id,
             'views' => 0,
@@ -33,6 +33,7 @@ class SongControllerTest extends TestCase
         $this->get(route('artists.songs.show', [$artist, $song]));
 
         $this->assertEquals(1, $song->fresh()->views);
+        $this->assertEquals(1, $artist->fresh()->views);
     }
 
     public function test_song_show_page_includes_favorite_status(): void
