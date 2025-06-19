@@ -56,7 +56,7 @@ class ArtistController extends Controller
         $this->authorize('create', Artist::class);
 
         $validated = $request->validate([
-            'name' => 'required',
+            'name' => 'required|max:100',
         ]);
 
         $artist = Artist::create($validated);

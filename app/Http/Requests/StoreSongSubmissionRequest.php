@@ -16,7 +16,7 @@ class StoreSongSubmissionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:100'],
             'key' => ['required', new Enum(SongKeyEnum::class)],
             'content' => ['required', 'string', function ($attribute, $value, $fail): void {
                 $parser = new SongContentParser;
