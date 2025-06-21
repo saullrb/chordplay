@@ -23,7 +23,6 @@ const loadMoreArtists = async () => {
 
     loading.value = true;
 
-    // TODO: handle error
     router.reload({
         only: ['favorite_artists'],
         data: { page: props.favorite_artists.current_page + 1 },
@@ -42,7 +41,6 @@ const loadMoreSongs = async () => {
 
     loading.value = true;
 
-    // TODO: handle error
     router.reload({
         only: ['favorite_songs'],
         data: { page: props.favorite_songs.current_page + 1 },

@@ -8,10 +8,9 @@ use App\Support\SongContentParser;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 
-// TODO: add tests
 class StoreSongSubmissionRequest extends FormRequest
 {
-    public array $processed_lines = [];
+    private array $processed_lines = [];
 
     public function rules(): array
     {
@@ -31,5 +30,14 @@ class StoreSongSubmissionRequest extends FormRequest
                 }
             }],
         ];
+    }
+
+    public function validated($key = null, $default = null): array
+    {
+        $validated = parent::validated($key, $default);
+        unset($validated['content']);
+        $validated['lines'] = $this->processed_lines;
+
+        return $validated;
     }
 }

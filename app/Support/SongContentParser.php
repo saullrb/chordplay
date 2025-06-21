@@ -4,7 +4,6 @@ namespace App\Support;
 
 use App\Enums\SongLineContentType;
 
-// TODO: add tests
 class SongContentParser
 {
     public function parse(string $content): array

@@ -80,13 +80,13 @@ class SongSubmissionPolicyTest extends TestCase
         $admin = User::factory()->admin()->create();
 
         $artist = Artist::factory()->create();
-        $songSubmission = SongSubmission::factory()->create([
+        SongSubmission::factory()->create([
             'artist_id' => $artist->id,
             'user_id' => $author->id,
         ]);
 
-        $this->assertFalse($this->policy->approve($regular_user, $songSubmission));
-        $this->assertFalse($this->policy->approve($author, $songSubmission));
-        $this->assertTrue($this->policy->approve($admin, $songSubmission));
+        $this->assertFalse($this->policy->approve($regular_user));
+        $this->assertFalse($this->policy->approve($author));
+        $this->assertTrue($this->policy->approve($admin));
     }
 }

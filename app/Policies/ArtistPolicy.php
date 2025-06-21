@@ -6,7 +6,7 @@ use App\Models\User;
 
 class ArtistPolicy
 {
-    public function create(User $user): bool
+    public function store(User $user): bool
     {
         return $user->isAdmin();
     }

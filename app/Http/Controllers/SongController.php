@@ -6,14 +6,18 @@ use App\Enums\SongKeyEnum;
 use App\Models\Artist;
 use App\Models\Chord;
 use App\Models\Song;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use App\Services\UserService;
+use App\Traits\FlashesMessages;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class SongController extends Controller
 {
-    use AuthorizesRequests;
+    use FlashesMessages;
+
+    public function __construct(private UserService $user_service) {}
 
     public function show(Artist $artist, Song $song): Response
     {
@@ -40,7 +44,6 @@ class SongController extends Controller
             'artist' => $artist,
             'valid_chords' => Chord::getGroupedChords(),
             'available_keys' => $available_keys,
-            'can' => ['update_song' => Auth::user()?->can('update') ?? false],
         ]);
     }
 
@@ -61,15 +64,37 @@ class SongController extends Controller
 
     public function favorite(Artist $artist, Song $song)
     {
-        Auth::user()->addFavoriteSong($song);
+        try {
+            $this->user_service->favoriteSong(Auth::user(), $song);
 
-        return back()->with('is_favorited', true);
+            return back()->with('is_favorited', true);
+        } catch (\Throwable $e) {
+            Log::error('Failed to favorite song', [
+                'user_id' => Auth::id(),
+                'artist_id' => $artist->id,
+                'song_id' => $song->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->withInput()->with($this->flashError('Unable to favorite song. Please try again later.'));
+        }
     }
 
     public function unfavorite(Artist $artist, Song $song)
     {
-        Auth::user()->removeFavoriteSong($song);
+        try {
+            $this->user_service->unfavoriteSong(Auth::user(), $song);
 
-        return back()->with('is_favorited', true);
+            return back()->with('is_favorited', false);
+        } catch (\Throwable $e) {
+            Log::error('Failed to unfavorite song', [
+                'user_id' => Auth::id(),
+                'artist_id' => $artist->id,
+                'song_id' => $song->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->withInput()->with($this->flashError('Unable to unfavorite song. Please try again later.'));
+        }
     }
 }

@@ -21,15 +21,15 @@ class ArtistPolicyTest extends TestCase
         $this->policy = new ArtistPolicy;
     }
 
-    public function test_regular_users_cannot_create(): void
+    public function test_regular_users_cannot_store(): void
     {
         $user = User::factory()->create(['role_id' => Role::USER]);
-        $this->assertFalse($this->policy->create($user));
+        $this->assertFalse($this->policy->store($user));
     }
 
-    public function test_admin_can_create(): void
+    public function test_admin_can_store(): void
     {
         $admin = User::factory()->create(['role_id' => Role::ADMIN]);
-        $this->assertTrue($this->policy->create($admin));
+        $this->assertTrue($this->policy->store($admin));
     }
 }

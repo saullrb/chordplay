@@ -6,18 +6,22 @@ use App\Enums\SongKeyEnum;
 use App\Http\Requests\StoreSongSubmissionRequest;
 use App\Models\Artist;
 use App\Models\Chord;
-use App\Models\Song;
 use App\Models\SongSubmission;
+use App\Services\SongSubmissionService;
+use App\Traits\FlashesMessages;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class SongSubmissionController extends Controller
 {
     use AuthorizesRequests;
+    use FlashesMessages;
+
+    public function __construct(private SongSubmissionService $song_submission_service) {}
 
     public function index(): Response
     {
@@ -60,23 +64,25 @@ class SongSubmissionController extends Controller
 
     public function store(Artist $artist, StoreSongSubmissionRequest $request): RedirectResponse
     {
-        $submission = SongSubmission::create([
-            'song_id' => $request->route('song')->id ?? null,
-            'artist_id' => $artist->id,
-            'user_id' => Auth::id(),
-            'name' => $request->name,
-            'key' => $request->key,
-        ]);
+        $validated = $request->validated();
 
-        foreach ($request->processed_lines as $line) {
-            $submission->lines()->create($line);
+        try {
+            $submission = $this->song_submission_service->store(
+                $validated,
+                $artist->id,
+                $request->route('song')->id ?? null,
+                Auth::id());
+
+            return redirect()->route('song_submissions.show', $submission)
+                ->with([
+                    'flash_message' => 'Your song was submited for review.',
+                    'flash_type' => 'success',
+                ]);
+        } catch (\Throwable $e) {
+            Log::error('Failed to store song submission', ['name' => $validated['name'], 'error' => $e->getMessage()]);
+
+            return back()->with($this->flashError('Failed to store submission.'));
         }
-
-        return redirect()->route('song_submissions.show', $submission)
-            ->with([
-                'flash_message' => 'Your song was submited for review.',
-                'flash_type' => 'success',
-            ]);
     }
 
     public function edit(SongSubmission $song_submission): Response
@@ -99,74 +105,70 @@ class SongSubmissionController extends Controller
     public function update(SongSubmission $song_submission, StoreSongSubmissionRequest $request): RedirectResponse
     {
         $this->authorize('update', $song_submission);
+        $validated = $request->validated();
 
-        DB::transaction(function () use ($song_submission, $request): void {
-            $song_submission->updateOrFail($request->validated());
-            $song_submission->lines()->delete();
-            foreach ($request->processed_lines as $line) {
-                $song_submission->lines()->create($line);
-            }
-        });
+        try {
 
-        return redirect()->route('song_submissions.show', $song_submission)
-            ->with([
-                'flash_message' => 'Submission updated successfully.',
-                'flash_type' => 'success',
-            ]);
+            $song_submission = $this->song_submission_service->update($song_submission, $validated);
+
+            return redirect()->route('song_submissions.show', $song_submission)
+                ->with([
+                    'flash_message' => 'Submission updated successfully.',
+                    'flash_type' => 'success',
+                ]);
+        } catch (\Throwable $e) {
+            Log::error('Failed to update song submission', ['name' => $song_submission->name, 'error' => $e->getMessage()]);
+
+            return back()->with($this->flashError('Failed to update submission.'));
+        }
     }
 
     public function destroy(SongSubmission $song_submission): RedirectResponse
     {
         $this->authorize('delete', $song_submission);
 
-        $song_submission->delete();
+        try {
+            $this->song_submission_service->destroy($song_submission);
 
-        return redirect()->route('song_submissions.index')->with([
-            'flash_message' => 'Submission was rejected.',
-            'flash_type' => 'success',
-        ]);
+            return redirect()->route('song_submissions.index')->with([
+                'flash_message' => 'Submission was rejected.',
+                'flash_type' => 'success',
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Failed to reject song submission', [
+                'name' => $song_submission->name,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with([
+                'flash_message' => 'Failed to reject submission.',
+                'flash_type' => 'error',
+            ]);
+        }
     }
 
     public function approve(SongSubmission $song_submission): RedirectResponse
     {
-        $this->authorize('approve', $song_submission);
-
-        $song_submission->load([
-            'lines' => fn ($query) => $query->orderBy('line_number'),
-        ]);
+        $this->authorize('approve', SongSubmission::class);
 
         try {
+            $song = $this->song_submission_service->approve($song_submission);
 
-            $song = DB::transaction(function () use ($song_submission) {
-                $song = Song::create([
-                    'name' => $song_submission->name,
-                    'key' => $song_submission->key,
-                    'artist_id' => $song_submission->artist_id,
+            return redirect()->route('artists.songs.show', [$song->artist->slug, $song->slug])
+                ->with([
+                    'flash_message' => 'Submission approved successfully.',
+                    'flash_type' => 'success',
                 ]);
+        } catch (\Throwable $e) {
+            Log::error('Failed to approve song submission', [
+                'name' => $song_submission->name,
+                'error' => $e->getMessage(),
+            ]);
 
-                foreach ($song_submission->lines as $line) {
-                    $song->lines()->create([
-                        'line_number' => $line->line_number,
-                        'content' => $line->content,
-                        'content_type' => $line->content_type,
-                    ]);
-                }
-
-                $song_submission->delete();
-
-                return $song;
-            });
-        } catch (\Throwable) {
             return back()->with([
                 'flash_message' => 'Failed to approve submission.',
                 'flash_type' => 'error',
             ]);
         }
-
-        return redirect()->route('artists.songs.show', [$song->artist->slug, $song->slug])
-            ->with([
-                'flash_message' => 'Submission approved successfully.',
-                'flash_type' => 'success',
-            ]);
     }
 }

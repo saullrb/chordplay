@@ -3,9 +3,9 @@
 namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Artist;
-use App\Models\Role;
 use App\Models\Song;
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -13,13 +13,12 @@ class SongControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_anyone_can_view_songs(): void
-    {
-        $artist = Artist::factory()->create();
-        $song = Song::factory()->create(['artist_id' => $artist->id]);
+    protected User $regular_user;
 
-        $response = $this->get(route('artists.songs.show', [$artist, $song]));
-        $response->assertOk();
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->regular_user = User::factory()->create();
     }
 
     public function test_viewing_song_increments_view_count(): void
@@ -38,14 +37,12 @@ class SongControllerTest extends TestCase
 
     public function test_song_show_page_includes_favorite_status(): void
     {
-        $user = User::factory()->create(['role_id' => Role::USER]);
-        $artist = Artist::factory()->create();
-        $song = Song::factory()->create(['artist_id' => $artist->id]);
+        $song = Song::factory()->create();
 
-        $user->addFavoriteSong($song);
+        $this->regular_user->addFavoriteSong($song);
 
-        $response = $this->actingAs($user)
-            ->get(route('artists.songs.show', [$artist, $song]));
+        $response = $this->actingAs($this->regular_user)
+            ->get(route('artists.songs.show', [$song->artist, $song]));
 
         $response->assertInertia(fn ($assert) => $assert
             ->where('is_favorited', true)
@@ -54,60 +51,89 @@ class SongControllerTest extends TestCase
 
     public function test_only_authenticated_user_can_access_edit_page(): void
     {
-        $user = User::factory()->create(['role_id' => Role::USER]);
-        $artist = Artist::factory()->create();
-        $song = Song::factory()->create(['artist_id' => $artist->id]);
+        $song = Song::factory()->create();
 
         $this->assertGuest();
-        $this->get(route('artists.songs.edit', [$artist, $song]))
+        $this->get(route('artists.songs.edit', [$song->artist, $song]))
             ->assertRedirect(route('login'));
 
-        $response = $this->actingAs($user)
-            ->get(route('artists.songs.edit', [$artist, $song]));
+        $response = $this->actingAs($this->regular_user)
+            ->get(route('artists.songs.edit', [$song->artist, $song]));
 
         $response->assertOk();
     }
 
     public function test_guests_cannot_favorite_songs(): void
     {
-        $artist = Artist::factory()->create();
-        $song = Song::factory()->create(['artist_id' => $artist->id]);
+        $song = Song::factory()->create();
 
-        $response = $this->post(route('songs.favorite', [$artist, $song]));
+        $response = $this->post(route('songs.favorite', [$song->artist, $song]));
 
         $response->assertRedirect(route('login'));
     }
 
     public function test_users_can_favorite_songs(): void
     {
-        $user = User::factory()->create();
-        $artist = Artist::factory()->create();
-        $song = Song::factory()->create(['artist_id' => $artist->id]);
+        $song = Song::factory()->create();
 
-        $response = $this->actingAs($user)
-            ->post(route('songs.favorite', [$artist, $song]));
+        $response = $this->actingAs($this->regular_user)
+            ->post(route('songs.favorite', [$song->artist, $song]));
 
         $response->assertRedirect();
         $this->assertDatabaseHas('favorite_songs', [
-            'user_id' => $user->id,
+            'user_id' => $this->regular_user->id,
             'song_id' => $song->id,
         ]);
     }
 
     public function test_users_can_unfavorite_songs(): void
     {
-        $user = User::factory()->create();
-        $artist = Artist::factory()->create();
-        $song = Song::factory()->create(['artist_id' => $artist->id]);
-        $user->addFavoriteSong($song);
+        $song = Song::factory()->create();
+        $this->regular_user->addFavoriteSong($song);
 
-        $response = $this->actingAs($user)
-            ->delete(route('songs.favorite', [$artist, $song]));
+        $response = $this->actingAs($this->regular_user)
+            ->delete(route('songs.favorite', [$song->artist, $song]));
 
         $response->assertRedirect();
         $this->assertDatabaseMissing('favorite_songs', [
-            'user_id' => $user->id,
+            'user_id' => $this->regular_user->id,
             'song_id' => $song->id,
         ]);
+    }
+
+    public function test_favorite_handles_exceptions(): void
+    {
+        $song = Song::factory()->create();
+
+        $this->mock(UserService::class, function ($mock): void {
+            $mock->shouldReceive('favoriteSong')
+                ->once()
+                ->andThrows(new \Exception('Database error'));
+        });
+
+        $this->actingAs($this->regular_user);
+
+        $this->post(route('songs.favorite', [$song->artist, $song]))
+            ->assertRedirect()
+            ->assertSessionHas('flash_message')
+            ->assertSessionHas('flash_type', 'error');
+    }
+
+    public function test_unfavorite_handles_exceptions(): void
+    {
+        $song = Song::factory()->create();
+
+        $this->mock(UserService::class, function ($mock): void {
+            $mock->shouldReceive('unfavoriteSong')
+                ->once()
+                ->andThrows(new \Exception('Database error'));
+        });
+
+        $this->actingAs($this->regular_user);
+
+        $this->delete(route('songs.favorite', [$song->artist, $song]))
+            ->assertRedirect()
+            ->assertSessionHas('flash_message')
+            ->assertSessionHas('flash_type', 'error');
     }
 }
