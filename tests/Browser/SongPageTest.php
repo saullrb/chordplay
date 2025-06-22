@@ -29,10 +29,10 @@ class SongPageTest extends DuskTestCase
         ]);
     }
 
-    public function test_complete_song_page_user_journey()
+    public function test_complete_song_page_user_journey(): void
     {
 
-        $this->browse(function (Browser $browser) {
+        $this->browse(function (Browser $browser): void {
             $song_url = route('artists.songs.show', [$this->artist, $this->song]);
 
             // Visit homepage and search for song

@@ -59,7 +59,7 @@ class SongLineFactory extends Factory
 
     public function chords(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'content_type' => 'chords',
             'content' => $this->generateChords(),
         ]);
@@ -67,7 +67,7 @@ class SongLineFactory extends Factory
 
     public function lyrics(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'content_type' => 'lyrics',
             'content' => fake()->sentence(),
         ]);
@@ -75,7 +75,7 @@ class SongLineFactory extends Factory
 
     public function empty(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'content_type' => 'empty',
             'content' => '',
         ]);
