@@ -24,6 +24,7 @@
         "fakerphp/faker": "^1.23",
         "larastan/larastan": "^3.0",
         "laravel/breeze": "^2.2",
+        "laravel/dusk": "^8.3",
         "laravel/pail": "^1.1",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.26",
@@ -74,6 +75,7 @@
         "test:types": "phpstan analyse",
         "test:run": "pest --colors=always --parallel",
         "test:coverage": "pest --colors=always --parallel --coverage",
+        "test:e2e": "artisan dusk",
         "test": [
             "@test:rector",
             "@test:lint",
