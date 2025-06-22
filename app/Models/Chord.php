@@ -40,6 +40,20 @@ class Chord extends Model
 
     public const BASE_NOTES = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
 
+    public static function allChords(): array
+    {
+        $chords = [];
+
+        foreach (Chord::BASE_NOTES as $base_note) {
+            foreach (Chord::VARIATIONS as $variation) {
+                $chord = $base_note.$variation;
+                $chords[] = $chord;
+            }
+        }
+
+        return $chords;
+    }
+
     /**
      * @return Collection<int|string, Collection<int|string, mixed>>
      */
