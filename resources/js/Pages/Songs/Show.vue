@@ -73,7 +73,7 @@ function handleFavorite() {
 }
 </script>
 
-<template>
+<template dusk="song-page">
     <Head :title="`${song.name} - ${artist.name}`" />
 
     <AppLayout>
@@ -81,6 +81,7 @@ function handleFavorite() {
             <div class="flex items-center gap-2">
                 <PageHeader :title="song.name" />
                 <IconLink
+                    dusk="edit-song-link"
                     v-if="user"
                     :href="route('artists.songs.edit', { artist, song })"
                 >
@@ -101,15 +102,17 @@ function handleFavorite() {
                 >
                     <span>Key: </span>
                     <button
+                        dusk="transpose-down-button"
                         @click="() => transpose('down', 1)"
                         class="flex size-8 cursor-pointer items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-gray-300 dark:text-white dark:hover:bg-gray-800"
                     >
                         <i class="fa-solid fa-minus"></i>
                     </button>
-                    <span class="text-yellow-600">
+                    <span dusk="song-key" class="text-yellow-600">
                         {{ song_key }}
                     </span>
                     <button
+                        dusk="transpose-up-button"
                         @click="() => transpose('up', 1)"
                         class="flex size-8 cursor-pointer items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-gray-300 dark:text-white dark:hover:bg-gray-800"
                     >
@@ -122,6 +125,7 @@ function handleFavorite() {
                 >
                     <span>Capo Fret:</span>
                     <select
+                        dusk="capo-position-select"
                         name="capo"
                         id="capo"
                         v-model="capo_position"

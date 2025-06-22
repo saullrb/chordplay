@@ -37,6 +37,13 @@ App to display lyrics with synced chords, for playing or learning songs.
     php artisan key:generate
     ```
 
+    - If you want to use Dusk tests, copy the example environment file and generate an application key:
+
+        ```sh
+        cp .env.dusk.example .env.dusk.local
+        php artisan key:generate --env=dusk.local
+        ```
+
 5. Set up Google OAuth credentials (required for authenticated features):
 
     > Note: Viewing artists, songs, and using search does **not** require login. Authentication is only needed for restricted features (e.g., adding/editing content).
@@ -70,7 +77,13 @@ App to display lyrics with synced chords, for playing or learning songs.
     php artisan migrate
     ```
 
-7. Then run the application:
+7. (Optional) Seed the database with sample data:
+
+    ```sh
+    php artisan db:seed
+    ```
+
+8. Then run the application:
 
     ```sh
     composer dev

@@ -20,6 +20,7 @@ function handleSubmit() {
                 <form @submit.prevent="handleSubmit" class="space-y-3">
                     <div class="flex justify-center">
                         <input
+                            dusk="search-input"
                             v-model="form.query"
                             type="text"
                             class="z-10 w-full rounded-l border-black dark:border-gray-400 dark:bg-gray-800 dark:text-white"

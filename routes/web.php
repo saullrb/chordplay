@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SongController;
 use App\Http\Controllers\SongSubmissionController;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -46,3 +47,14 @@ Route::middleware('auth')->group(function (): void {
 Route::get('/artists/{artist:slug}', [ArtistController::class, 'show'])->name('artists.show');
 Route::get('/artists', [ArtistController::class, 'index'])->name('artists.index');
 Route::get('/artists/{artist:slug}/{song:slug}', [SongController::class, 'show'])->name('artists.songs.show');
+
+if (app()->environment(['testing', 'local'])) {
+    Route::get('/test/oauth/callback/{user_id}', function ($userId) {
+        $user = User::find($userId);
+        Auth::login($user);
+
+        $intended = request('intended', '/');
+
+        return redirect($intended);
+    })->name('test.oauth.callback');
+}

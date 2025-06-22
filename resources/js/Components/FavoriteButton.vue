@@ -6,6 +6,7 @@ const emit = defineEmits(['favorite']);
 
 <template>
     <button
+        dusk="favorite-button"
         class="cursor-pointer disabled:cursor-wait"
         @click="() => emit('favorite')"
     >

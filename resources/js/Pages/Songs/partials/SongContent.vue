@@ -83,6 +83,7 @@ function extractBrackets(line) {
         }"
     >
         <p
+            dusk="chord-line"
             v-if="line.content_type === 'chords'"
             class="whitespace-pre text-yellow-600"
         >
