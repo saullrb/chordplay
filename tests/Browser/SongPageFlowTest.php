@@ -8,7 +8,7 @@ use App\Models\User;
 use Laravel\Dusk\Browser;
 use Tests\DuskTestCase;
 
-class SongPageTest extends DuskTestCase
+class SongPageFlowTest extends DuskTestCase
 {
     protected $artist;
 
