@@ -51,6 +51,7 @@ function handleFavorite() {
                 </div>
 
                 <IconLink
+                    dusk="add-song-link"
                     v-if="user"
                     :href="route('artists.songs.create', artist)"
                     ><i class="fa-solid fa-plus"></i>

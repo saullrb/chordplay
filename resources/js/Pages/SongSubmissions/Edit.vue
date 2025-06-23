@@ -7,7 +7,6 @@ import SongPreview from './partials/SongPreview.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 
 const props = defineProps({
-    artist: Object,
     available_keys: Array,
     song_submission: Object,
 });
@@ -28,14 +27,16 @@ function submitForm() {
 </script>
 
 <template>
-    <Head :title="`${artist.name} - ${song_submission.name} - Edit`" />
+    <Head
+        :title="`${song_submission.artist.name} - ${song_submission.name} - Edit`"
+    />
 
     <AppLayout>
         <template #header>
             <PageHeader title="Edit song submission" />
 
-            <TextLink :href="route('artists.show', artist)">
-                {{ artist.name }}
+            <TextLink :href="route('artists.show', song_submission.artist)">
+                {{ song_submission.artist.name }}
             </TextLink>
         </template>
 

@@ -37,6 +37,7 @@ function close() {
         leave-to-class="opacity-0 translate-y-4"
     >
         <div
+            dusk="flash-message"
             v-if="show"
             role="alert"
             class="fixed top-4 left-1/2 z-50 max-w-md -translate-x-1/2 rounded-lg p-4 text-sm shadow-lg"

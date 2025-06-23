@@ -63,6 +63,7 @@ function reject() {
     <AppLayout>
         <template #header>
             <div
+                dusk="preview-notice"
                 class="mb-4 rounded bg-yellow-100 px-4 py-2 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
             >
                 <strong>Preview:</strong> This is a preview of the song
@@ -71,18 +72,23 @@ function reject() {
             <div class="flex items-center gap-2">
                 <PageHeader :title="song_submission.name" />
                 <FormButtonIcon
+                    dusk="approve-song-button"
                     v-if="can.approve_submission"
                     :handleSubmit="approve"
                 >
                     <i class="fa-solid fa-check"></i>
                 </FormButtonIcon>
                 <IconLink
+                    dusk="edit-song-link"
                     v-if="user"
                     :href="route('song_submissions.edit', { song_submission })"
                 >
                     <i class="fa-solid fa-pencil"></i>
                 </IconLink>
-                <FormButtonIcon :handleSubmit="confirmSubmissionRejection">
+                <FormButtonIcon
+                    dusk="reject-song-button"
+                    :handleSubmit="confirmSubmissionRejection"
+                >
                     <i class="fa-solid fa-trash"></i>
                 </FormButtonIcon>
             </div>
@@ -94,7 +100,7 @@ function reject() {
                     class="flex items-center justify-start gap-2 text-sm dark:text-white"
                 >
                     <span>Key: </span>
-                    <span class="text-yellow-600">
+                    <span dusk="song-key" class="text-yellow-600">
                         {{ song_key }}
                     </span>
                 </div>
@@ -136,6 +142,7 @@ function reject() {
                 <SecondaryButton @click="closeModal">Cancel</SecondaryButton>
 
                 <DangerButton
+                    dusk="confirm-modal-button"
                     class="ms-3"
                     :class="{ 'opacity-25': reject_form.processing }"
                     :disabled="reject_form.processing"

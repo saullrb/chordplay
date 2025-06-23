@@ -33,6 +33,7 @@ function handleSubmit() {
         <div class="flex flex-col gap-1">
             <InputLabel for="name" value="Name" />
             <input
+                dusk="song-name-input"
                 class="px-2 py-1 dark:bg-gray-800 dark:text-white"
                 type="text"
                 required
@@ -44,6 +45,7 @@ function handleSubmit() {
         <div class="flex flex-col gap-1">
             <InputLabel for="key" value="Key" />
             <select
+                dusk="song-key-select"
                 class="bg-white p-2 dark:bg-gray-800 dark:text-white"
                 v-model="form.key"
                 id="key"
@@ -62,6 +64,7 @@ function handleSubmit() {
         <div class="flex flex-col gap-1">
             <InputLabel for="content" value="Content" />
             <textarea
+                dusk="song-content-textarea"
                 v-model="form.content"
                 id="content"
                 required
@@ -69,9 +72,13 @@ function handleSubmit() {
                 class="h-80 resize-y overflow-auto px-2 font-mono text-sm leading-5 tracking-tighter whitespace-pre-wrap dark:bg-gray-800 dark:text-white"
             ></textarea>
         </div>
-        <InputError :message="form.errors?.content" />
+        <InputError dusk="content-errors" :message="form.errors?.content" />
         <div class="mt-4 flex justify-end gap-2">
-            <PrimaryButton :disabled="form.processing" type="submit">
+            <PrimaryButton
+                dusk="submit-button"
+                :disabled="form.processing"
+                type="submit"
+            >
                 {{ submit_label }}
             </PrimaryButton>
         </div>
