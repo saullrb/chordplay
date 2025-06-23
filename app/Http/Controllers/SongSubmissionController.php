@@ -70,7 +70,7 @@ class SongSubmissionController extends Controller
             $submission = $this->song_submission_service->store(
                 $validated,
                 $artist->id,
-                $request->route('song')->id ?? null,
+                $request->song['id'] ?? null,
                 Auth::id());
 
             return redirect()->route('song_submissions.show', $submission)

@@ -56,9 +56,8 @@ class SongController extends Controller
 
         return Inertia::render('Songs/Edit', [
             'available_keys' => array_map(fn ($key) => $key->value, SongKeyEnum::cases()),
-            'artist' => $artist,
-            'valid_chords' => Chord::getGroupedChords(),
             'song' => $song,
+            'artist' => $artist,
         ]);
     }
 

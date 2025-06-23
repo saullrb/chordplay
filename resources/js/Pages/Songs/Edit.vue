@@ -19,8 +19,8 @@ const form = useForm({
 });
 
 function submitForm() {
-    form.patch(
-        route('artists.songs.update', {
+    form.post(
+        route('song_submissions.store', {
             artist: props.artist,
             song: props.song,
         }),
