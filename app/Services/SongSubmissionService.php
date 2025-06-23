@@ -43,11 +43,22 @@ class SongSubmissionService
         ]);
 
         return DB::transaction(function () use ($song_submission) {
-            $song = Song::create([
-                'name' => $song_submission->name,
-                'key' => $song_submission->key,
-                'artist_id' => $song_submission->artist_id,
-            ]);
+            // Check if is creating a new song or updating a existing one
+            if ($song_submission->song_id) {
+                $song = Song::find($song_submission->song_id);
+                $song->update([
+                    'name' => $song_submission->name,
+                    'key' => $song_submission->key,
+                ]);
+
+                $song->lines()->delete();
+            } else {
+                $song = Song::create([
+                    'name' => $song_submission->name,
+                    'key' => $song_submission->key,
+                    'artist_id' => $song_submission->artist_id,
+                ]);
+            }
 
             foreach ($song_submission->lines as $line) {
                 $song->lines()->create([
