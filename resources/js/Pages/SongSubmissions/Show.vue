@@ -13,6 +13,15 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 
 const props = defineProps({
     song_submission: Object,
+    can: {
+        type: Object,
+        default: () => ({
+            create_artist: {
+                type: Boolean,
+                default: false,
+            },
+        }),
+    },
 });
 
 const page = usePage();
@@ -61,7 +70,10 @@ function reject() {
             </div>
             <div class="flex items-center gap-2">
                 <PageHeader :title="song_submission.name" />
-                <FormButtonIcon :handleSubmit="approve">
+                <FormButtonIcon
+                    v-if="can.approve_submission"
+                    :handleSubmit="approve"
+                >
                     <i class="fa-solid fa-check"></i>
                 </FormButtonIcon>
                 <IconLink

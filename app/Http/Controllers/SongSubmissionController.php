@@ -48,7 +48,9 @@ class SongSubmissionController extends Controller
 
         return Inertia::render('SongSubmissions/Show', [
             'song_submission' => $song_submission,
-            'valid_chords' => Chord::getGroupedChords(),
+            'can' => [
+                'approve_submission' => Auth::user()?->can('approve', SongSubmission::class) ?? false,
+            ],
         ]
         );
     }

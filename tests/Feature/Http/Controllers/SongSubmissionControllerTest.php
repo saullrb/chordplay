@@ -114,7 +114,6 @@ class SongSubmissionControllerTest extends TestCase
                 ->where('song_submission.artist.id', $artist->id)
                 ->where('song_submission.lines.0.content', '[Am] [C]')
                 ->where('song_submission.lines.1.content', 'Line 2')
-                ->has('valid_chords')
             );
     }
 
