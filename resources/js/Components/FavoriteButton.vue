@@ -23,8 +23,8 @@ const emit = defineEmits(['favorite']);
         <input
             type="checkbox"
             :checked="favorited"
-            @change="emit('favorite')"
             aria-label="Favorite"
+            @change="emit('favorite')"
         />
         <StarIcon class="swap-off size-6" />
         <StarIconSolid class="swap-on size-6 text-yellow-500" />

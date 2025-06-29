@@ -29,5 +29,3 @@ createInertiaApp({
         color: '#4B5563',
     },
 });
-
-console.log(sbf);

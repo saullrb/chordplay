@@ -8,59 +8,59 @@ use Illuminate\Support\Facades\DB;
 
 class SongSubmissionService
 {
-    public function store(array $song_submission, int $artist_id, ?int $song_id, int $user_id): SongSubmission
+    public function store(array $songSubmission, int $artist_id, ?int $song_id, int $user_id): SongSubmission
     {
         $submission = SongSubmission::create([
             'song_id' => $song_id,
             'artist_id' => $artist_id,
             'user_id' => $user_id,
-            'name' => $song_submission['name'],
-            'key' => $song_submission['key'],
+            'name' => $songSubmission['name'],
+            'key' => $songSubmission['key'],
         ]);
 
-        foreach ($song_submission['lines'] as $line) {
+        foreach ($songSubmission['lines'] as $line) {
             $submission->lines()->create($line);
         }
 
         return $submission;
     }
 
-    public function update(SongSubmission $song_submission, array $validated): SongSubmission
+    public function update(SongSubmission $songSubmission, array $validated): SongSubmission
     {
-        return DB::transaction(function () use ($song_submission, $validated): SongSubmission {
-            $song_submission->updateOrFail($validated);
-            $song_submission->lines()->delete();
-            $song_submission->lines()->createMany($validated['lines']);
+        return DB::transaction(function () use ($songSubmission, $validated): SongSubmission {
+            $songSubmission->updateOrFail($validated);
+            $songSubmission->lines()->delete();
+            $songSubmission->lines()->createMany($validated['lines']);
 
-            return $song_submission;
+            return $songSubmission;
         });
     }
 
-    public function approve(SongSubmission $song_submission): Song
+    public function approve(SongSubmission $songSubmission): Song
     {
-        $song_submission->load([
+        $songSubmission->load([
             'lines' => fn ($query) => $query->orderBy('line_number'),
         ]);
 
-        return DB::transaction(function () use ($song_submission) {
+        return DB::transaction(function () use ($songSubmission) {
             // Check if is creating a new song or updating a existing one
-            if ($song_submission->song_id) {
-                $song = Song::find($song_submission->song_id);
+            if ($songSubmission->song_id) {
+                $song = Song::find($songSubmission->song_id);
                 $song->update([
-                    'name' => $song_submission->name,
-                    'key' => $song_submission->key,
+                    'name' => $songSubmission->name,
+                    'key' => $songSubmission->key,
                 ]);
 
                 $song->lines()->delete();
             } else {
                 $song = Song::create([
-                    'name' => $song_submission->name,
-                    'key' => $song_submission->key,
-                    'artist_id' => $song_submission->artist_id,
+                    'name' => $songSubmission->name,
+                    'key' => $songSubmission->key,
+                    'artist_id' => $songSubmission->artist_id,
                 ]);
             }
 
-            foreach ($song_submission->lines as $line) {
+            foreach ($songSubmission->lines as $line) {
                 $song->lines()->create([
                     'line_number' => $line->line_number,
                     'content' => $line->content,
@@ -68,14 +68,14 @@ class SongSubmissionService
                 ]);
             }
 
-            $song_submission->delete();
+            $songSubmission->delete();
 
             return $song;
         });
     }
 
-    public function destroy(SongSubmission $song_submission): void
+    public function destroy(SongSubmission $songSubmission): void
     {
-        $song_submission->delete();
+        $songSubmission->delete();
     }
 }

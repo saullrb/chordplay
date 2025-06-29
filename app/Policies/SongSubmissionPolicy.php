@@ -7,19 +7,19 @@ use App\Models\User;
 
 class SongSubmissionPolicy
 {
-    public function view(User $user, SongSubmission $song_submission): bool
+    public function view(User $user, SongSubmission $songSubmission): bool
     {
-        return $this->isAdminOrAuthor($user, $song_submission);
+        return $this->isAdminOrAuthor($user, $songSubmission);
     }
 
-    public function update(User $user, SongSubmission $song_submission): bool
+    public function update(User $user, SongSubmission $songSubmission): bool
     {
-        return $this->isAdminOrAuthor($user, $song_submission);
+        return $this->isAdminOrAuthor($user, $songSubmission);
     }
 
-    public function delete(User $user, SongSubmission $song_submission): bool
+    public function delete(User $user, SongSubmission $songSubmission): bool
     {
-        return $this->isAdminOrAuthor($user, $song_submission);
+        return $this->isAdminOrAuthor($user, $songSubmission);
     }
 
     public function approve(User $user): bool
@@ -27,9 +27,9 @@ class SongSubmissionPolicy
         return $this->isAdmin($user);
     }
 
-    private function isAuthor(User $user, SongSubmission $song_submission): bool
+    private function isAuthor(User $user, SongSubmission $songSubmission): bool
     {
-        return $user->id === $song_submission->user_id;
+        return $user->id === $songSubmission->user_id;
     }
 
     private function isAdmin(User $user): bool
@@ -37,12 +37,12 @@ class SongSubmissionPolicy
         return $user->isAdmin();
     }
 
-    private function isAdminOrAuthor(User $user, SongSubmission $song_submission): bool
+    private function isAdminOrAuthor(User $user, SongSubmission $songSubmission): bool
     {
         if ($this->isAdmin($user)) {
             return true;
         }
 
-        return $this->isAuthor($user, $song_submission);
+        return $this->isAuthor($user, $songSubmission);
     }
 }

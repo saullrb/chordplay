@@ -15,13 +15,13 @@ class DashboardControllerTest extends TestCase
 
     private User $admin;
 
-    private User $regular_user;
+    private User $regularUser;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->admin = User::factory()->admin()->create();
-        $this->regular_user = User::factory()->create();
+        $this->regularUser = User::factory()->create();
     }
 
     public function test_guests_cannot_access_dashboard(): void
@@ -32,20 +32,20 @@ class DashboardControllerTest extends TestCase
 
     public function test_redirects_the_user_if_trying_to_use_page_parameter(): void
     {
-        $this->actingAs($this->regular_user)
+        $this->actingAs($this->regularUser)
             ->get(route('dashboard', ['page' => 1]))
             ->assertRedirect(route('dashboard'));
     }
 
     public function test_dashboard_shows_empty_state_for_new_users(): void
     {
-        $response = $this->actingAs($this->regular_user)
+        $response = $this->actingAs($this->regularUser)
             ->get(route('dashboard'));
 
         $response->assertInertia(fn ($page) => $page
             ->component('Dashboard')
-            ->has('favorite_songs.data', 0)
-            ->has('favorite_artists.data', 0)
+            ->has('favoriteSongs.data', 0)
+            ->has('favoriteArtists.data', 0)
             ->has('submissions', 0)
         );
     }
@@ -57,29 +57,29 @@ class DashboardControllerTest extends TestCase
             'artist_id' => $artist->id,
             'name' => 'Favorite Song',
         ]);
-        $this->regular_user->addFavoriteSong($song);
+        $this->regularUser->addFavoriteSong($song);
 
-        $response = $this->actingAs($this->regular_user)
+        $response = $this->actingAs($this->regularUser)
             ->get(route('dashboard'));
 
         $response->assertInertia(fn ($page) => $page
             ->component('Dashboard')
-            ->has('favorite_songs.data', 1)
-            ->where('favorite_songs.data.0.name', 'Favorite Song')
+            ->has('favoriteSongs.data', 1)
+            ->where('favoriteSongs.data.0.name', 'Favorite Song')
         );
     }
 
     public function test_dashboard_shows_favorite_artists(): void
     {
         $artist = Artist::factory()->create(['name' => 'Favorite Artist']);
-        $this->regular_user->favoriteArtists()->attach($artist);
+        $this->regularUser->favoriteArtists()->attach($artist);
 
-        $this->actingAs($this->regular_user)
+        $this->actingAs($this->regularUser)
             ->get(route('dashboard'))
             ->assertInertia(fn ($page) => $page
                 ->component('Dashboard')
-                ->has('favorite_artists.data', 1)
-                ->where('favorite_artists.data.0.name', 'Favorite Artist')
+                ->has('favoriteArtists.data', 1)
+                ->where('favoriteArtists.data.0.name', 'Favorite Artist')
             );
     }
 
@@ -88,7 +88,7 @@ class DashboardControllerTest extends TestCase
         $artist = Artist::factory()->create();
         SongSubmission::factory()->count(15)->create([
             'artist_id' => $artist->id,
-            'user_id' => $this->regular_user->id,
+            'user_id' => $this->regularUser->id,
         ]);
 
         $this->actingAs($this->admin)
@@ -97,7 +97,7 @@ class DashboardControllerTest extends TestCase
                 ->component('Dashboard')
                 ->has('submissions', 10)
                 ->where('submissions.0.artist.name', $artist->name)
-                ->where('submissions.0.user.name', $this->regular_user->name)
+                ->where('submissions.0.user.name', $this->regularUser->name)
             );
     }
 
@@ -106,20 +106,20 @@ class DashboardControllerTest extends TestCase
         $artist = Artist::factory()->create();
         SongSubmission::factory()->count(5)->create([
             'artist_id' => $artist->id,
-            'user_id' => $this->regular_user->id,
+            'user_id' => $this->regularUser->id,
         ]);
         SongSubmission::factory()->count(5)->create([
             'artist_id' => $artist->id,
             'user_id' => $this->admin->id,
         ]);
 
-        $this->actingAs($this->regular_user)
+        $this->actingAs($this->regularUser)
             ->get(route('dashboard'))
             ->assertInertia(fn ($page) => $page
                 ->component('Dashboard')
                 ->has('submissions', 5)
                 ->where('submissions.0.artist.name', $artist->name)
-                ->where('submissions.0.user.name', $this->regular_user->name)
+                ->where('submissions.0.user.name', $this->regularUser->name)
             );
     }
 }

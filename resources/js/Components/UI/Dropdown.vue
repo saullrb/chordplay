@@ -1,12 +1,18 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue';
 
-const dropdown = ref(null);
-
 defineProps({
-    triggerClass: [String, Object],
-    listClass: String,
+    triggerClass: {
+        type: [String, Object],
+        default: '',
+    },
+    listClass: {
+        type: [String, Object],
+        default: '',
+    },
 });
+
+const dropdown = ref(null);
 
 function handleClickOutside(event) {
     if (dropdown.value && !dropdown.value.contains(event.target)) {
@@ -23,7 +29,7 @@ onUnmounted(() => {
 });
 </script>
 <template>
-    <details class="dropdown block" ref="dropdown">
+    <details ref="dropdown" class="dropdown block">
         <summary class="btn btn-sm after:hidden" :class="triggerClass">
             <slot name="trigger" />
         </summary>

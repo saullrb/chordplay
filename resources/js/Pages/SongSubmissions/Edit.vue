@@ -6,9 +6,18 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
-    artist: Object,
-    song: Object,
-    available_keys: Array,
+    song: {
+        type: Object,
+        required: true,
+    },
+    artist: {
+        type: Object,
+        required: true,
+    },
+    availableKeys: {
+        type: Array,
+        required: true,
+    },
 });
 
 const form = useForm({
@@ -19,8 +28,8 @@ const form = useForm({
 
 function submitForm() {
     form.patch(
-        route('song_submissions.update', {
-            song_submission: props.song,
+        route('song-submissions.update', {
+            songSubmission: props.song,
         }),
     );
 }
@@ -40,9 +49,9 @@ function submitForm() {
 
         <div class="mt-6 grid grid-cols-2 justify-between gap-12 py-6">
             <SongForm
-                :available_keys="available_keys"
-                :initial_data="form"
-                submit_label="Update"
+                :available-keys="availableKeys"
+                :initial-data="form"
+                submit-label="Update"
                 @submit="submitForm"
             />
 

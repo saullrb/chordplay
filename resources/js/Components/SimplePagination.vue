@@ -20,10 +20,10 @@ defineProps({
     >
         <li class="flex items-center justify-center">
             <Link
-                :href="pagination.prev_page_url ?? ''"
+                :href="pagination.prevPageUrl ?? ''"
                 class="btn btn-xs btn-ghost"
                 :class="{
-                    'btn-disabled': !pagination.prev_page_url,
+                    'btn-disabled': !pagination.prevPageUrl,
                 }"
             >
                 <ChevronLeftIconSolid class="size-3" />
@@ -33,15 +33,15 @@ defineProps({
         <li
             class="flex items-center justify-center text-sm text-gray-500 dark:text-gray-400"
         >
-            {{ pagination.current_page }}/{{ pagination.last_page }}
+            {{ pagination.currentPage }}/{{ pagination.lastPage }}
         </li>
 
         <li class="flex items-center justify-center">
             <Link
-                :href="pagination.next_page_url ?? ''"
+                :href="pagination.nextPageUrl ?? ''"
                 class="btn btn-xs btn-ghost"
                 :class="{
-                    'btn-disabled': !pagination.next_page_url,
+                    'btn-disabled': !pagination.nextPageUrl,
                 }"
             >
                 <ChevronRightIconSolid class="size-3" />

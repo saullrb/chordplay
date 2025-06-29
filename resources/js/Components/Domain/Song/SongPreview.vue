@@ -1,17 +1,17 @@
 <script setup>
 const props = defineProps({
-    content: String,
+    content: { type: String, default: '' },
 });
 
 function separateLines() {
     const lines = props.content.split('\n').map((line) => {
-        const trimmed_line = line.trim();
-        if (trimmed_line.startsWith('[')) {
-            return { content_type: 'chords', content: line };
-        } else if (trimmed_line === '') {
-            return { content_type: 'empty', content: trimmed_line };
+        const trimmedLine = line.trim();
+        if (trimmedLine.startsWith('[')) {
+            return { contentType: 'chords', content: line };
+        } else if (trimmedLine === '') {
+            return { contentType: 'empty', content: trimmedLine };
         } else {
-            return { content_type: 'lyrics', content: trimmed_line };
+            return { contentType: 'lyrics', content: trimmedLine };
         }
     });
 
@@ -19,46 +19,46 @@ function separateLines() {
 }
 
 function extractBrackets(line) {
-    let new_line = '';
-    let bracket_content = null;
+    let newLine = '';
+    let bracketContent = null;
 
     line.split('').forEach((char) => {
         if (char === '[') {
-            bracket_content = '';
-        } else if (char === ']' && bracket_content) {
-            const chord = bracket_content.trim();
+            bracketContent = '';
+        } else if (char === ']' && bracketContent) {
+            const chord = bracketContent.trim();
 
-            new_line += chord;
+            newLine += chord;
 
-            bracket_content = null;
-        } else if (bracket_content !== null) {
-            bracket_content += char;
+            bracketContent = null;
+        } else if (bracketContent !== null) {
+            bracketContent += char;
         } else {
-            new_line += ' ';
+            newLine += ' ';
         }
     });
 
-    return new_line;
+    return newLine;
 }
 </script>
 
 <template>
     <div
-        v-for="(line, line_index) in separateLines()"
-        :key="line_index"
+        v-for="(line, lineIndex) in separateLines()"
+        :key="lineIndex"
         class="w-full font-mono text-sm leading-5 tracking-tighter"
         :class="{
-            'break-after-avoid': line.content_type === 'chords',
-            'break-after-auto': line.content_type !== 'chords',
+            'break-after-avoid': line.contentType === 'chords',
+            'break-after-auto': line.contentType !== 'chords',
         }"
     >
         <p
-            v-if="line.content_type === 'chords'"
+            v-if="line.contentType === 'chords'"
             class="text-accent font-bold whitespace-pre"
         >
             {{ extractBrackets(line.content) }}
         </p>
-        <p v-else-if="line.content_type === 'lyrics'" class="whitespace-pre">
+        <p v-else-if="line.contentType === 'lyrics'" class="whitespace-pre">
             {{ line.content }}
         </p>
         <br v-else />

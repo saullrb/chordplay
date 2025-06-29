@@ -24,7 +24,7 @@ class SongSubmissionPolicyTest extends TestCase
 
     public function test_only_author_or_admin_can_view_submission(): void
     {
-        $regular_user = User::factory()->create();
+        $regularUser = User::factory()->create();
         $author = User::factory()->create();
         $admin = User::factory()->admin()->create();
 
@@ -34,14 +34,14 @@ class SongSubmissionPolicyTest extends TestCase
             'user_id' => $author->id,
         ]);
 
-        $this->assertFalse($this->policy->view($regular_user, $songSubmission));
+        $this->assertFalse($this->policy->view($regularUser, $songSubmission));
         $this->assertTrue($this->policy->view($author, $songSubmission));
         $this->assertTrue($this->policy->view($admin, $songSubmission));
     }
 
     public function test_only_author_or_admin_can_update_submission(): void
     {
-        $regular_user = User::factory()->create();
+        $regularUser = User::factory()->create();
         $author = User::factory()->create();
         $admin = User::factory()->admin()->create();
 
@@ -51,14 +51,14 @@ class SongSubmissionPolicyTest extends TestCase
             'user_id' => $author->id,
         ]);
 
-        $this->assertFalse($this->policy->update($regular_user, $songSubmission));
+        $this->assertFalse($this->policy->update($regularUser, $songSubmission));
         $this->assertTrue($this->policy->update($author, $songSubmission));
         $this->assertTrue($this->policy->update($admin, $songSubmission));
     }
 
     public function test_only_author_or_admin_can_delete_submission(): void
     {
-        $regular_user = User::factory()->create();
+        $regularUser = User::factory()->create();
         $author = User::factory()->create();
         $admin = User::factory()->admin()->create();
 
@@ -68,14 +68,14 @@ class SongSubmissionPolicyTest extends TestCase
             'user_id' => $author->id,
         ]);
 
-        $this->assertFalse($this->policy->delete($regular_user, $songSubmission));
+        $this->assertFalse($this->policy->delete($regularUser, $songSubmission));
         $this->assertTrue($this->policy->delete($author, $songSubmission));
         $this->assertTrue($this->policy->delete($admin, $songSubmission));
     }
 
     public function test_only_admin_can_approve_submission(): void
     {
-        $regular_user = User::factory()->create();
+        $regularUser = User::factory()->create();
         $author = User::factory()->create();
         $admin = User::factory()->admin()->create();
 
@@ -85,7 +85,7 @@ class SongSubmissionPolicyTest extends TestCase
             'user_id' => $author->id,
         ]);
 
-        $this->assertFalse($this->policy->approve($regular_user));
+        $this->assertFalse($this->policy->approve($regularUser));
         $this->assertFalse($this->policy->approve($author));
         $this->assertTrue($this->policy->approve($admin));
     }

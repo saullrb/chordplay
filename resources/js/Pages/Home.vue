@@ -24,12 +24,12 @@ function handleSubmit() {
             <h1 class="mb-4 text-center text-2xl font-bold sm:text-3xl">
                 Search songs and artists
             </h1>
-            <form @submit.prevent="handleSubmit" class="w-full max-w-md">
+            <form class="w-full max-w-md" @submit.prevent="handleSubmit">
                 <label class="input input-primary validator w-full">
                     <SearchIcon class="h-[1em] opacity-50" />
                     <input
-                        dusk="search-input"
                         v-model="form.query"
+                        dusk="search-input"
                         type="search"
                         required
                         placeholder="Search"

@@ -8,11 +8,14 @@ import { Link, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const props = defineProps({
-    artists: Object,
+    artists: {
+        type: Object,
+        required: true,
+    },
     can: {
         type: Object,
         default: () => ({
-            create_artist: {
+            createArtist: {
                 type: Boolean,
                 default: false,
             },
@@ -23,13 +26,13 @@ const props = defineProps({
 const loading = ref(false);
 
 const loadMoreArtists = async () => {
-    if (!props.artists.next_page_url) return;
+    if (!props.artists.nextPageUrl) return;
 
     loading.value = true;
 
     router.reload({
         only: ['artists'],
-        data: { page: props.artists.current_page + 1 },
+        data: { page: props.artists.currentPage + 1 },
         preserveUrl: true,
         showProgress: true,
         onFinish: () => {
@@ -48,7 +51,7 @@ const loadMoreArtists = async () => {
                 <PageHeader title="All Artists" />
 
                 <Link
-                    v-if="can.create_artist"
+                    v-if="can.createArtist"
                     :href="route('artists.create')"
                     class="btn btn-primary btn-sm"
                 >
@@ -59,15 +62,15 @@ const loadMoreArtists = async () => {
         </template>
 
         <ItemList
-            show_route_name="artists.show"
+            show-route-name="artists.show"
             :items="artists.data"
             class="mt-6"
         />
 
         <div class="my-6 flex justify-center">
             <LoadingButton
-                v-if="artists.next_page_url"
-                :onLoadMore="loadMoreArtists"
+                v-if="artists.nextPageUrl"
+                :on-load-more="loadMoreArtists"
                 :loading="loading"
             >
                 Load More

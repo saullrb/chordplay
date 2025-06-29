@@ -4,8 +4,11 @@ import PrimaryButton from '@/Components/UI/button/PrimaryButton.vue';
 import { reactive } from 'vue';
 
 const props = defineProps({
-    available_keys: Array,
-    initial_data: {
+    availableKeys: {
+        type: Array,
+        default: () => [],
+    },
+    initialData: {
         type: Object,
         default: () => ({
             name: '',
@@ -13,7 +16,7 @@ const props = defineProps({
             content: '',
         }),
     },
-    submit_label: {
+    submitLabel: {
         type: String,
         default: 'Submit',
     },
@@ -21,20 +24,20 @@ const props = defineProps({
 
 const emit = defineEmits(['submit']);
 
-const form = reactive(props.initial_data);
+const form = reactive(props.initialData);
 
 function handleSubmit() {
     emit('submit');
 }
 </script>
 <template>
-    <form @submit.prevent="handleSubmit" class="flex w-full flex-col gap-2">
+    <form class="flex w-full flex-col gap-2" @submit.prevent="handleSubmit">
         <div class="flex flex-col gap-1">
             <label class="floating-label input validator w-full">
                 <span>Name</span>
                 <input
-                    v-model="form.name"
                     id="name"
+                    v-model="form.name"
                     type="text"
                     placeholder="Name"
                     dusk="song-name-input"
@@ -49,15 +52,15 @@ function handleSubmit() {
             <label class="select validator w-full">
                 <span class="label">Key</span>
                 <select
-                    v-model="form.key"
                     id="key"
+                    v-model="form.key"
                     dusk="song-key-select"
                     required
                     @input="form.errors.key = null"
                 >
                     <option
+                        v-for="key in availableKeys"
                         :key="key"
-                        v-for="key in available_keys"
                         :value="key"
                     >
                         {{ key }}
@@ -68,14 +71,14 @@ function handleSubmit() {
         </div>
         <div class="flex flex-col gap-1">
             <textarea
-                v-model="form.content"
                 id="content"
+                v-model="form.content"
                 :placeholder="'Use [] to denote chords. Example -> [C]   [Dm]   [F7].\r\nIf the first non-empty character of the line is not [ , then it will be considered a lyric line.'"
                 class="textarea validator h-80 w-full"
                 dusk="song-content-textarea"
                 required
                 @input="form.errors.content = null"
-            ></textarea>
+            />
         </div>
         <InputError dusk="content-errors" :message="form.errors?.content" />
         <div class="mt-4 flex justify-end gap-2">
@@ -84,7 +87,7 @@ function handleSubmit() {
                 :disabled="form.processing"
                 type="submit"
             >
-                {{ submit_label }}
+                {{ submitLabel }}
             </PrimaryButton>
         </div>
     </form>

@@ -8,48 +8,57 @@ import { Head, Link, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const props = defineProps({
-    favorite_artists: Object,
-    favorite_songs: Object,
-    submissions: Array,
+    favoriteArtists: {
+        type: Object,
+        required: true,
+    },
+    favoriteSongs: {
+        type: Object,
+        required: true,
+    },
+    submissions: {
+        type: Array,
+        required: true,
+    },
 });
 
 const loading = ref(false);
-const songs = ref(props.favorite_songs.data);
-const songs_next_page = ref(props.favorite_songs.next_page_url);
-const artists = ref(props.favorite_artists.data);
-const artists_next_page = ref(props.favorite_artists.next_page_url);
+const songs = ref(props.favoriteSongs.data);
+const songsNextPage = ref(props.favoriteSongs.nextPageUrl);
+const artists = ref(props.favoriteArtists.data);
+const artistsNextPage = ref(props.favoriteArtists.nextPageUrl);
 
 const loadMoreArtists = async () => {
-    if (!artists_next_page.value) return;
+    if (!artistsNextPage.value) return;
 
     loading.value = true;
 
     router.reload({
-        only: ['favorite_artists'],
-        data: { page: props.favorite_artists.current_page + 1 },
+        only: ['favoriteArtists'],
+        data: { page: props.favoriteArtists.currentPage + 1 },
         preserveUrl: true,
         showProgress: true,
         onSuccess: (page) => {
-            artists.value.push(...page.props.favorite_artists.data);
-            artists_next_page.value = page.props.favorite_artists.next_page_url;
+            artists.value.push(...page.props.favoriteArtists.data);
+            artistsNextPage.value = page.props.favoriteArtists.nextPageUrl;
         },
         onFinish: () => (loading.value = false),
     });
 };
 
 const loadMoreSongs = async () => {
-    if (!songs_next_page.value) return;
+    if (!songsNextPage.value) return;
 
     loading.value = true;
 
     router.reload({
-        only: ['favorite_songs'],
-        data: { page: props.favorite_songs.current_page + 1 },
+        only: ['favoriteSongs'],
+        data: { page: props.favoriteSongs.currentPage + 1 },
         preserveUrl: true,
         showProgress: true,
         onSuccess: (page) => {
-            songs.value.push(...page.props.favorite_songs.data);
-            songs_next_page.value = page.props.favorite_songs.next_page_url;
+            songs.value.push(...page.props.favoriteSongs.data);
+            songsNextPage.value = page.props.favoriteSongs.nextPageUrl;
         },
         onFinish: () => (loading.value = false),
     });
@@ -87,9 +96,9 @@ const loadMoreSongs = async () => {
                 </h2>
                 <ul v-if="songs.length" class="list">
                     <li
-                        class="list-row hover:bg-primary/8"
                         v-for="song in songs"
                         :key="song.id"
+                        class="list-row hover:bg-primary/8"
                     >
                         <Link
                             class="list-grow flex items-center gap-1"
@@ -109,8 +118,8 @@ const loadMoreSongs = async () => {
                 </ul>
                 <p v-else class="px-3 py-2">You have no favorite songs yet.</p>
                 <LoadingButton
-                    v-if="songs_next_page"
-                    :onLoadMore="loadMoreSongs"
+                    v-if="songsNextPage"
+                    :on-load-more="loadMoreSongs"
                     :loading="loading"
                 />
             </div>
@@ -122,9 +131,9 @@ const loadMoreSongs = async () => {
                 </h2>
                 <ul v-if="artists.length" class="list">
                     <li
-                        class="list-row hover:bg-primary/8"
                         v-for="artist in artists"
                         :key="artist.id"
+                        class="list-row hover:bg-primary/8"
                     >
                         <Link
                             class="list-grow"
@@ -138,8 +147,8 @@ const loadMoreSongs = async () => {
                     You have no favorite artists yet.
                 </p>
                 <LoadingButton
-                    v-if="artists_next_page"
-                    :onLoadMore="loadMoreArtists"
+                    v-if="artistsNextPage"
+                    :on-load-more="loadMoreArtists"
                     :loading="loading"
                 />
             </div>

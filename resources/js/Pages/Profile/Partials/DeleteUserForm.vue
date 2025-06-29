@@ -4,10 +4,10 @@ import ConfirmationDialog from '@/Components/UI/dialog/ConfirmationDialog.vue';
 import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
-const confirm_dialog = ref();
+const confirmDialog = ref();
 
 const handleConfirmation = () => {
-    confirm_dialog.value.close();
+    confirmDialog.value.close();
 
     router.delete(route('profile.destroy'));
 };
@@ -19,12 +19,12 @@ const handleConfirmation = () => {
             <h2 class="text-lg font-medium">Delete Account</h2>
         </header>
 
-        <DangerButton @click="confirm_dialog.show()"
-            >Delete Account</DangerButton
-        >
+        <DangerButton @click="confirmDialog.show()">
+            Delete Account
+        </DangerButton>
 
         <ConfirmationDialog
-            ref="confirm_dialog"
+            ref="confirmDialog"
             title="Delete?"
             message="Are you sure you wan to delete your account?"
             @confirm="handleConfirmation"

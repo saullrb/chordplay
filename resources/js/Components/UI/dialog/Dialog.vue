@@ -1,16 +1,18 @@
 <script setup>
 import { defineExpose, ref } from 'vue';
 
-const dialog_ref = ref();
+const dialogRef = ref();
 
 defineExpose({
-    show: () => dialog_ref.value?.showModal(),
-    close: () => dialog_ref.value?.close(),
+    show: () => dialogRef.value?.showModal(),
+    close: () => dialogRef.value?.close(),
 });
+
+defineEmits(['close']);
 </script>
 
 <template>
-    <dialog ref="dialog_ref" class="modal" @close="$emit('close')">
+    <dialog ref="dialogRef" class="modal" @close="$emit('close')">
         <div class="modal-box">
             <slot />
             <form method="dialog">

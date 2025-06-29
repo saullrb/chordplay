@@ -18,15 +18,15 @@ defineProps({
                     <th>Name</th>
                     <th>Artist</th>
                     <th>User</th>
-                    <th></th>
+                    <th />
                 </tr>
             </thead>
 
             <tbody>
                 <tr
-                    class="hover:bg-primary/8"
                     v-for="submission in submissions"
                     :key="submission.id"
+                    class="hover:bg-primary/8"
                 >
                     <td>
                         {{ submission.name }}
@@ -40,7 +40,7 @@ defineProps({
                     <td>
                         <Link
                             class="btn btn-sm btn-soft btn-secondary btn-circle"
-                            :href="route('song_submissions.show', submission)"
+                            :href="route('song-submissions.show', submission)"
                         >
                             <EyeIconSolid class="size-5" />
                         </Link>

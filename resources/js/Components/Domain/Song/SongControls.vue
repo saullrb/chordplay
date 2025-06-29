@@ -8,49 +8,55 @@ import {
 import { ref, watch } from 'vue';
 
 const props = defineProps({
-    song_key: { type: String, required: true },
-    available_keys: Array,
-    show_capo_options: Boolean,
-    show_key_change_buttons: Boolean,
+    songKey: {
+        type: String,
+        required: true,
+    },
+    availableKeys: {
+        type: Array,
+        default: () => [],
+    },
+    showCapoOptions: Boolean,
+    showKeyChangeButtons: Boolean,
 });
 
-const song_key = ref(props.song_key);
-const capo_position = ref(0);
-const multi_column = ref(false);
-const key_offset = ref(0);
+const songKey = ref(props.songKey);
+const capoPosition = ref(0);
+const multiColumn = ref(false);
+const keyOffset = ref(0);
 
 defineExpose({
-    key_offset,
-    multi_column,
+    keyOffset: keyOffset,
+    multiColumn: multiColumn,
 });
 
-watch(capo_position, (new_position, old_position) => {
-    new_position - old_position > 0
-        ? transpose('down', new_position - old_position, false)
-        : transpose('up', Math.abs(new_position - old_position), false);
+watch(capoPosition, (newPosition, oldPosition) => {
+    newPosition - oldPosition > 0
+        ? transpose('down', newPosition - oldPosition, false)
+        : transpose('up', Math.abs(newPosition - oldPosition), false);
 });
 
 function selectCapoPostion(position) {
-    capo_position.value = position;
+    capoPosition.value = position;
 }
 
-function transpose(direction, half_steps, should_change_key = true) {
-    let key_index = props.available_keys.findIndex(
-        (key) => key === song_key.value,
+function transpose(direction, halfSteps, shouldChangeKey = true) {
+    let keyIndex = props.availableKeys.findIndex(
+        (key) => key === songKey.value,
     );
 
     if (direction === 'down') {
-        key_index =
-            (key_index - half_steps + props.available_keys.length) %
-            props.available_keys.length;
-        key_offset.value -= half_steps;
+        keyIndex =
+            (keyIndex - halfSteps + props.availableKeys.length) %
+            props.availableKeys.length;
+        keyOffset.value -= halfSteps;
     } else {
-        key_index = (key_index + half_steps) % props.available_keys.length;
-        key_offset.value += half_steps;
+        keyIndex = (keyIndex + halfSteps) % props.availableKeys.length;
+        keyOffset.value += halfSteps;
     }
 
-    if (should_change_key) {
-        song_key.value = props.available_keys[key_index];
+    if (shouldChangeKey) {
+        songKey.value = props.availableKeys[keyIndex];
     }
 }
 </script>
@@ -62,23 +68,23 @@ function transpose(direction, half_steps, should_change_key = true) {
                 <span>Key: </span>
                 <div class="flex items-center justify-between">
                     <button
-                        v-if="show_key_change_buttons"
+                        v-if="showKeyChangeButtons"
                         dusk="transpose-down-button"
-                        @click="() => transpose('down', 1)"
                         class="btn btn-xs btn-circle btn-soft"
                         aria-label="Transpose down"
+                        @click="() => transpose('down', 1)"
                     >
                         <MinusIcon class="size-4" />
                     </button>
                     <span dusk="song-key" class="text-accent w-10 text-center">
-                        {{ song_key }}
+                        {{ songKey }}
                     </span>
                     <button
-                        v-if="show_key_change_buttons"
+                        v-if="showKeyChangeButtons"
                         dusk="transpose-up-button"
-                        @click="() => transpose('up', 1)"
                         class="btn btn-xs btn-circle btn-soft"
                         aria-label="Transpose up"
+                        @click="() => transpose('up', 1)"
                     >
                         <PlusIconSolid class="size-4" />
                     </button>
@@ -86,7 +92,7 @@ function transpose(direction, half_steps, should_change_key = true) {
             </div>
 
             <div
-                v-if="show_capo_options"
+                v-if="showCapoOptions"
                 class="flex items-center justify-start gap-2"
             >
                 <label for="capo">Capo Fret:</label>
@@ -94,11 +100,13 @@ function transpose(direction, half_steps, should_change_key = true) {
                     class="dropdown-right"
                     :trigger-class="{
                         'btn-circle': true,
-                        'btn-accent': capo_position !== 0,
+                        'btn-accent': capoPosition !== 0,
                     }"
                     dusk="capo-dropdown"
                 >
-                    <template #trigger> {{ capo_position }} </template>
+                    <template #trigger>
+                        {{ capoPosition }}
+                    </template>
                     <li
                         v-for="(_, n) in 12"
                         :key="n"
@@ -107,7 +115,7 @@ function transpose(direction, half_steps, should_change_key = true) {
                         <button
                             class="btn btn-xs btn-accent btn-ghost"
                             :class="{
-                                'btn-active': n === capo_position,
+                                'btn-active': n === capoPosition,
                             }"
                             :dusk="'capo-' + n"
                         >
@@ -118,11 +126,11 @@ function transpose(direction, half_steps, should_change_key = true) {
             </div>
         </div>
         <button
-            @click="multi_column = !multi_column"
             class="btn btn-sm hidden lg:flex"
             :class="{
-                'btn-success': multi_column,
+                'btn-success': multiColumn,
             }"
+            @click="multiColumn = !multiColumn"
         >
             <MultiColumnIcon class="size-5" />
             Multi Column

@@ -23,8 +23,8 @@ function submit() {
         </template>
         <div class="mt-12 flex items-center justify-center">
             <form
-                @submit.prevent="submit"
                 class="flex w-full max-w-md flex-col"
+                @submit.prevent="submit"
             >
                 <fieldset
                     class="fieldset bg-base-200 rounded-box p-4 shadow-sm"
@@ -43,7 +43,7 @@ function submit() {
                     <InputError :message="form.errors.name" />
                 </fieldset>
                 <div class="mt-4 flex justify-end">
-                    <PrimaryButton type="submit">Submit</PrimaryButton>
+                    <PrimaryButton type="submit"> Submit </PrimaryButton>
                 </div>
             </form>
         </div>

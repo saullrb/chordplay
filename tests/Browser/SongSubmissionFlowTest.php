@@ -1,7 +1,8 @@
 <?php
 
+namespace Tests\Browser;
+
 use App\Models\Artist;
-use App\Models\Song;
 use App\Models\SongSubmission;
 use App\Models\User;
 use Laravel\Dusk\Browser;
@@ -64,16 +65,16 @@ class SongSubmissionFlowTest extends DuskTestCase
                 ->click('@submit-button')
                 ->pause(500);
 
-            $song_submission = SongSubmission::firstWhere('name', 'New Song');
+            $songSubmission = SongSubmission::firstWhere('name', 'New Song');
 
             // SongSubmission show page
             $browser
-                ->waitForTextIn('@song-key', $song_submission->key, 3)
-                ->assertRouteIs('song_submissions.show', $song_submission)
+                ->waitForTextIn('@song-key', $songSubmission->key, 3)
+                ->assertRouteIs('song-submissions.show', $songSubmission)
                 ->assertPresent('@preview-notice')
                 ->assertPresent('@flash-message')
-                ->assertSeeLink($song_submission->artist->name)
-                ->assertSee($song_submission->name)
+                ->assertSeeLink($songSubmission->artist->name)
+                ->assertSee($songSubmission->name)
                 ->assertNotPresent('@approve-song-button')
                 ->assertPresent('@edit-song-link')
                 ->assertPresent('@reject-song-button');
@@ -82,19 +83,19 @@ class SongSubmissionFlowTest extends DuskTestCase
             $browser
                 ->click('@edit-song-link')
                 ->pause(500)
-                ->assertInputValue('@song-name-input', $song_submission->name)
-                ->assertSelected('@song-key-select', $song_submission->key)
+                ->assertInputValue('@song-name-input', $songSubmission->name)
+                ->assertSelected('@song-key-select', $songSubmission->key)
                 ->assertInputValue('@song-content-textarea', $song_content)
                 ->type('@song-name-input', 'Updated Song Name')
                 ->click('@submit-button')
                 ->pause(500);
 
-            $song_submission->refresh();
+            $songSubmission->refresh();
 
             // Check if song submission was updated
             $browser
-                ->waitForTextIn('@song-key', $song_submission->key, 3)
-                ->assertSee($song_submission->name)
+                ->waitForTextIn('@song-key', $songSubmission->key, 3)
+                ->assertSee($songSubmission->name)
                 ->assertPresent('@flash-message');
 
             // Delete song submission
@@ -102,8 +103,8 @@ class SongSubmissionFlowTest extends DuskTestCase
                 ->click('@reject-song-button')
                 ->waitFor('@confirm-modal-button')
                 ->click('@confirm-modal-button')
-                ->pause(500)
-                ->assertRouteIs('song_submissions.index');
+                ->pause(1000)
+                ->assertRouteIs('song-submissions.index');
         });
     }
 }

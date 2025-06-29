@@ -40,10 +40,10 @@ class SongController extends Controller
 
         return Inertia::render('Songs/Show', [
             'song' => $song,
-            'is_favorited' => $is_favorited,
+            'isFavorited' => $is_favorited,
             'artist' => $artist,
-            'valid_chords' => Chord::getGroupedChords(),
-            'available_keys' => $available_keys,
+            'validChords' => Chord::getGroupedChords(),
+            'availableKeys' => $available_keys,
         ]);
     }
 
@@ -55,7 +55,7 @@ class SongController extends Controller
         $song->content = $lines->pluck('content')->implode("\n");
 
         return Inertia::render('Songs/Edit', [
-            'available_keys' => array_map(fn ($key) => $key->value, SongKeyEnum::cases()),
+            'availableKeys' => array_map(fn ($key) => $key->value, SongKeyEnum::cases()),
             'song' => $song,
             'artist' => $artist,
         ]);
@@ -66,12 +66,12 @@ class SongController extends Controller
         try {
             $this->user_service->favoriteSong(Auth::user(), $song);
 
-            return back()->with('is_favorited', true);
+            return back()->with('isFavorited', true);
         } catch (\Throwable $e) {
             Log::error('Failed to favorite song', [
-                'user_id' => Auth::id(),
-                'artist_id' => $artist->id,
-                'song_id' => $song->id,
+                'userId' => Auth::id(),
+                'artistId' => $artist->id,
+                'songId' => $song->id,
                 'error' => $e->getMessage(),
             ]);
 
@@ -86,12 +86,12 @@ class SongController extends Controller
         try {
             $this->user_service->unfavoriteSong(Auth::user(), $song);
 
-            return back()->with('is_favorited', false);
+            return back()->with('isFavorited', false);
         } catch (\Throwable $e) {
             Log::error('Failed to unfavorite song', [
-                'user_id' => Auth::id(),
-                'artist_id' => $artist->id,
-                'song_id' => $song->id,
+                'userId' => Auth::id(),
+                'artistId' => $artist->id,
+                'songId' => $song->id,
                 'error' => $e->getMessage(),
             ]);
 

@@ -28,7 +28,7 @@ class ArtistController extends Controller
         return Inertia::render('Artists/Index', [
             'artists' => Inertia::deepMerge($artists),
             'can' => [
-                'create_artist' => Auth::user()?->can('create', Artist::class) ?? false,
+                'createArtist' => Auth::user()?->can('create', Artist::class) ?? false,
             ],
         ]);
     }
@@ -49,7 +49,7 @@ class ArtistController extends Controller
         return Inertia::render('Artists/Show', [
             'artist' => $artist,
             'songs' => Inertia::deepMerge($songs),
-            'is_favorited' => $is_favorited,
+            'isFavorited' => $is_favorited,
         ]);
     }
 
@@ -90,8 +90,8 @@ class ArtistController extends Controller
             return back()->with('is_favorited', true);
         } catch (\Throwable $e) {
             Log::error('Failed to favorite artist', [
-                'user_id' => Auth::id(),
-                'artist_id' => $artist->id,
+                'userId' => Auth::id(),
+                'artistId' => $artist->id,
                 'error' => $e->getMessage(),
             ]);
 
@@ -109,8 +109,8 @@ class ArtistController extends Controller
             return back()->with('is_favorited', false);
         } catch (\Throwable $e) {
             Log::error('Failed to unfavorite artist', [
-                'user_id' => Auth::id(),
-                'artist_id' => $artist->id,
+                'userId' => Auth::id(),
+                'artistId' => $artist->id,
                 'error' => $e->getMessage(),
             ]);
 

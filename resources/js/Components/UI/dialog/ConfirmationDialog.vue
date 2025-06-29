@@ -3,20 +3,26 @@ import { ref } from 'vue';
 import Dialog from './Dialog.vue';
 
 defineProps({
-    title: String,
-    message: String,
+    title: {
+        type: String,
+        required: true,
+    },
+    message: {
+        type: String,
+        required: true,
+    },
 });
 
 const emit = defineEmits(['confirm', 'cancel']);
 
-const dialog_ref = ref();
+const dialogRef = ref();
 
 function show() {
-    dialog_ref.value?.show();
+    dialogRef.value?.show();
 }
 
 function close() {
-    dialog_ref.value?.close();
+    dialogRef.value?.close();
 }
 
 function onConfirm() {
@@ -37,15 +43,19 @@ defineExpose({ show, close });
 </script>
 
 <template>
-    <Dialog ref="dialog_ref" @close="onClose">
-        <h3 class="mb-2 text-lg font-bold">{{ title }}</h3>
-        <p class="mb-4">{{ message }}</p>
+    <Dialog ref="dialogRef" @close="onClose">
+        <h3 class="mb-2 text-lg font-bold">
+            {{ title }}
+        </h3>
+        <p class="mb-4">
+            {{ message }}
+        </p>
         <div class="flex justify-end gap-2">
             <button class="btn" @click="onCancel">Cancel</button>
             <button
                 class="btn btn-primary ms-3 data-[loading]:pointer-events-none data-[loading]:cursor-not-allowed data-[loading]:opacity-50"
-                @click="onConfirm"
                 dusk="confirm-modal-button"
+                @click="onConfirm"
             >
                 Confirm
             </button>

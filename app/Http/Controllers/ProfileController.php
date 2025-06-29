@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
-use App\Models\User;
 use App\Services\UserService;
 use App\Traits\FlashesMessages;
 use Illuminate\Http\RedirectResponse;
@@ -18,7 +17,7 @@ class ProfileController extends Controller
 {
     use FlashesMessages;
 
-    public function __construct(private UserService $user_service) {}
+    public function __construct(private UserService $userService) {}
 
     /**
      * Display the user's profile form.
@@ -36,7 +35,7 @@ class ProfileController extends Controller
         $validated = $request->validated();
 
         try {
-            $this->user_service->update($request->user(), $validated);
+            $this->userService->update($request->user(), $validated);
 
             $this->flashSuccess('Name updated successfully.');
 
@@ -60,7 +59,7 @@ class ProfileController extends Controller
         Auth::logout();
 
         try {
-            $this->user_service->destroy($user);
+            $this->userService->destroy($user);
 
             $request->session()->invalidate();
             $request->session()->regenerateToken();

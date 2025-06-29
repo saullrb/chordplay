@@ -54,7 +54,6 @@ function close() {
             >
                 <span>{{ message }}</span>
                 <button
-                    @click="close"
                     class="btn btn-xs btn-ghost absolute top-0 right-0 flex items-center justify-center"
                     :class="{
                         'btn-success': type === 'success',
@@ -63,6 +62,7 @@ function close() {
                         'btn-info': type === 'info',
                     }"
                     aria-label="Dismiss alert"
+                    @click="close"
                 >
                     ✕
                 </button>

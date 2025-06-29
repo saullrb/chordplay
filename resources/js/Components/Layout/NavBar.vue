@@ -21,19 +21,19 @@ const user = computed(() => page.props.auth.user);
                 </template>
 
                 <li>
-                    <NavLink route_name="home">Home</NavLink>
+                    <NavLink route-name="home"> Home </NavLink>
                 </li>
                 <li>
-                    <NavLink route_name="artists.index">Artists</NavLink>
+                    <NavLink route-name="artists.index"> Artists </NavLink>
                 </li>
             </Dropdown>
             <Logo class="mr-2" />
             <ul class="menu menu-horizontal hidden gap-2 px-1 md:flex">
                 <li>
-                    <NavLink route_name="home">Home</NavLink>
+                    <NavLink route-name="home"> Home </NavLink>
                 </li>
                 <li>
-                    <NavLink route_name="artists.index">Artists</NavLink>
+                    <NavLink route-name="artists.index"> Artists </NavLink>
                 </li>
             </ul>
         </div>
@@ -56,18 +56,22 @@ const user = computed(() => page.props.auth.user);
                         </template>
 
                         <li>
-                            <NavLink route_name="dashboard">Dashboard</NavLink>
+                            <NavLink route-name="dashboard">
+                                Dashboard
+                            </NavLink>
                         </li>
                         <li>
-                            <NavLink route_name="profile.edit">Profile</NavLink>
+                            <NavLink route-name="profile.edit">
+                                Profile
+                            </NavLink>
                         </li>
                         <li class="mt-4">
-                            <NavLink route_name="logout" method="post"
-                                >Log Out</NavLink
-                            >
+                            <NavLink route-name="logout" method="post">
+                                Log Out
+                            </NavLink>
                         </li>
                     </Dropdown>
-                    <NavLink v-else route_name="login">Login</NavLink>
+                    <NavLink v-else route-name="login"> Login </NavLink>
                 </li>
             </ul>
         </div>

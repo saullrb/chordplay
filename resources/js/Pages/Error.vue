@@ -3,7 +3,12 @@ import PageHeader from '@/Components/PageHeader.vue';
 import { useStatusMessage } from '@/Composables/useStatusMessage';
 import { Head, Link } from '@inertiajs/vue3';
 
-const props = defineProps({ status: Number });
+defineProps({
+    status: {
+        type: Number,
+        required: true,
+    },
+});
 </script>
 
 <template>

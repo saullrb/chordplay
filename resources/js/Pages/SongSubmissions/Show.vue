@@ -13,18 +13,30 @@ import { Link, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const props = defineProps({
-    song: Object,
-    artist: Object,
-    valid_chords: Object,
-    available_keys: Array,
+    song: {
+        type: Object,
+        required: true,
+    },
+    artist: {
+        type: Object,
+        required: true,
+    },
+    availableKeys: {
+        type: Array,
+        required: true,
+    },
+    validChords: {
+        type: Object,
+        required: true,
+    },
     can: {
         type: Object,
         default: () => ({
-            approve_submission: {
+            approveSubmission: {
                 type: Boolean,
                 default: false,
             },
-            update_submission: {
+            updateSubmission: {
                 type: Boolean,
                 default: false,
             },
@@ -32,11 +44,11 @@ const props = defineProps({
     },
 });
 
-const song_controls_ref = ref(null);
-const confirm_dialog = ref();
+const songControlsRef = ref(null);
+const confirmDialog = ref();
 
 function handleConfirmation() {
-    router.delete(route('song_submissions.destroy', { id: props.song.id }));
+    router.delete(route('song-submissions.destroy', { id: props.song.id }));
 }
 </script>
 
@@ -55,11 +67,11 @@ function handleConfirmation() {
             <div class="flex items-center gap-2">
                 <PageHeader :title="song.name" />
                 <Link
-                    v-if="can.approve_submission"
+                    v-if="can.approveSubmission"
                     class="btn btn-success btn-sm btn-circle btn-ghost"
                     dusk="approve-song-button"
                     :href="
-                        route('song_submissions.approve', {
+                        route('song-submissions.approve', {
                             id: props.song.id,
                         })
                     "
@@ -68,11 +80,11 @@ function handleConfirmation() {
                     <CheckIconSolid class="size-5" />
                 </Link>
                 <Link
+                    v-if="can.updateSubmission"
                     dusk="edit-song-link"
-                    v-if="can.update_submission"
                     class="btn btn-info btn-sm btn-circle btn-ghost"
                     :href="
-                        route('song_submissions.edit', {
+                        route('song-submissions.edit', {
                             id: song.id,
                         })
                     "
@@ -80,9 +92,9 @@ function handleConfirmation() {
                     <PencilSquareIconSolid class="size-5" />
                 </Link>
                 <button
-                    @click="confirm_dialog.show()"
                     class="btn btn-error btn-sm btn-circle btn-ghost"
                     dusk="reject-song-button"
+                    @click="confirmDialog.show()"
                 >
                     <TrashIconSolid class="size-5" />
                 </button>
@@ -93,28 +105,28 @@ function handleConfirmation() {
             >
                 {{ song.artist.name }}
             </Link>
-            <SongControls ref="song_controls_ref" :song_key="song.key" />
+            <SongControls ref="songControlsRef" :song-key="song.key" />
         </template>
         <div
             class="py-6 dark:text-white"
             :class="{
-                'columns-2 gap-8': song_controls_ref?.multi_column ?? false,
+                'columns-2 gap-8': songControlsRef?.multiColumn ?? false,
             }"
         >
             <SongContent
-                :original_key="song.key"
-                :key_offset="song_controls_ref?.key_offset ?? 0"
-                :available_keys="available_keys"
+                :original-key="song.key"
+                :key-offset="songControlsRef?.keyOffset ?? 0"
+                :available-keys="availableKeys"
                 :content="song.lines"
-                :valid_chords="valid_chords"
+                :valid-chords="validChords"
             />
         </div>
 
         <ConfirmationDialog
-            ref="confirm_dialog"
-            @confirm="handleConfirmation"
+            ref="confirmDialog"
             title="Delete?"
             message="Are you sure you want to reject this submission"
+            @confirm="handleConfirmation"
         />
     </AppLayout>
 </template>

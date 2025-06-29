@@ -19,19 +19,19 @@ class SongSubmissionControllerTest extends TestCase
 
     protected User $author;
 
-    protected User $regular_user;
+    protected User $regularUser;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->admin = User::factory()->admin()->create();
         $this->author = User::factory()->create();
-        $this->regular_user = User::factory()->create();
+        $this->regularUser = User::factory()->create();
     }
 
     public function test_guest_user_cannot_visit_submissions_page(): void
     {
-        $this->get(route('song_submissions.index'))->assertRedirect(route('login'));
+        $this->get(route('song-submissions.index'))->assertRedirect(route('login'));
     }
 
     public function test_admin_sees_all_submissions(): void
@@ -42,7 +42,7 @@ class SongSubmissionControllerTest extends TestCase
         ]);
 
         $this->actingAs($this->admin)
-            ->get(route('song_submissions.index'))
+            ->get(route('song-submissions.index'))
             ->assertOk()
             ->assertInertia(fn ($page) => $page
                 ->component('SongSubmissions/Index')
@@ -58,7 +58,7 @@ class SongSubmissionControllerTest extends TestCase
         SongSubmission::factory()->count(5)->create(['user_id' => $this->admin->id, 'artist_id' => $artist->id]);
 
         $this->actingAs($this->author)
-            ->get(route('song_submissions.index'))
+            ->get(route('song-submissions.index'))
             ->assertStatus(200)
             ->assertInertia(fn ($page) => $page->component('SongSubmissions/Index')
                 ->has('submissions.data', 5)
@@ -73,22 +73,22 @@ class SongSubmissionControllerTest extends TestCase
         ]);
 
         // Guest user
-        $this->get(route('song_submissions.show', $submission))
+        $this->get(route('song-submissions.show', $submission))
             ->assertRedirect(route('login'));
 
         // Regular user
-        $this->actingAs($this->regular_user)
-            ->get(route('song_submissions.show', $submission))
+        $this->actingAs($this->regularUser)
+            ->get(route('song-submissions.show', $submission))
             ->assertForbidden();
 
         // Author
         $this->actingAs($this->author)
-            ->get(route('song_submissions.show', $submission))
+            ->get(route('song-submissions.show', $submission))
             ->assertOk();
 
         // Admin
         $this->actingAs($this->admin)
-            ->get(route('song_submissions.show', $submission))
+            ->get(route('song-submissions.show', $submission))
             ->assertOk();
     }
 
@@ -106,7 +106,7 @@ class SongSubmissionControllerTest extends TestCase
         ]);
 
         $this->actingAs($this->author)
-            ->get(route('song_submissions.show', $submission))
+            ->get(route('song-submissions.show', $submission))
             ->assertOk()
             ->assertInertia(fn ($page) => $page
                 ->component('SongSubmissions/Show')
@@ -125,7 +125,7 @@ class SongSubmissionControllerTest extends TestCase
         $this->get(route('artists.songs.create', $artist))->assertRedirect(route('login'));
 
         // Authenticated user
-        $this->actingAs($this->regular_user)->get(route('artists.songs.create', $artist))->assertOk();
+        $this->actingAs($this->regularUser)->get(route('artists.songs.create', $artist))->assertOk();
     }
 
     public function test_create_displays_song_submission_create_page(): void
@@ -138,8 +138,8 @@ class SongSubmissionControllerTest extends TestCase
             ->assertInertia(fn ($page) => $page
                 ->component('SongSubmissions/Create')
                 ->where('artist.id', $artist->id)
-                ->has('available_keys')
-                ->has('valid_chords')
+                ->has('availableKeys')
+                ->has('validChords')
             );
     }
 
@@ -147,11 +147,11 @@ class SongSubmissionControllerTest extends TestCase
     {
         $artist = Artist::factory()->create();
 
-        $this->post(route('song_submissions.store', $artist))
+        $this->post(route('song-submissions.store', $artist))
             ->assertRedirect(route('login'));
 
         $response = $this->actingAs($this->author)
-            ->post(route('song_submissions.store', $artist), [
+            ->post(route('song-submissions.store', $artist), [
                 'name' => 'Test Song',
                 'key' => 'C',
                 'content' => '[Am] Test',
@@ -160,7 +160,7 @@ class SongSubmissionControllerTest extends TestCase
         $songSubmission = SongSubmission::where('name', 'Test Song')->first();
 
         $response
-            ->assertRedirect(route('song_submissions.show', $songSubmission))
+            ->assertRedirect(route('song-submissions.show', $songSubmission))
             ->assertSessionHas('flash.message')
             ->assertSessionHas('flash.type', 'success');
     }
@@ -176,7 +176,7 @@ class SongSubmissionControllerTest extends TestCase
         ];
 
         $this->actingAs($this->author)
-            ->post(route('song_submissions.store', $artist), $invalid_data)
+            ->post(route('song-submissions.store', $artist), $invalid_data)
             ->assertRedirectBack()
             ->assertSessionHasErrors(['name', 'key', 'content']);
     }
@@ -192,7 +192,7 @@ class SongSubmissionControllerTest extends TestCase
         });
 
         $this->actingAs($this->author)
-            ->post(route('song_submissions.store', $artist), [
+            ->post(route('song-submissions.store', $artist), [
                 'name' => 'Test Song',
                 'key' => 'C',
                 'content' => '[Am] Test',
@@ -207,7 +207,7 @@ class SongSubmissionControllerTest extends TestCase
         $artist = Artist::factory()->create();
         $submission = SongSubmission::factory()
             ->for($artist)
-            ->for($this->regular_user, 'user')
+            ->for($this->regularUser, 'user')
             ->create();
 
         $submission->lines()->createMany([
@@ -215,14 +215,14 @@ class SongSubmissionControllerTest extends TestCase
             ['line_number' => 2, 'content' => 'Line 2', 'content_type' => SongLineContentType::LYRICS],
         ]);
 
-        $this->actingAs($this->regular_user)
-            ->get(route('song_submissions.edit', $submission))
+        $this->actingAs($this->regularUser)
+            ->get(route('song-submissions.edit', $submission))
             ->assertOk()
             ->assertInertia(fn ($page) => $page
                 ->component('SongSubmissions/Edit')
                 ->where('song.id', $submission->id)
                 ->where('song.content', "[Am] [C]\nLine 2")
-                ->has('available_keys')
+                ->has('availableKeys')
             );
     }
 
@@ -234,22 +234,22 @@ class SongSubmissionControllerTest extends TestCase
         ]);
 
         // Guest user
-        $this->get(route('song_submissions.edit', $submission))
+        $this->get(route('song-submissions.edit', $submission))
             ->assertRedirect(route('login'));
 
         // Regular user
-        $this->actingAs($this->regular_user)
-            ->get(route('song_submissions.edit', $submission))
+        $this->actingAs($this->regularUser)
+            ->get(route('song-submissions.edit', $submission))
             ->assertForbidden();
 
         // Author
         $this->actingAs($this->author)
-            ->get(route('song_submissions.edit', $submission))
+            ->get(route('song-submissions.edit', $submission))
             ->assertOk();
 
         // Admin
         $this->actingAs($this->admin)
-            ->get(route('song_submissions.edit', $submission))
+            ->get(route('song-submissions.edit', $submission))
             ->assertOk();
     }
 
@@ -268,18 +268,18 @@ class SongSubmissionControllerTest extends TestCase
         ];
 
         // Guest user
-        $this->patch(route('song_submissions.update', $submission), $requestData)
+        $this->patch(route('song-submissions.update', $submission), $requestData)
             ->assertRedirect(route('login'));
 
         // Regular user
-        $this->actingAs($this->regular_user)
-            ->patch(route('song_submissions.update', $submission), $requestData)
+        $this->actingAs($this->regularUser)
+            ->patch(route('song-submissions.update', $submission), $requestData)
             ->assertForbidden();
 
         // Author
         $this->actingAs($this->author)
-            ->patch(route('song_submissions.update', $submission), $requestData)
-            ->assertRedirect(route('song_submissions.show', $submission));
+            ->patch(route('song-submissions.update', $submission), $requestData)
+            ->assertRedirect(route('song-submissions.show', $submission));
 
         $submission->refresh();
 
@@ -310,7 +310,7 @@ class SongSubmissionControllerTest extends TestCase
         });
 
         $this->actingAs($this->author)
-            ->patch(route('song_submissions.update', $submission), $requestData)
+            ->patch(route('song-submissions.update', $submission), $requestData)
             ->assertRedirectBack()
             ->assertSessionHas('flash.message')
             ->assertSessionHas('flash.type', 'error');
@@ -324,22 +324,22 @@ class SongSubmissionControllerTest extends TestCase
         ]);
 
         // Guest user
-        $this->get(route('song_submissions.destroy', $submission))
+        $this->get(route('song-submissions.destroy', $submission))
             ->assertRedirect(route('login'));
 
         // Regular user
-        $this->actingAs($this->regular_user)
-            ->get(route('song_submissions.destroy', $submission))
+        $this->actingAs($this->regularUser)
+            ->get(route('song-submissions.destroy', $submission))
             ->assertForbidden();
 
         // Author
         $this->actingAs($this->author)
-            ->get(route('song_submissions.destroy', $submission))
+            ->get(route('song-submissions.destroy', $submission))
             ->assertOk();
 
         // Admin
         $this->actingAs($this->admin)
-            ->get(route('song_submissions.destroy', $submission))
+            ->get(route('song-submissions.destroy', $submission))
             ->assertOk();
     }
 
@@ -352,8 +352,8 @@ class SongSubmissionControllerTest extends TestCase
             ->create();
 
         $this->actingAs($this->author)
-            ->delete(route('song_submissions.destroy', $submission))
-            ->assertRedirect(route('song_submissions.index'));
+            ->delete(route('song-submissions.destroy', $submission))
+            ->assertRedirect(route('song-submissions.index'));
 
         $this->assertDatabaseMissing('song_submissions', ['id' => $submission->id]);
     }
@@ -364,21 +364,21 @@ class SongSubmissionControllerTest extends TestCase
         $submission = SongSubmission::factory()->for($artist)->for($this->author, 'user')->create();
 
         // Guest user
-        $this->post(route('song_submissions.approve', $submission))
+        $this->post(route('song-submissions.approve', $submission))
             ->assertRedirect(route('login'));
 
         // Regular user
-        $this->actingAs($this->regular_user)
-            ->post(route('song_submissions.approve', $submission))
+        $this->actingAs($this->regularUser)
+            ->post(route('song-submissions.approve', $submission))
             ->assertForbidden();
 
         // Author
         $this->actingAs($this->author)
-            ->post(route('song_submissions.approve', $submission))
+            ->post(route('song-submissions.approve', $submission))
             ->assertForbidden();
 
         // Admin
-        $response = $this->actingAs($this->admin)->post(route('song_submissions.approve', $submission));
+        $response = $this->actingAs($this->admin)->post(route('song-submissions.approve', $submission));
         $song = Song::where('name', $submission->name)->first();
         $response->assertRedirect(route('artists.songs.show', [$artist, $song]));
     }
@@ -393,7 +393,7 @@ class SongSubmissionControllerTest extends TestCase
             ['line_number' => 2, 'content' => 'Some lyrics', 'content_type' => SongLineContentType::LYRICS],
         ]);
 
-        $response = $this->actingAs($this->admin)->post(route('song_submissions.approve', $submission));
+        $response = $this->actingAs($this->admin)->post(route('song-submissions.approve', $submission));
 
         $song = Song::where('name', $submission->name)->first();
 
@@ -432,7 +432,7 @@ class SongSubmissionControllerTest extends TestCase
                 ->andThrow(new \Exception('Database error'));
         });
 
-        $this->actingAs($this->admin)->post(route('song_submissions.approve', $submission))
+        $this->actingAs($this->admin)->post(route('song-submissions.approve', $submission))
             ->assertRedirectBack()
             ->assertSessionHas('flash.message')
             ->assertSessionHas('flash.type', 'error');
@@ -449,7 +449,7 @@ class SongSubmissionControllerTest extends TestCase
                 ->andThrow(new \Exception('Database error'));
         });
 
-        $this->actingAs($this->admin)->delete(route('song_submissions.destroy', $submission))
+        $this->actingAs($this->admin)->delete(route('song-submissions.destroy', $submission))
             ->assertRedirectBack()
             ->assertSessionHas('flash.message')
             ->assertSessionHas('flash.type', 'error');

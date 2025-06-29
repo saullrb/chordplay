@@ -1,14 +1,14 @@
 <script setup>
 const props = defineProps({
     content: { type: Array, required: true },
-    available_keys: { type: Array, required: true },
-    valid_chords: { type: Object, required: true },
-    original_key: { type: String, required: true },
-    key_offset: { type: Number, required: true },
+    availableKeys: { type: Array, required: true },
+    validChords: { type: Object, required: true },
+    originalKey: { type: String, required: true },
+    keyOffset: { type: Number, required: true },
 });
 
 function getChordType(chord) {
-    for (const [type, chords] of Object.entries(props.valid_chords)) {
+    for (const [type, chords] of Object.entries(props.validChords)) {
         if (chords.includes(chord)) {
             return type;
         }
@@ -18,64 +18,64 @@ function getChordType(chord) {
 }
 
 function findNoteIndex(note) {
-    return props.available_keys.findIndex((n) => n === note);
+    return props.availableKeys.findIndex((n) => n === note);
 }
 
 function transposeChord(chord) {
     if (!chord) return chord;
 
-    const chord_type = getChordType(chord);
+    const chordType = getChordType(chord);
 
-    if (chord_type === null) {
+    if (chordType === null) {
         return ' ';
     }
 
-    const original_index = findNoteIndex(props.original_key);
-    const target_index = original_index + props.key_offset;
-    const semitones = target_index - original_index;
+    const originalIndex = findNoteIndex(props.originalKey);
+    const targetIndex = originalIndex + props.keyOffset;
+    const semitones = targetIndex - originalIndex;
 
-    const chord_array = props.valid_chords[chord_type];
-    const current_index = chord_array.findIndex((c) => c === chord);
+    const chordArray = props.validChords[chordType];
+    const currentIndex = chordArray.findIndex((c) => c === chord);
 
-    let new_index = (current_index + semitones) % chord_array.length;
-    if (new_index < 0) {
-        new_index += chord_array.length;
+    let newIndex = (currentIndex + semitones) % chordArray.length;
+    if (newIndex < 0) {
+        newIndex += chordArray.length;
     }
 
-    return chord_array[new_index];
+    return chordArray[newIndex];
 }
 
 function extractBrackets(line) {
-    let new_line = '';
-    let bracket_content = null;
+    let newLine = '';
+    let bracketContent = null;
 
     line.split('').forEach((char) => {
         if (char === '[') {
-            bracket_content = '';
-        } else if (char === ']' && bracket_content) {
-            const chord = bracket_content.trim();
-            const transposed_chord = transposeChord(chord);
+            bracketContent = '';
+        } else if (char === ']' && bracketContent) {
+            const chord = bracketContent.trim();
+            const transposedChord = transposeChord(chord);
 
-            if (transposed_chord) {
-                new_line += transposed_chord;
+            if (transposedChord) {
+                newLine += transposedChord;
             }
 
-            bracket_content = null;
-        } else if (bracket_content !== null) {
-            bracket_content += char;
+            bracketContent = null;
+        } else if (bracketContent !== null) {
+            bracketContent += char;
         } else {
-            new_line += ' ';
+            newLine += ' ';
         }
     });
 
-    return new_line;
+    return newLine;
 }
 </script>
 
 <template>
     <div
-        v-for="(line, line_index) in content"
-        :key="line_index"
+        v-for="(line, lineIndex) in content"
+        :key="lineIndex"
         class="w-full font-mono text-sm leading-5 tracking-tighter"
         :class="{
             'break-after-avoid': line.content_type === 'chords',
@@ -83,8 +83,8 @@ function extractBrackets(line) {
         }"
     >
         <p
-            dusk="chord-line"
             v-if="line.content_type === 'chords'"
+            dusk="chord-line"
             class="text-accent font-bold whitespace-pre"
         >
             {{ extractBrackets(line.content) }}

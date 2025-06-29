@@ -8,48 +8,57 @@ import { Link, router, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const props = defineProps({
-    songs: Object,
-    artists: Object,
-    query: String,
+    songs: {
+        type: Object,
+        required: true,
+    },
+    artists: {
+        type: Object,
+        required: true,
+    },
+    query: {
+        type: String,
+        required: true,
+    },
 });
 
 const loading = ref(false);
 const songs = ref(props.songs.data);
-const songs_next_page = ref(props.songs.next_page_url);
+const songsNextPage = ref(props.songs.nextPageUrl);
 const artists = ref(props.artists.data);
-const artists_next_page = ref(props.artists.next_page_url);
+const artistsNextPage = ref(props.artists.nextPageUrl);
 
 const loadMoreSongs = async () => {
-    if (!songs_next_page.value) return;
+    if (!songsNextPage.value) return;
 
     loading.value = true;
 
     router.reload({
         only: ['songs'],
-        data: { page: props.songs.current_page + 1 },
+        data: { page: props.songs.currentPage + 1 },
         preserveUrl: true,
         showProgress: true,
         onSuccess: (page) => {
             songs.value.push(...page.props.songs.data);
-            songs_next_page.value = page.props.songs.next_page_url;
+            songsNextPage.value = page.props.songs.nextPageUrl;
         },
         onFinish: () => (loading.value = false),
     });
 };
 
 const loadMoreArtists = async () => {
-    if (!artists_next_page.value) return;
+    if (!artistsNextPage.value) return;
 
     loading.value = true;
 
     router.reload({
         only: ['artists'],
-        data: { page: props.artists.current_page + 1 },
+        data: { page: props.artists.currentPage + 1 },
         preserveUrl: true,
         showProgress: true,
         onSuccess: (page) => {
             artists.value.push(...page.props.artists.data);
-            artists_next_page.value = page.props.artists.next_page_url;
+            artistsNextPage.value = page.props.artists.nextPageUrl;
         },
         onFinish: () => (loading.value = false),
     });
@@ -64,9 +73,9 @@ function handleSubmit() {
         preserveState: true,
         onSuccess: (page) => {
             songs.value = page.props.songs.data;
-            songs_next_page.value = page.props.songs.next_page_url;
+            songsNextPage.value = page.props.songs.nextPageUrl;
             artists.value = page.props.artists.data;
-            artists_next_page.value = page.props.artists.next_page_url;
+            artistsNextPage.value = page.props.artists.nextPageUrl;
         },
     });
 }
@@ -80,12 +89,12 @@ function handleSubmit() {
             <PageHeader :title="'Search: ' + query" />
         </template>
 
-        <form @submit.prevent="handleSubmit" class="w-full">
+        <form class="w-full" @submit.prevent="handleSubmit">
             <label class="input input-primary validator w-full">
                 <SearchIcon class="h-[1em] opacity-50" />
                 <input
-                    dusk="search-input"
                     v-model="form.query"
+                    dusk="search-input"
                     type="search"
                     placeholder="Search"
                     maxlength="100"
@@ -110,9 +119,9 @@ function handleSubmit() {
                     class="divide-y-1 divide-gray-400 dark:divide-gray-700"
                 >
                     <li
-                        class="flex justify-between gap-x-6 rounded px-3 py-2 transition-colors duration-150 *:text-gray-900 hover:bg-gray-300 dark:*:text-white dark:hover:bg-gray-700"
                         v-for="song in songs"
                         :key="song.id"
+                        class="flex justify-between gap-x-6 rounded px-3 py-2 transition-colors duration-150 *:text-gray-900 hover:bg-gray-300 dark:*:text-white dark:hover:bg-gray-700"
                     >
                         <Link
                             class="flex grow items-center gap-2"
@@ -124,7 +133,7 @@ function handleSubmit() {
                             "
                         >
                             <StarIconSolid
-                                v-if="song.is_favorited"
+                                v-if="song.isFavorited"
                                 class="size-6 text-yellow-500"
                             />
 
@@ -139,8 +148,8 @@ function handleSubmit() {
                     No results found.
                 </p>
                 <LoadingButton
-                    v-if="songs_next_page"
-                    :onLoadMore="loadMoreSongs"
+                    v-if="songsNextPage"
+                    :on-load-more="loadMoreSongs"
                     :loading="loading"
                 />
             </div>
@@ -155,16 +164,16 @@ function handleSubmit() {
                     class="divide-y-1 divide-gray-400 dark:divide-gray-700"
                 >
                     <li
-                        class="flex justify-between gap-x-6 rounded px-3 py-2 transition-colors duration-150 *:text-gray-900 hover:bg-gray-300 dark:*:text-white dark:hover:bg-gray-700"
                         v-for="artist in artists"
                         :key="artist.id"
+                        class="flex justify-between gap-x-6 rounded px-3 py-2 transition-colors duration-150 *:text-gray-900 hover:bg-gray-300 dark:*:text-white dark:hover:bg-gray-700"
                     >
                         <Link
                             class="flex grow items-center gap-2"
                             :href="route('artists.show', artist)"
                         >
                             <StarIconSolid
-                                v-if="artist.is_favorited"
+                                v-if="artist.isFavorited"
                                 class="size-6 text-yellow-500"
                             />
                             {{ artist.name }}
@@ -176,11 +185,12 @@ function handleSubmit() {
                 </p>
                 <div class="my-6 flex justify-center">
                     <LoadingButton
-                        v-if="artists_next_page"
-                        :onLoadMore="loadMoreArtists"
+                        v-if="artistsNextPage"
+                        :on-load-more="loadMoreArtists"
                         :loading="loading"
-                        >Load More</LoadingButton
                     >
+                        Load More
+                    </LoadingButton>
                 </div>
             </div>
         </div>

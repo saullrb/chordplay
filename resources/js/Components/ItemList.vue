@@ -2,9 +2,18 @@
 import { Link } from '@inertiajs/vue3';
 
 defineProps({
-    items: Array,
-    show_route_name: String,
-    parent: Object,
+    items: {
+        type: Array,
+        default: () => [],
+    },
+    showRouteName: {
+        type: String,
+        required: true,
+    },
+    parent: {
+        type: Object,
+        default: null,
+    },
 });
 </script>
 
@@ -16,7 +25,7 @@ defineProps({
             class="list-row hover:bg-primary/8"
         >
             <Link
-                :href="route(show_route_name, parent ? [parent, item] : item)"
+                :href="route(showRouteName, parent ? [parent, item] : item)"
                 class="list-col-grow flex justify-between"
             >
                 {{ item.name }}

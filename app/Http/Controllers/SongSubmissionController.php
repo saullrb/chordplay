@@ -21,7 +21,7 @@ class SongSubmissionController extends Controller
     use AuthorizesRequests;
     use FlashesMessages;
 
-    public function __construct(private SongSubmissionService $song_submission_service) {}
+    public function __construct(private SongSubmissionService $songSubmissionService) {}
 
     public function index(): Response
     {
@@ -37,32 +37,32 @@ class SongSubmissionController extends Controller
         return Inertia::render('SongSubmissions/Index', ['submissions' => $query->paginate(10)]);
     }
 
-    public function show(SongSubmission $song_submission): Response
+    public function show(SongSubmission $songSubmission): Response
     {
-        $this->authorize('view', $song_submission);
+        $this->authorize('view', $songSubmission);
 
-        $song_submission->load([
+        $songSubmission->load([
             'lines' => fn ($query) => $query->orderBy('line_number'),
         ]);
 
         $available_keys = [];
 
         // Set the available keys based on the song key
-        if (str_ends_with((string) $song_submission->key, 'm')) {
+        if (str_ends_with((string) $songSubmission->key, 'm')) {
             $available_keys = array_values(array_filter(SongKeyEnum::cases(), fn ($key): bool => str_ends_with((string) $key->value, 'm')));
         } else {
             $available_keys = array_values(array_filter(SongKeyEnum::cases(), fn ($key): bool => ! str_ends_with((string) $key->value, 'm')));
         }
 
         return Inertia::render('SongSubmissions/Show', [
-            'song' => $song_submission,
-            'artist' => $song_submission->artist,
-            'valid_chords' => Chord::getGroupedChords(),
-            'available_keys' => $available_keys,
+            'song' => $songSubmission,
+            'artist' => $songSubmission->artist,
+            'validChords' => Chord::getGroupedChords(),
+            'availableKeys' => $available_keys,
             'can' => [
-                'approve_submission' => Auth::user()?->can('approve', SongSubmission::class) ?? false,
-                'update_submission' => Auth::user()?->can('update', $song_submission) ?? false,
-                'delete_submission' => Auth::user()?->can('delete', $song_submission) ?? false,
+                'approveSubmission' => Auth::user()?->can('approve', SongSubmission::class) ?? false,
+                'updateSubmission' => Auth::user()?->can('update', $songSubmission) ?? false,
+                'deleteSubmission' => Auth::user()?->can('delete', $songSubmission) ?? false,
             ],
         ]
         );
@@ -71,9 +71,9 @@ class SongSubmissionController extends Controller
     public function create(Artist $artist): Response
     {
         return Inertia::render('SongSubmissions/Create', [
-            'available_keys' => array_map(fn ($key) => $key->value, SongKeyEnum::cases()),
+            'availableKeys' => array_map(fn ($key) => $key->value, SongKeyEnum::cases()),
             'artist' => $artist,
-            'valid_chords' => Chord::getGroupedChords(),
+            'validChords' => Chord::getGroupedChords(),
         ]);
     }
 
@@ -82,7 +82,7 @@ class SongSubmissionController extends Controller
         $validated = $request->validated();
 
         try {
-            $submission = $this->song_submission_service->store(
+            $submission = $this->songSubmissionService->store(
                 $validated,
                 $artist->id,
                 $request->song['id'] ?? null,
@@ -90,7 +90,7 @@ class SongSubmissionController extends Controller
 
             $this->flashSuccess('Your song was submited for review.');
 
-            return redirect()->route('song_submissions.show', $submission);
+            return redirect()->route('song-submissions.show', $submission);
         } catch (\Throwable $e) {
             Log::error('Failed to store song submission', ['name' => $validated['name'], 'error' => $e->getMessage()]);
 
@@ -100,36 +100,36 @@ class SongSubmissionController extends Controller
         }
     }
 
-    public function edit(SongSubmission $song_submission): Response
+    public function edit(SongSubmission $songSubmission): Response
     {
-        $this->authorize('update', $song_submission);
+        $this->authorize('update', $songSubmission);
 
-        $lines = $song_submission->lines()->get(['content']);
-        $song_submission->unsetRelation('lines');
+        $lines = $songSubmission->lines()->get(['content']);
+        $songSubmission->unsetRelation('lines');
         /** @phpstan-ignore-next-line */
-        $song_submission->content = $lines->pluck('content')->implode("\n");
+        $songSubmission->content = $lines->pluck('content')->implode("\n");
 
         return Inertia::render('SongSubmissions/Edit', [
-            'available_keys' => array_map(fn ($key) => $key->value, SongKeyEnum::cases()),
-            'song' => $song_submission,
-            'artist' => $song_submission->artist,
+            'availableKeys' => array_map(fn ($key) => $key->value, SongKeyEnum::cases()),
+            'song' => $songSubmission,
+            'artist' => $songSubmission->artist,
         ]);
     }
 
-    public function update(SongSubmission $song_submission, StoreSongSubmissionRequest $request): RedirectResponse
+    public function update(SongSubmission $songSubmission, StoreSongSubmissionRequest $request): RedirectResponse
     {
-        $this->authorize('update', $song_submission);
+        $this->authorize('update', $songSubmission);
         $validated = $request->validated();
 
         try {
 
-            $song_submission = $this->song_submission_service->update($song_submission, $validated);
+            $songSubmission = $this->songSubmissionService->update($songSubmission, $validated);
 
             $this->flashSuccess('Submission updated successfully.');
 
-            return redirect()->route('song_submissions.show', $song_submission);
+            return redirect()->route('song-submissions.show', $songSubmission);
         } catch (\Throwable $e) {
-            Log::error('Failed to update song submission', ['name' => $song_submission->name, 'error' => $e->getMessage()]);
+            Log::error('Failed to update song submission', ['name' => $songSubmission->name, 'error' => $e->getMessage()]);
 
             $this->flashError('Failed to update submission.');
 
@@ -137,19 +137,19 @@ class SongSubmissionController extends Controller
         }
     }
 
-    public function destroy(SongSubmission $song_submission): RedirectResponse
+    public function destroy(SongSubmission $songSubmission): RedirectResponse
     {
-        $this->authorize('delete', $song_submission);
+        $this->authorize('delete', $songSubmission);
 
         try {
-            $this->song_submission_service->destroy($song_submission);
+            $this->songSubmissionService->destroy($songSubmission);
 
             $this->flashSuccess('Deleted the submission.');
 
-            return redirect()->route('song_submissions.index');
+            return redirect()->route('song-submissions.index');
         } catch (\Throwable $e) {
             Log::error('Failed to reject song submission', [
-                'name' => $song_submission->name,
+                'name' => $songSubmission->name,
                 'error' => $e->getMessage(),
             ]);
 
@@ -159,19 +159,19 @@ class SongSubmissionController extends Controller
         }
     }
 
-    public function approve(SongSubmission $song_submission): RedirectResponse
+    public function approve(SongSubmission $songSubmission): RedirectResponse
     {
         $this->authorize('approve', SongSubmission::class);
 
         try {
-            $song = $this->song_submission_service->approve($song_submission);
+            $song = $this->songSubmissionService->approve($songSubmission);
 
             $this->flashSuccess('Submission approved successfully.');
 
             return redirect()->route('artists.songs.show', [$song->artist->slug, $song->slug]);
         } catch (\Throwable $e) {
             Log::error('Failed to approve song submission', [
-                'name' => $song_submission->name,
+                'name' => $songSubmission->name,
                 'error' => $e->getMessage(),
             ]);
 
