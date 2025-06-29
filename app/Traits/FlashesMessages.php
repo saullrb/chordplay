@@ -3,34 +3,38 @@
 namespace App\Traits;
 
 use App\Enums\FlashType;
+use Illuminate\Support\Facades\Session;
 
 trait FlashesMessages
 {
-    protected function flashMessage(string $message, FlashType $type = FlashType::INFO): array
+    private const DEFAULT_FLASH_DURATION = 3000;
+
+    private function flashMessage(string $message, FlashType $type = FlashType::INFO, ?int $duration = null): void
     {
-        return [
-            'flash_message' => $message,
-            'flash_type' => $type->value,
-        ];
+        Session::flash('flash', [
+            'message' => $message,
+            'type' => $type->value,
+            'duration' => $duration ?? self::DEFAULT_FLASH_DURATION,
+        ]);
     }
 
-    protected function flashSuccess(string $message): array
+    protected function flashSuccess(string $message, ?int $duration = null): void
     {
-        return $this->flashMessage($message, FlashType::SUCCESS);
+        $this->flashMessage($message, FlashType::SUCCESS, $duration);
     }
 
-    protected function flashError(string $message): array
+    protected function flashError(string $message, ?int $duration = null): void
     {
-        return $this->flashMessage($message, FlashType::ERROR);
+        $this->flashMessage($message, FlashType::ERROR, $duration);
     }
 
-    protected function flashWarning(string $message): array
+    protected function flashWarning(string $message, ?int $duration = null): void
     {
-        return $this->flashMessage($message, FlashType::WARNING);
+        $this->flashMessage($message, FlashType::WARNING, $duration);
     }
 
-    protected function flashInfo(string $message): array
+    protected function flashInfo(string $message, ?int $duration = null): void
     {
-        return $this->flashMessage($message, FlashType::INFO);
+        $this->flashMessage($message, FlashType::INFO, $duration);
     }
 }

@@ -49,8 +49,12 @@ class SongPageFlowTest extends DuskTestCase
                 ->waitForTextIn('@song-key', $this->song->key, 3)
                 ->assertSeeLink($this->artist->name)
                 ->assertSee($this->song->name)
-                ->assertSelectHasOptions('@capo-position-select', ['0', '1', '2', '3', '4', '5', '6',  '7', '8', '9', '10', '11'])
-                ->assertSelected('@capo-position-select', '0')
+                ->assertPresent('@capo-0')
+                ->assertPresent('@capo-1')
+                ->assertPresent('@capo-2')
+                ->assertPresent('@capo-3')
+                ->assertPresent('@capo-10')
+                ->assertPresent('@capo-11')
                 ->assertNotPresent('@edit-song-link');
 
             // Transpose song
@@ -74,9 +78,8 @@ class SongPageFlowTest extends DuskTestCase
 
             // Add capo
             $browser
-                ->select('@capo-position-select', '3')
-                ->pause(500)
-                ->assertSelected('@capo-position-select', '3');
+                ->click('@capo-dropdown')
+                ->click('@capo-3');
 
             $transposed_chords = $browser->text('[dusk="chord-line"]:first-of-type');
             $expected_chords = 'D#        Bm          C#           G#7';
@@ -87,7 +90,8 @@ class SongPageFlowTest extends DuskTestCase
             $browser
                 ->click('@favorite-button')
                 ->waitForLocation(route('login'))
-                ->assertSee('Continue with Google');
+
+                ->assertSee('Login with Google');
 
             $browser->visit(route('test.oauth.callback', $this->user->id).'?intended='.urlencode($song_url));
 
@@ -95,25 +99,17 @@ class SongPageFlowTest extends DuskTestCase
             $browser->waitForLocation($song_url)
                 ->assertAuthenticated()
                 ->waitFor('@favorite-button')
-                ->assertPresent('@edit-song-link');
-
-            $favorite_button_classes = $browser->attribute('@favorite-button i', 'class');
-            $this->assertStringNotContainsString('fa-solid', $favorite_button_classes);
-
-            $browser
+                ->assertPresent('@edit-song-link')
+                ->assertNotChecked('@favorite-button input')
                 ->click('@favorite-button')
-                ->pause(1000);
-
-            $favorite_button_classes = $browser->attribute('@favorite-button i', 'class');
-            $this->assertStringContainsString('fa-solid', $favorite_button_classes);
+                ->pause(1000)
+                ->assertChecked('@favorite-button input');
 
             // Unfavorite song
             $browser
                 ->click('@favorite-button')
-                ->pause(1000);
-
-            $favorite_button_classes = $browser->attribute('@favorite-button i', 'class');
-            $this->assertStringNotContainsString('fa-solid', $favorite_button_classes);
+                ->pause(1000)
+                ->assertNotChecked('@favorite-button input');
         });
     }
 }

@@ -1,0 +1,9 @@
+export { default as CheckIconSolid } from './CheckIcon.vue';
+export { default as ChevronDownIconSolid } from './ChevronDownIcon.vue';
+export { default as ChevronLeftIconSolid } from './ChevronLeftIcon.vue';
+export { default as ChevronRightIconSolid } from './ChevronRightIcon.vue';
+export { default as EyeIconSolid } from './EyeIcon.vue';
+export { default as PencilSquareIconSolid } from './PencilSquareIcon.vue';
+export { default as PlusIconSolid } from './PlusIcon.vue';
+export { default as StarIconSolid } from './StarIcon.vue';
+export { default as TrashIconSolid } from './TrashIcon.vue';

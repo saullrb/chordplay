@@ -75,7 +75,9 @@ class SongController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return back()->withInput()->with($this->flashError('Unable to favorite song. Please try again later.'));
+            $this->flashError('Unable to favorite song. Please try again later.');
+
+            return back()->withInput();
         }
     }
 
@@ -93,7 +95,9 @@ class SongController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return back()->withInput()->with($this->flashError('Unable to unfavorite song. Please try again later.'));
+            $this->flashError('Unable to unfavorite song. Please try again later.');
+
+            return back()->withInput();
         }
     }
 }

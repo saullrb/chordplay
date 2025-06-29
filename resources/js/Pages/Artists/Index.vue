@@ -1,11 +1,11 @@
 <script setup>
-import IconLink from '@/Components/IconLink.vue';
 import ItemList from '@/Components/ItemList.vue';
-import LoadMoreButton from '@/Components/LoadMoreButton.vue';
+import LoadingButton from '@/Components/LoadingButton.vue';
 import PageHeader from '@/Components/PageHeader.vue';
+import { PlusIconSolid } from '@/Components/UI/Icons';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { Link, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import { router } from '@inertiajs/vue3';
 
 const props = defineProps({
     artists: Object,
@@ -32,9 +32,10 @@ const loadMoreArtists = async () => {
         data: { page: props.artists.current_page + 1 },
         preserveUrl: true,
         showProgress: true,
+        onFinish: () => {
+            loading.value = false;
+        },
     });
-
-    loading.value = false;
 };
 </script>
 
@@ -43,25 +44,34 @@ const loadMoreArtists = async () => {
 
     <AppLayout>
         <template #header>
-            <div class="flex justify-between">
+            <div class="flex w-full justify-between">
                 <PageHeader title="All Artists" />
 
-                <IconLink
+                <Link
                     v-if="can.create_artist"
                     :href="route('artists.create')"
-                    ><i class="fa-solid fa-plus"></i>
-                </IconLink>
+                    class="btn btn-primary btn-sm"
+                >
+                    <PlusIconSolid class="size-5" />
+                    Add Artist
+                </Link>
             </div>
         </template>
 
-        <ItemList showRouteName="artists.show" :items="artists.data" />
+        <ItemList
+            show_route_name="artists.show"
+            :items="artists.data"
+            class="mt-6"
+        />
 
         <div class="my-6 flex justify-center">
-            <LoadMoreButton
+            <LoadingButton
                 v-if="artists.next_page_url"
                 :onLoadMore="loadMoreArtists"
                 :loading="loading"
-            />
+            >
+                Load More
+            </LoadingButton>
         </div>
     </AppLayout>
 </template>

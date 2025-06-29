@@ -80,6 +80,7 @@ class Song extends Model
                 'songs.name',
                 'songs.slug',
                 'songs.artist_id',
+                'songs.views',
                 \DB::raw('CASE WHEN favorite_songs.song_id IS NOT NULL THEN 1 ELSE 0 END as is_favorited')
             );
     }

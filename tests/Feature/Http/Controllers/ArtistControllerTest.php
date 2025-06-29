@@ -3,7 +3,6 @@
 namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Artist;
-use App\Models\Song;
 use App\Models\User;
 use App\Services\ArtistService;
 use App\Services\UserService;
@@ -67,14 +66,13 @@ class ArtistControllerTest extends TestCase
 
     public function test_artist_show_page_includes_songs(): void
     {
-        $artist = Artist::factory()->create();
-        Song::factory()->count(3)->create(['artist_id' => $artist->id]);
+        $artist = Artist::factory()->withSongs(3)->create();
 
         $response = $this->get(route('artists.show', $artist));
 
         $response->assertInertia(fn ($page) => $page
             ->component('Artists/Show')
-            ->has('artist.songs', 3)
+            ->has('songs.data', 3)
         );
     }
 
@@ -118,8 +116,8 @@ class ArtistControllerTest extends TestCase
             'name' => 'New Artist',
         ])
             ->assertRedirect()
-            ->assertSessionHas('flash_message')
-            ->assertSessionHas('flash_type', 'success');
+            ->assertSessionHas('flash.message')
+            ->assertSessionHas('flash.type', 'success');
 
         $this->assertDatabaseHas('artists', ['name' => 'New Artist']);
     }
@@ -136,8 +134,8 @@ class ArtistControllerTest extends TestCase
 
         $this->actingAs($this->admin)->post(route('artists.store'), $data)
             ->assertRedirect()
-            ->assertSessionHas('flash_message')
-            ->assertSessionHas('flash_type', 'error');
+            ->assertSessionHas('flash.message')
+            ->assertSessionHas('flash.type', 'error');
     }
 
     public function test_guests_cannot_favorite_artists(): void
@@ -177,8 +175,8 @@ class ArtistControllerTest extends TestCase
 
         $this->post(route('artists.favorite', $artist))
             ->assertRedirect()
-            ->assertSessionHas('flash_message')
-            ->assertSessionHas('flash_type', 'error');
+            ->assertSessionHas('flash.message')
+            ->assertSessionHas('flash.type', 'error');
     }
 
     public function test_unfavorite_handles_exceptions(): void
@@ -195,8 +193,8 @@ class ArtistControllerTest extends TestCase
 
         $this->delete(route('artists.favorite', $artist))
             ->assertRedirect()
-            ->assertSessionHas('flash_message')
-            ->assertSessionHas('flash_type', 'error');
+            ->assertSessionHas('flash.message')
+            ->assertSessionHas('flash.type', 'error');
     }
 
     public function test_users_can_unfavorite_artists(): void

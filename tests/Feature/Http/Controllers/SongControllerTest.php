@@ -115,8 +115,8 @@ class SongControllerTest extends TestCase
 
         $this->post(route('songs.favorite', [$song->artist, $song]))
             ->assertRedirect()
-            ->assertSessionHas('flash_message')
-            ->assertSessionHas('flash_type', 'error');
+            ->assertSessionHas('flash.message')
+            ->assertSessionHas('flash.type', 'error');
     }
 
     public function test_unfavorite_handles_exceptions(): void
@@ -133,7 +133,7 @@ class SongControllerTest extends TestCase
 
         $this->delete(route('songs.favorite', [$song->artist, $song]))
             ->assertRedirect()
-            ->assertSessionHas('flash_message')
-            ->assertSessionHas('flash_type', 'error');
+            ->assertSessionHas('flash.message')
+            ->assertSessionHas('flash.type', 'error');
     }
 }

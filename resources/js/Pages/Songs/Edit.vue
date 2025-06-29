@@ -1,15 +1,14 @@
 <script setup>
+import SongForm from '@/Components/Domain/Song/SongForm.vue';
+import SongPreview from '@/Components/Domain/Song/SongPreview.vue';
 import PageHeader from '@/Components/PageHeader.vue';
-import TextLink from '@/Components/TextLink.vue';
-import SongForm from './partials/SongForm.vue';
-import { useForm } from '@inertiajs/vue3';
-import SongPreview from './partials/SongPreview.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { Link, useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
     artist: Object,
-    available_keys: Array,
     song: Object,
+    available_keys: Array,
 });
 
 const form = useForm({
@@ -35,9 +34,9 @@ function submitForm() {
         <template #header>
             <PageHeader title="Edit song" />
 
-            <TextLink :href="route('artists.show', artist)">
+            <Link :href="route('artists.show', artist)">
                 {{ artist.name }}
-            </TextLink>
+            </Link>
         </template>
 
         <div class="mt-6 grid grid-cols-2 justify-between gap-12 py-6">

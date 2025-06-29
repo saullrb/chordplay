@@ -1,21 +1,32 @@
 <script setup>
-defineProps({ is_favorited: Boolean });
+import { StarIcon, StarIconSolid } from '@/Components/UI/Icons';
+
+defineProps({
+    favorited: {
+        type: Boolean,
+        required: true,
+    },
+    loading: Boolean,
+});
 
 const emit = defineEmits(['favorite']);
 </script>
 
 <template>
-    <button
+    <label
+        class="swap swap-rotate"
+        :class="{
+            'cursor-wait': loading,
+        }"
         dusk="favorite-button"
-        class="cursor-pointer disabled:cursor-wait"
-        @click="() => emit('favorite')"
     >
-        <i
-            class="fa-regular fa-star text-xl text-black hover:text-yellow-600 dark:text-white"
-            :class="{
-                'fa-solid text-yellow-600 hover:brightness-90 dark:text-yellow-600':
-                    is_favorited,
-            }"
-        ></i>
-    </button>
+        <input
+            type="checkbox"
+            :checked="favorited"
+            @change="emit('favorite')"
+            aria-label="Favorite"
+        />
+        <StarIcon class="swap-off size-6" />
+        <StarIconSolid class="swap-on size-6 text-yellow-500" />
+    </label>
 </template>

@@ -110,10 +110,10 @@ class SongSubmissionControllerTest extends TestCase
             ->assertOk()
             ->assertInertia(fn ($page) => $page
                 ->component('SongSubmissions/Show')
-                ->where('song_submission.id', $submission->id)
-                ->where('song_submission.artist.id', $artist->id)
-                ->where('song_submission.lines.0.content', '[Am] [C]')
-                ->where('song_submission.lines.1.content', 'Line 2')
+                ->where('song.id', $submission->id)
+                ->where('song.artist.id', $artist->id)
+                ->where('song.lines.0.content', '[Am] [C]')
+                ->where('song.lines.1.content', 'Line 2')
             );
     }
 
@@ -161,8 +161,8 @@ class SongSubmissionControllerTest extends TestCase
 
         $response
             ->assertRedirect(route('song_submissions.show', $songSubmission))
-            ->assertSessionHas('flash_message')
-            ->assertSessionHas('flash_type', 'success');
+            ->assertSessionHas('flash.message')
+            ->assertSessionHas('flash.type', 'success');
     }
 
     public function test_store_handle_validation_errors(): void
@@ -198,8 +198,8 @@ class SongSubmissionControllerTest extends TestCase
                 'content' => '[Am] Test',
             ])
             ->assertRedirectBack()
-            ->assertSessionHas('flash_message')
-            ->assertSessionHas('flash_type', 'error');
+            ->assertSessionHas('flash.message')
+            ->assertSessionHas('flash.type', 'error');
     }
 
     public function test_edit_displays_song_submission_edit_page(): void
@@ -220,8 +220,8 @@ class SongSubmissionControllerTest extends TestCase
             ->assertOk()
             ->assertInertia(fn ($page) => $page
                 ->component('SongSubmissions/Edit')
-                ->where('song_submission.id', $submission->id)
-                ->where('song_submission.content', "[Am] [C]\nLine 2")
+                ->where('song.id', $submission->id)
+                ->where('song.content', "[Am] [C]\nLine 2")
                 ->has('available_keys')
             );
     }
@@ -312,8 +312,8 @@ class SongSubmissionControllerTest extends TestCase
         $this->actingAs($this->author)
             ->patch(route('song_submissions.update', $submission), $requestData)
             ->assertRedirectBack()
-            ->assertSessionHas('flash_message')
-            ->assertSessionHas('flash_type', 'error');
+            ->assertSessionHas('flash.message')
+            ->assertSessionHas('flash.type', 'error');
     }
 
     public function test_only_admin_or_author_can_delete_song_submission(): void
@@ -434,8 +434,8 @@ class SongSubmissionControllerTest extends TestCase
 
         $this->actingAs($this->admin)->post(route('song_submissions.approve', $submission))
             ->assertRedirectBack()
-            ->assertSessionHas('flash_message')
-            ->assertSessionHas('flash_type', 'error');
+            ->assertSessionHas('flash.message')
+            ->assertSessionHas('flash.type', 'error');
     }
 
     public function test_destroy_handles_errors(): void
@@ -451,7 +451,7 @@ class SongSubmissionControllerTest extends TestCase
 
         $this->actingAs($this->admin)->delete(route('song_submissions.destroy', $submission))
             ->assertRedirectBack()
-            ->assertSessionHas('flash_message')
-            ->assertSessionHas('flash_type', 'error');
+            ->assertSessionHas('flash.message')
+            ->assertSessionHas('flash.type', 'error');
     }
 }

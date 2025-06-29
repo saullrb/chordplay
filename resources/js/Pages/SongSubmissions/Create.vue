@@ -1,10 +1,9 @@
 <script setup>
+import SongForm from '@/Components/Domain/Song/SongForm.vue';
+import SongPreview from '@/Components/Domain/Song/SongPreview.vue';
 import PageHeader from '@/Components/PageHeader.vue';
-import TextLink from '@/Components/TextLink.vue';
-import { useForm } from '@inertiajs/vue3';
-import SongForm from './partials/SongForm.vue';
-import SongPreview from './partials/SongPreview.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { Link, useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
     available_keys: Array,
@@ -29,21 +28,25 @@ function submitForm() {
         <template #header>
             <PageHeader title="Add song" />
 
-            <TextLink :href="route('artists.show', artist)">
+            <Link
+                :href="route('artists.show', props.artist)"
+                class="text-base-content/50 dark:text-base-content/30 hover:text-base-content/70 dark:hover:text-base-content/50"
+            >
                 {{ artist.name }}
-            </TextLink>
+            </Link>
         </template>
 
-        <div class="mt-6 grid grid-cols-2 justify-between gap-12 py-6">
+        <div
+            class="mt-6 grid grid-cols-1 justify-between gap-12 py-6 lg:grid-cols-2"
+        >
             <SongForm
                 :available_keys="available_keys"
                 :initial_data="form"
-                submit_label="Add"
                 @submit="submitForm"
             />
 
-            <section class="dark:text-white">
-                <h3 class="text-md mb-6">Preview</h3>
+            <section v-if="form.content" class="dark:text-white">
+                <h2 class="mb-6">Song Preview</h2>
                 <SongPreview :content="form.content" />
             </section>
         </div>

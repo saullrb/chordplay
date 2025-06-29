@@ -38,15 +38,15 @@ class ProfileController extends Controller
         try {
             $this->user_service->update($request->user(), $validated);
 
-            return Redirect::route('profile.edit')
-                ->with([
-                    'flash_message' => 'Name updated successfully.',
-                    'flash_type' => 'success',
-                ]);
+            $this->flashSuccess('Name updated successfully.');
+
+            return Redirect::route('profile.edit');
         } catch (\Throwable $e) {
             Log::error('Failed to update user', ['name' => $validated['name'], 'error' => $e->getMessage()]);
 
-            return Redirect::route('profile.edit')->with($this->flashError('Failed to update user.'));
+            $this->flashError('Failed to update user.');
+
+            return Redirect::route('profile.edit');
         }
     }
 
@@ -65,14 +65,15 @@ class ProfileController extends Controller
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            return Redirect::to('/')->with([
-                'flash_message' => 'Account deleted successfully.',
-                'flash_type' => 'success',
-            ]);
+            $this->flashSuccess('Account deleted successfully.');
+
+            return Redirect::to('/');
         } catch (\Throwable $e) {
             Log::error('Failed to delete user', ['name' => $user->name, 'error' => $e->getMessage()]);
 
-            return Redirect::route('profile.edit')->with($this->flashError('Failed to delete user.'));
+            $this->flashError('Failed to delete user.');
+
+            return Redirect::route('profile.edit');
         }
     }
 }

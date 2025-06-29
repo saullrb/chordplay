@@ -1,7 +1,7 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3';
 import PageHeader from '@/Components/PageHeader.vue';
-import { useStatusMessage } from '@/composables/status';
+import { useStatusMessage } from '@/Composables/useStatusMessage';
+import { Head, Link } from '@inertiajs/vue3';
 
 const props = defineProps({ status: Number });
 </script>

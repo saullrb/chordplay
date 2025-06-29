@@ -2,15 +2,18 @@
 import { Link } from '@inertiajs/vue3';
 
 defineProps({
-    active: Boolean,
+    route_name: String,
+    params: Object,
 });
 </script>
 
 <template>
     <Link
-        class="block rounded-lg px-4 py-2 text-sm font-semibold text-gray-500 hover:bg-gray-500 hover:text-white dark:text-gray-400 dark:hover:bg-gray-800"
+        :href="route(route_name, params)"
+        class="text-base-content/70 font-bold"
         :class="{
-            'text-gray-900 dark:text-white': active,
+            'bg-base-300 text-base-content/100 font-bold':
+                route().current(route_name),
         }"
     >
         <slot />

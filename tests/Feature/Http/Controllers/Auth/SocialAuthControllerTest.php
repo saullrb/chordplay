@@ -31,8 +31,8 @@ class SocialAuthControllerTest extends TestCase
         $response = $this->get('/auth/google/callback');
 
         $response->assertRedirect(route('login'));
-        $response->assertSessionHas('flash_message');
-        $response->assertSessionHas('flash_type', 'error');
+        $response->assertSessionHas('flash.message');
+        $response->assertSessionHas('flash.type', 'error');
     }
 
     public function test_google_callback_creates_new_user_and_logs_in(): void
@@ -85,7 +85,7 @@ class SocialAuthControllerTest extends TestCase
         $response = $this->get('/auth/google/callback');
 
         $response->assertRedirect(route('login'));
-        $response->assertSessionHas('flash_message');
-        $response->assertSessionHas('flash_type', 'error');
+        $response->assertSessionHas('flash.message');
+        $response->assertSessionHas('flash.type', 'error');
     }
 }
