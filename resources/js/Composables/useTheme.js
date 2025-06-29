@@ -1,30 +1,30 @@
 import { onMounted, ref } from 'vue';
 
-const available_themes = [
-    { display_name: 'Light', name: 'light' },
-    { display_name: 'Dark', name: 'dark' },
-    { display_name: 'Night', name: 'night' },
+const availableThemes = [
+    { displayName: 'Light', name: 'light' },
+    { displayName: 'Dark', name: 'dark' },
+    { displayName: 'Night', name: 'night' },
 ];
-const current_theme = ref('light');
-const user_system_theme = ref(getSystemTheme());
+const currentTheme = ref('light');
+const systemTheme = ref(getSystemTheme());
 
 export function useTheme() {
     onMounted(() => {
-        current_theme.value = getLocalStoreTheme() ?? user_system_theme.value;
+        currentTheme.value = getLocalStoreTheme() ?? systemTheme.value;
     });
 
     function persistTheme(value) {
-        current_theme.value = value;
+        currentTheme.value = value;
         localStorage.setItem('theme', value);
         applyTheme(value);
     }
 
-    return { persistTheme, available_themes, current_theme };
+    return { persistTheme, availableThemes, currentTheme };
 }
 
 export function initializeTheme() {
-    const saved_theme = getLocalStoreTheme();
-    applyTheme(saved_theme);
+    const savedTheme = getLocalStoreTheme();
+    applyTheme(savedTheme);
 
     window
         .matchMedia('(prefers-color-scheme: dark)')
@@ -32,12 +32,12 @@ export function initializeTheme() {
 }
 
 function handleSystemThemeChange() {
-    user_system_theme.value = getSystemTheme();
-    const saved_theme = getLocalStoreTheme();
+    systemTheme.value = getSystemTheme();
+    const savedTheme = getLocalStoreTheme();
 
-    if (!saved_theme) {
-        current_theme.value = user_system_theme.value;
-        applyTheme(saved_theme);
+    if (!savedTheme) {
+        currentTheme.value = systemTheme.value;
+        applyTheme(savedTheme);
     }
 }
 
