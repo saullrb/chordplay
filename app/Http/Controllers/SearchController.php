@@ -21,13 +21,13 @@ class SearchController extends Controller
             ->with('artist:id,name,slug')
             ->withFavoriteStatus($user_id)
             ->orderByFavoritesAndViews()
-            ->paginate(20);
+            ->paginate(5);
 
         $artists = Artist::query()
             ->searchByName($query)
             ->withFavoriteStatus($user_id)
             ->orderByFavoritesAndViews()
-            ->paginate(20);
+            ->paginate(5);
 
         return Inertia::render('Search', [
             'songs' => $songs,

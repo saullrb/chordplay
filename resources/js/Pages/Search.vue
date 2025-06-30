@@ -3,6 +3,7 @@ import { SearchIcon, StarIconSolid } from '@/Components/UI/Icons';
 import InputError from '@/Components/UI/InputError.vue';
 import LoadingButton from '@/Components/UI/LoadingButton.vue';
 import PageHeader from '@/Components/UI/PageHeader.vue';
+import Panel from '@/Components/UI/Panel.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, router, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
@@ -22,45 +23,46 @@ const props = defineProps({
     },
 });
 
-const loading = ref(false);
+const loadingSongs = ref(false);
+const loadingArtists = ref(false);
 const songs = ref(props.songs.data);
-const songsNextPage = ref(props.songs.nextPageUrl);
+const songsNextPage = ref(props.songs.next_page_url);
 const artists = ref(props.artists.data);
-const artistsNextPage = ref(props.artists.nextPageUrl);
+const artistsNextPage = ref(props.artists.next_page_url);
 
 const loadMoreSongs = async () => {
     if (!songsNextPage.value) return;
 
-    loading.value = true;
+    loadingSongs.value = true;
 
     router.reload({
         only: ['songs'],
-        data: { page: props.songs.currentPage + 1 },
+        data: { page: props.songs.current_page + 1 },
         preserveUrl: true,
         showProgress: true,
         onSuccess: (page) => {
             songs.value.push(...page.props.songs.data);
-            songsNextPage.value = page.props.songs.nextPageUrl;
+            songsNextPage.value = page.props.songs.next_page_url;
         },
-        onFinish: () => (loading.value = false),
+        onFinish: () => (loadingSongs.value = false),
     });
 };
 
 const loadMoreArtists = async () => {
     if (!artistsNextPage.value) return;
 
-    loading.value = true;
+    loadingArtists.value = true;
 
     router.reload({
         only: ['artists'],
-        data: { page: props.artists.currentPage + 1 },
+        data: { page: props.artists.current_page + 1 },
         preserveUrl: true,
         showProgress: true,
         onSuccess: (page) => {
             artists.value.push(...page.props.artists.data);
-            artistsNextPage.value = page.props.artists.nextPageUrl;
+            artistsNextPage.value = page.props.artists.next_page_url;
         },
-        onFinish: () => (loading.value = false),
+        onFinish: () => (loadingArtists.value = false),
     });
 };
 
@@ -73,9 +75,9 @@ function handleSubmit() {
         preserveState: true,
         onSuccess: (page) => {
             songs.value = page.props.songs.data;
-            songsNextPage.value = page.props.songs.nextPageUrl;
+            songsNextPage.value = page.props.songs.next_page_url;
             artists.value = page.props.artists.data;
-            artistsNextPage.value = page.props.artists.nextPageUrl;
+            artistsNextPage.value = page.props.artists.next_page_url;
         },
     });
 }
@@ -105,94 +107,83 @@ function handleSubmit() {
             <InputError class="mt-1" :message="form.errors.query" />
         </form>
 
-        <div
-            class="mt-6 grid grid-cols-1 gap-6 border border-gray-700 p-4 sm:grid-cols-2 sm:rounded-lg"
-        >
-            <div class="">
-                <h2
-                    class="mb-4 px-3 py-2 text-xl font-semibold dark:text-white"
+        <Panel>
+            <h2 class="px-3 py-2 text-xl font-semibold">Songs</h2>
+            <ul v-if="songs.length" role="list" class="list">
+                <li
+                    v-for="song in songs"
+                    :key="song.id"
+                    class="list-row hover:bg-primary/8"
                 >
-                    Songs
-                </h2>
-                <ul
-                    v-if="songs.length"
-                    class="divide-y-1 divide-gray-400 dark:divide-gray-700"
-                >
-                    <li
-                        v-for="song in songs"
-                        :key="song.id"
-                        class="flex justify-between gap-x-6 rounded px-3 py-2 transition-colors duration-150 *:text-gray-900 hover:bg-gray-300 dark:*:text-white dark:hover:bg-gray-700"
+                    <Link
+                        :href="
+                            route('artists.songs.show', [
+                                song.artist,
+                                song.slug,
+                            ])
+                        "
+                        class="list-col-grow flex items-center gap-2"
                     >
-                        <Link
-                            class="flex grow items-center gap-2"
-                            :href="
-                                route('artists.songs.show', [
-                                    song.artist,
-                                    song.slug,
-                                ])
-                            "
-                        >
-                            <StarIconSolid
-                                v-if="song.isFavorited"
-                                class="size-6 text-yellow-500"
-                            />
+                        <StarIconSolid
+                            class="invisible size-5"
+                            :class="{
+                                'visible text-yellow-500': song.is_favorited,
+                            }"
+                        />
 
-                            {{ song.name }} <span>-</span>
-                            <span class="text-sm text-gray-500">{{
-                                song.artist.name
-                            }}</span>
-                        </Link>
-                    </li>
-                </ul>
-                <p v-else class="px-3 py-2 dark:text-white">
-                    No results found.
-                </p>
+                        <b>{{ song.name }}</b> <span>-</span>
+                        <span class="text-base-content/70 text-sm">{{
+                            song.artist.name
+                        }}</span>
+                    </Link>
+                </li>
+            </ul>
+            <p v-else class="px-3 py-2">No results found.</p>
+            <div class="flex justify-center">
                 <LoadingButton
                     v-if="songsNextPage"
                     :on-load-more="loadMoreSongs"
-                    :loading="loading"
-                />
+                    :loading="loadingSongs"
+                >
+                    Load More
+                </LoadingButton>
             </div>
-            <div>
-                <h2
-                    class="mb-4 px-3 py-2 text-xl font-semibold dark:text-white"
+        </Panel>
+
+        <Panel>
+            <h2 class="px-3 py-2 text-xl font-semibold">Artists</h2>
+            <ul v-if="artists.length" role="list" class="list">
+                <li
+                    v-for="artist in artists"
+                    :key="artist.id"
+                    class="list-row hover:bg-primary/8"
                 >
-                    Artists
-                </h2>
-                <ul
-                    v-if="artists.length"
-                    class="divide-y-1 divide-gray-400 dark:divide-gray-700"
-                >
-                    <li
-                        v-for="artist in artists"
-                        :key="artist.id"
-                        class="flex justify-between gap-x-6 rounded px-3 py-2 transition-colors duration-150 *:text-gray-900 hover:bg-gray-300 dark:*:text-white dark:hover:bg-gray-700"
+                    <Link
+                        :href="route('artists.show', artist)"
+                        class="list-col-grow flex items-center gap-2"
                     >
-                        <Link
-                            class="flex grow items-center gap-2"
-                            :href="route('artists.show', artist)"
-                        >
-                            <StarIconSolid
-                                v-if="artist.isFavorited"
-                                class="size-6 text-yellow-500"
-                            />
+                        <StarIconSolid
+                            class="invisible size-5"
+                            :class="{
+                                'visible text-yellow-500': artist.is_favorited,
+                            }"
+                        />
+                        <b>
                             {{ artist.name }}
-                        </Link>
-                    </li>
-                </ul>
-                <p v-else class="px-3 py-2 dark:text-white">
-                    No results found.
-                </p>
-                <div class="my-6 flex justify-center">
-                    <LoadingButton
-                        v-if="artistsNextPage"
-                        :on-load-more="loadMoreArtists"
-                        :loading="loading"
-                    >
-                        Load More
-                    </LoadingButton>
-                </div>
+                        </b>
+                    </Link>
+                </li>
+            </ul>
+            <p v-else class="px-3 py-2">No results found.</p>
+            <div class="flex justify-center">
+                <LoadingButton
+                    v-if="artistsNextPage"
+                    :on-load-more="loadMoreArtists"
+                    :loading="loadingArtists"
+                >
+                    Load More
+                </LoadingButton>
             </div>
-        </div>
+        </Panel>
     </AppLayout>
 </template>
