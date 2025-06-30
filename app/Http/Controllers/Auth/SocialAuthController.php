@@ -45,7 +45,7 @@ class SocialAuthController extends Controller
                     'name' => $socialUser->getName() ?? 'Unnamed',
                     'role_id' => Role::USER,
                 ]);
-                $flash_message = 'Welcome to '.config('APP_NAME').'!';
+                $flash_message = 'Welcome to '.config('app.name').'!';
             }
 
             Auth::login($user);
@@ -56,7 +56,7 @@ class SocialAuthController extends Controller
         } catch (Exception $e) {
             Log::error("{$provider} auth failed", ['error' => $e->getMessage()]);
 
-            $this->flashError('Failed to authenticate with'.$provider);
+            $this->flashError('Failed to authenticate with '.$provider);
 
             return redirect()->route('login');
         }
