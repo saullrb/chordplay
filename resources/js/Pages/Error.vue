@@ -1,5 +1,5 @@
 <script setup>
-import PageHeader from '@/Components/PageHeader.vue';
+import PageHeader from '@/Components/UI/PageHeader.vue';
 import { useStatusMessage } from '@/Composables/useStatusMessage';
 import { Head, Link } from '@inertiajs/vue3';
 

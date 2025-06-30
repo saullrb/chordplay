@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import PageHeader from '@/Components/PageHeader.vue';
-import SimplePagination from '@/Components/SimplePagination.vue';
+import PageHeader from '@/Components/UI/PageHeader.vue';
+import SimplePagination from '@/Components/UI/SimplePagination.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import SongSubmissionTable from './partials/SongSubmissionTable.vue';
 

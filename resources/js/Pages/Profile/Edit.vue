@@ -1,5 +1,5 @@
 <script setup>
-import PageHeader from '@/Components/PageHeader.vue';
+import PageHeader from '@/Components/UI/PageHeader.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import DeleteUserForm from './Partials/DeleteUserForm.vue';

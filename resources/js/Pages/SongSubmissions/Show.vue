@@ -1,13 +1,13 @@
 <script setup>
 import SongContent from '@/Components/Domain/Song/SongContent.vue';
 import SongControls from '@/Components/Domain/Song/SongControls.vue';
-import PageHeader from '@/Components/PageHeader.vue';
 import ConfirmationDialog from '@/Components/UI/dialog/ConfirmationDialog.vue';
 import {
     CheckIconSolid,
     PencilSquareIconSolid,
     TrashIconSolid,
 } from '@/Components/UI/Icons';
+import PageHeader from '@/Components/UI/PageHeader.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, router } from '@inertiajs/vue3';
 import { ref } from 'vue';

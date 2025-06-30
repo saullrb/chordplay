@@ -1,6 +1,6 @@
 <script setup>
-import PageHeader from '@/Components/PageHeader.vue';
 import InputError from '@/Components/UI/InputError.vue';
+import PageHeader from '@/Components/UI/PageHeader.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { useForm } from '@inertiajs/vue3';
 

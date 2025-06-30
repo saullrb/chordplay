@@ -1,7 +1,7 @@
 <script setup>
-import LoadingButton from '@/Components/LoadingButton.vue';
-import PageHeader from '@/Components/PageHeader.vue';
 import { ArrowRightIcon } from '@/Components/UI/Icons';
+import LoadingButton from '@/Components/UI/LoadingButton.vue';
+import PageHeader from '@/Components/UI/PageHeader.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import SongSubmissionTable from '@/Pages/SongSubmissions/partials/SongSubmissionTable.vue';
 import { Head, Link, router } from '@inertiajs/vue3';

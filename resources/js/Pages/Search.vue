@@ -1,8 +1,8 @@
 <script setup>
-import LoadingButton from '@/Components/LoadingButton.vue';
-import PageHeader from '@/Components/PageHeader.vue';
 import { SearchIcon, StarIconSolid } from '@/Components/UI/Icons';
 import InputError from '@/Components/UI/InputError.vue';
+import LoadingButton from '@/Components/UI/LoadingButton.vue';
+import PageHeader from '@/Components/UI/PageHeader.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, router, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';

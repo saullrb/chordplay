@@ -1,7 +1,7 @@
 <script setup>
 import SongForm from '@/Components/Domain/Song/SongForm.vue';
 import SongPreview from '@/Components/Domain/Song/SongPreview.vue';
-import PageHeader from '@/Components/PageHeader.vue';
+import PageHeader from '@/Components/UI/PageHeader.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, useForm } from '@inertiajs/vue3';
 

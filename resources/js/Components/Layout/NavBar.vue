@@ -1,9 +1,9 @@
 <script setup>
-import Logo from '@/Components/Logo.vue';
-import NavLink from '@/Components/NavLink.vue';
-import ThemeSelector from '@/Components/ThemeSelector.vue';
 import Dropdown from '@/Components/UI/Dropdown.vue';
 import { MenuIcon } from '@/Components/UI/Icons';
+import Logo from '@/Components/UI/Logo.vue';
+import NavLink from '@/Components/UI/NavLink.vue';
+import ThemeSelector from '@/Components/UI/ThemeSelector.vue';
 import { usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 

@@ -1,9 +1,9 @@
 <script setup>
 import SongContent from '@/Components/Domain/Song/SongContent.vue';
 import SongControls from '@/Components/Domain/Song/SongControls.vue';
-import FavoriteButton from '@/Components/FavoriteButton.vue';
-import PageHeader from '@/Components/PageHeader.vue';
+import FavoriteButton from '@/Components/UI/FavoriteButton.vue';
 import { PencilSquareIconSolid } from '@/Components/UI/Icons';
+import PageHeader from '@/Components/UI/PageHeader.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';

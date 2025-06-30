@@ -1,8 +1,8 @@
 <script setup>
-import ItemList from '@/Components/ItemList.vue';
-import LoadingButton from '@/Components/LoadingButton.vue';
-import PageHeader from '@/Components/PageHeader.vue';
 import { PlusIconSolid } from '@/Components/UI/Icons';
+import ItemList from '@/Components/UI/ItemList.vue';
+import LoadingButton from '@/Components/UI/LoadingButton.vue';
+import PageHeader from '@/Components/UI/PageHeader.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
