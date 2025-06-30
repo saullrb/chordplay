@@ -14,7 +14,6 @@ watch(
     (newMessage) => {
         show.value = !!newMessage;
         if (newMessage) {
-            // flash messages are shown for 3 seconds
             setTimeout(() => {
                 show.value = false;
             }, duration.value);
@@ -41,7 +40,7 @@ function close() {
             v-if="show"
             dusk="flash-message"
             role="alert"
-            class="toast toast-top toast-center"
+            class="toast toast-top toast-center z-50"
         >
             <div
                 class="alert relative"

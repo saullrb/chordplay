@@ -13,7 +13,7 @@ const user = computed(() => page.props.auth.user);
 </script>
 
 <template>
-    <nav class="navbar bg-base-100 sticky top-0 z-50 shadow-sm">
+    <nav class="navbar bg-base-100 sticky top-0 z-40 shadow-sm">
         <div class="navbar-start">
             <Dropdown class="md:hidden">
                 <template #trigger>
