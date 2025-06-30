@@ -19,7 +19,7 @@ class SongController extends Controller
 {
     use FlashesMessages;
 
-    public function __construct(private UserService $user_service) {}
+    public function __construct(private UserService $userService) {}
 
     public function show(Artist $artist, Song $song): Response
     {
@@ -59,7 +59,7 @@ class SongController extends Controller
     public function favorite(Artist $artist, Song $song)
     {
         try {
-            $this->user_service->favoriteSong(Auth::user(), $song);
+            $this->userService->favoriteSong(Auth::user(), $song);
 
             return back()->with('isFavorited', true);
         } catch (\Throwable $e) {
@@ -79,7 +79,7 @@ class SongController extends Controller
     public function unfavorite(Artist $artist, Song $song)
     {
         try {
-            $this->user_service->unfavoriteSong(Auth::user(), $song);
+            $this->userService->unfavoriteSong(Auth::user(), $song);
 
             return back()->with('isFavorited', false);
         } catch (\Throwable $e) {

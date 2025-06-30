@@ -21,7 +21,7 @@ class ArtistController extends Controller
     use AuthorizesRequests;
     use FlashesMessages;
 
-    public function __construct(private ArtistService $artist_service, private UserService $user_service) {}
+    public function __construct(private ArtistService $artistService, private UserService $userService) {}
 
     public function index()
     {
@@ -67,7 +67,7 @@ class ArtistController extends Controller
         $validated = $request->validated();
 
         try {
-            $artist = $this->artist_service->store($validated);
+            $artist = $this->artistService->store($validated);
 
             $this->flashSuccess('Artist created successfully');
 
@@ -87,7 +87,7 @@ class ArtistController extends Controller
     public function favorite(Artist $artist)
     {
         try {
-            $this->user_service->favoriteArtist(Auth::user(), $artist);
+            $this->userService->favoriteArtist(Auth::user(), $artist);
 
             return back()->with('is_favorited', true);
         } catch (\Throwable $e) {
@@ -106,7 +106,7 @@ class ArtistController extends Controller
     public function unfavorite(Artist $artist)
     {
         try {
-            $this->user_service->unfavoriteArtist(Auth::user(), $artist);
+            $this->userService->unfavoriteArtist(Auth::user(), $artist);
 
             return back()->with('is_favorited', false);
         } catch (\Throwable $e) {
