@@ -16,10 +16,9 @@ defineProps({
 <template>
     <Link
         :href="route(routeName, params)"
-        class="text-base-content/70 font-bold"
+        class="font-semibold"
         :class="{
-            'bg-base-300 text-base-content/100 font-bold':
-                route().current(routeName),
+            'bg-base-300': route().current(routeName),
         }"
     >
         <slot />

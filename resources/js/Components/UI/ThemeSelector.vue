@@ -11,7 +11,7 @@ const { persistTheme, availableThemes, currentTheme } = useTheme();
     <Dropdown class="dropdown-end" list-class="w-40" trigger-class="btn-ghost">
         <template #trigger>
             <ThemeIcon />
-            <ChevronDownIconSolid class="text-base-content/50 size-4" />
+            <ChevronDownIconSolid class="text-base-content/70 size-4" />
         </template>
         <li v-for="theme in availableThemes" :key="theme.name">
             <button class="gap-3 px-2" @click="persistTheme(theme.name)">

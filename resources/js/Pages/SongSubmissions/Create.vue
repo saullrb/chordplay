@@ -36,7 +36,7 @@ function submitForm() {
 
             <Link
                 :href="route('artists.show', props.artist)"
-                class="text-base-content/50 dark:text-base-content/30 hover:text-base-content/70 dark:hover:text-base-content/50"
+                class="text-base-content/70 hover:text-base-content/90"
             >
                 {{ artist.name }}
             </Link>

@@ -14,7 +14,7 @@ const form = useForm({
         <header>
             <h2 class="text-lg font-medium">Profile Information</h2>
 
-            <p class="text-base-content/50 mt-1 text-sm">
+            <p class="text-base-content/70 mt-1 text-sm">
                 Update your account's profile information
             </p>
         </header>
@@ -52,7 +52,7 @@ const form = useForm({
                 >
                     <p
                         v-if="form.recentlySuccessful"
-                        class="text-base-content/50 text-sm"
+                        class="text-base-content/70 text-sm"
                     >
                         Saved.
                     </p>

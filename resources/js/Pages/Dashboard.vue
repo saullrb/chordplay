@@ -109,10 +109,11 @@ const loadMoreSongs = async () => {
                                 ])
                             "
                         >
-                            {{ song.name }} <span>-</span>
-                            <span class="text-base-content/50 text-sm">{{
-                                song.artist.name
-                            }}</span>
+                            <b>{{ song.name }}</b> <span>-</span>
+                            <span
+                                class="text-base-content/70 text-sm font-normal"
+                                >{{ song.artist.name }}</span
+                            >
                         </Link>
                     </li>
                 </ul>
