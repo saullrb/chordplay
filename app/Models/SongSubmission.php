@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 /**
  * @property int $id
@@ -68,5 +69,15 @@ class SongSubmission extends Model
         return [
             'key' => SongKeyEnum::class,
         ];
+    }
+
+    #[\Override]
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saving(function (SongSubmission $song): void {
+            $song->name = Str::squish($song->name);
+        });
     }
 }

@@ -97,32 +97,18 @@ class Song extends Model
         parent::boot();
 
         static::creating(function (Song $song): void {
-            $song->slug = static::generateSlug($song);
+            $song->slug = Str::slug($song->name);
         });
 
         static::updating(function (Song $song): void {
             if ($song->isDirty('name')) {
-                $song->slug = static::generateSlug($song);
+                $song->slug = Str::slug($song->name);
             }
         });
 
         static::saving(function (Song $song): void {
-            $song->name = trim($song->name);
+            $song->name = Str::squish($song->name);
         });
-    }
-
-    protected static function generateSlug(Song $song): string
-    {
-        $baseSlug = Str::slug($song->name);
-        $slug = $baseSlug;
-
-        $count = Song::whereArtistId($song->artist_id)->whereName($song->name)->count();
-
-        if ($count > 0) {
-            return $baseSlug.'-'.$count;
-        }
-
-        return $slug;
     }
 
     protected function casts(): array

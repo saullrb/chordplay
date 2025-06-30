@@ -23,7 +23,7 @@ return new class extends Migration
             $table->unsignedBigInteger('views')->default(0);
             $table->timestamps();
 
-            $table->unique(['artist_id', 'slug']);
+            $table->unique(['artist_id', 'name', 'slug']);
         });
     }
 

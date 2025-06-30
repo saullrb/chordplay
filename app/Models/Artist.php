@@ -80,32 +80,18 @@ class Artist extends Model
         parent::boot();
 
         static::creating(function (Artist $artist): void {
-            $artist->slug = static::generateSlug($artist->name);
+            $artist->slug = Str::slug($artist->name);
         });
 
         static::updating(function (Artist $artist): void {
             if ($artist->isDirty('name')) {
-                $artist->slug = static::generateSlug($artist->name);
+                $artist->slug = Str::slug($artist->name);
             }
         });
 
         static::saving(function (Artist $artist): void {
-            $artist->name = trim($artist->name);
+            $artist->name = Str::squish($artist->name);
         });
-    }
-
-    protected static function generateSlug(string $name): string
-    {
-        $baseSlug = Str::slug($name);
-        $slug = $baseSlug;
-
-        $count = Artist::whereName($name)->count();
-
-        if ($count > 0) {
-            return $baseSlug.'-'.$count;
-        }
-
-        return $slug;
     }
 
     protected function casts(): array
