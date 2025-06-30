@@ -46,7 +46,7 @@ class SongPageFlowTest extends DuskTestCase
             // Assert song page elements
             $browser
                 ->click('a[href="'.$song_url.'"]')
-                ->waitForTextIn('@song-key', $this->song->key, 3)
+                ->waitForTextIn('@song-key', $this->song->key->value, 3)
                 ->assertSeeLink($this->artist->name)
                 ->assertSee($this->song->name)
                 ->assertPresent('@capo-0')

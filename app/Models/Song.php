@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\SongKeyEnum;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,7 +19,7 @@ use Str;
  * @property string $name
  * @property string $slug
  * @property int $artist_id
- * @property string $key
+ * @property SongKeyEnum $key
  * @property int $views
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -44,6 +45,7 @@ class Song extends Model
 
     protected $casts = [
         'is_favorited' => 'boolean',
+        'key' => SongKeyEnum::class,
     ];
 
     /**

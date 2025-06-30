@@ -69,7 +69,7 @@ class SongSubmissionFlowTest extends DuskTestCase
 
             // SongSubmission show page
             $browser
-                ->waitForTextIn('@song-key', $songSubmission->key, 3)
+                ->waitForTextIn('@song-key', $songSubmission->key->value, 3)
                 ->assertRouteIs('song-submissions.show', $songSubmission)
                 ->assertPresent('@preview-notice')
                 ->assertPresent('@flash-message')
@@ -84,7 +84,7 @@ class SongSubmissionFlowTest extends DuskTestCase
                 ->click('@edit-song-link')
                 ->pause(500)
                 ->assertInputValue('@song-name-input', $songSubmission->name)
-                ->assertSelected('@song-key-select', $songSubmission->key)
+                ->assertSelected('@song-key-select', $songSubmission->key->value)
                 ->assertInputValue('@song-content-textarea', $song_content)
                 ->type('@song-name-input', 'Updated Song Name')
                 ->click('@submit-button')
@@ -94,7 +94,7 @@ class SongSubmissionFlowTest extends DuskTestCase
 
             // Check if song submission was updated
             $browser
-                ->waitForTextIn('@song-key', $songSubmission->key, 3)
+                ->waitForTextIn('@song-key', $songSubmission->key->value, 3)
                 ->assertSee($songSubmission->name)
                 ->assertPresent('@flash-message');
 

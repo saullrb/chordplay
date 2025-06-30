@@ -45,14 +45,7 @@ class SongSubmissionController extends Controller
             'lines' => fn ($query) => $query->orderBy('line_number'),
         ]);
 
-        $available_keys = [];
-
-        // Set the available keys based on the song key
-        if (str_ends_with((string) $songSubmission->key, 'm')) {
-            $available_keys = array_values(array_filter(SongKeyEnum::cases(), fn ($key): bool => str_ends_with((string) $key->value, 'm')));
-        } else {
-            $available_keys = array_values(array_filter(SongKeyEnum::cases(), fn ($key): bool => ! str_ends_with((string) $key->value, 'm')));
-        }
+        $available_keys = SongKeyEnum::sameModeAs($songSubmission->key);
 
         return Inertia::render('SongSubmissions/Show', [
             'song' => $songSubmission,
@@ -71,7 +64,7 @@ class SongSubmissionController extends Controller
     public function create(Artist $artist): Response
     {
         return Inertia::render('SongSubmissions/Create', [
-            'availableKeys' => array_map(fn ($key) => $key->value, SongKeyEnum::cases()),
+            'availableKeys' => SongKeyEnum::values(),
             'artist' => $artist,
             'validChords' => Chord::getGroupedChords(),
         ]);
@@ -110,7 +103,7 @@ class SongSubmissionController extends Controller
         $songSubmission->content = $lines->pluck('content')->implode("\n");
 
         return Inertia::render('SongSubmissions/Edit', [
-            'availableKeys' => array_map(fn ($key) => $key->value, SongKeyEnum::cases()),
+            'availableKeys' => SongKeyEnum::values(),
             'song' => $songSubmission,
             'artist' => $songSubmission->artist,
         ]);

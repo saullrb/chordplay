@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\SongKeyEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +13,7 @@ use Illuminate\Support\Collection;
 /**
  * @property int $id
  * @property string $name
- * @property string|null $key
+ * @property SongKeyEnum $key
  * @property int $artist_id
  * @property int $user_id
  * @property Carbon|null $created_at
@@ -31,6 +32,10 @@ class SongSubmission extends Model
         'user_id',
         'song_id',
         'key',
+    ];
+
+    protected $casts = [
+        'key' => SongKeyEnum::class,
     ];
 
     /**

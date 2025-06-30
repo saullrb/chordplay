@@ -21,7 +21,7 @@ class SongSubmissionFactory extends Factory
     {
         return [
             'name' => fake()->word().' '.fake()->word,
-            'key' => fake()->randomElement(array_column(SongKeyEnum::cases(), 'value')),
+            'key' => fake()->randomElement(SongKeyEnum::cases()),
             'artist_id' => Artist::factory(),
             'user_id' => User::factory(),
         ];

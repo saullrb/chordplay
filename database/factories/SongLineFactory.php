@@ -19,7 +19,7 @@ class SongLineFactory extends Factory
      */
     public function definition(): array
     {
-        $contentType = fake()->randomElement(array_column(SongLineContentType::cases(), 'value'));
+        $contentType = fake()->randomElement(SongLineContentType::values());
 
         return [
             'song_id' => Song::factory(),

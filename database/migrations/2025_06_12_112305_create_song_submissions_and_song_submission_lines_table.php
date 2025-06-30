@@ -20,7 +20,7 @@ return new class extends Migration
         Schema::create('song_submissions', function (Blueprint $table): void {
             $table->id();
             $table->string('name');
-            $table->enum('key', array_column(SongKeyEnum::cases(), 'value'))->nullable();
+            $table->enum('key', SongKeyEnum::values());
             $table->foreignIdFor(Song::class)->nullable()->cascadeOnDelete();
             $table->foreignIdFor(Artist::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
@@ -31,7 +31,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(SongSubmission::class)->constrained()->cascadeOnDelete();
             $table->integer('line_number');
-            $table->enum('content_type', array_column(SongLineContentType::cases(), 'value'));
+            $table->enum('content_type', SongLineContentType::values());
             $table->text('content');
             $table->timestamps();
             $table->unique(['song_submission_id', 'line_number']);

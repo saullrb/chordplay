@@ -23,7 +23,7 @@ class SongFactory extends Factory
         return [
             'name' => fake()->words(random_int(3, 5), true),
             'artist_id' => Artist::factory(),
-            'key' => fake()->randomElement(array_column(SongKeyEnum::cases(), 'value')),
+            'key' => fake()->randomElement(SongKeyEnum::cases()),
             'views' => fake()->numberBetween(0, 10000),
         ];
     }

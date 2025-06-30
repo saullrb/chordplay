@@ -27,14 +27,7 @@ class SongController extends Controller
             $query->orderBy('line_number');
         }]);
 
-        $available_keys = [];
-
-        // Set the available keys based on the song key
-        if (str_ends_with($song->key, 'm')) {
-            $available_keys = array_values(array_filter(SongKeyEnum::cases(), fn ($key): bool => str_ends_with((string) $key->value, 'm')));
-        } else {
-            $available_keys = array_values(array_filter(SongKeyEnum::cases(), fn ($key): bool => ! str_ends_with((string) $key->value, 'm')));
-        }
+        $available_keys = SongKeyEnum::sameModeAs($song->key);
 
         $is_favorited = Auth::user()?->favoriteSongs()->where('song_id', $song->id)->exists() ?? false;
 
@@ -55,7 +48,7 @@ class SongController extends Controller
         $song->content = $lines->pluck('content')->implode("\n");
 
         return Inertia::render('Songs/Edit', [
-            'availableKeys' => array_map(fn ($key) => $key->value, SongKeyEnum::cases()),
+            'availableKeys' => SongKeyEnum::values(),
             'song' => $song,
             'artist' => $artist,
         ]);

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Song::class)->constrained()->cascadeOnDelete();
             $table->integer('line_number');
-            $table->enum('content_type', array_column(SongLineContentType::cases(), 'value'));
+            $table->enum('content_type', SongLineContentType::values());
             $table->text('content');
             $table->unique(['song_id', 'line_number']);
             $table->timestamps();

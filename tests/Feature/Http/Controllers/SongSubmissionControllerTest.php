@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Http\Controllers;
 
+use App\Enums\SongKeyEnum;
 use App\Enums\SongLineContentType;
 use App\Models\Artist;
 use App\Models\Song;
@@ -284,7 +285,7 @@ class SongSubmissionControllerTest extends TestCase
         $submission->refresh();
 
         $this->assertEquals('Updated Song', $submission->name);
-        $this->assertEquals('D', $submission->key);
+        $this->assertEquals(SongKeyEnum::D, $submission->key);
         $this->assertCount(2, $submission->lines);
         $this->assertEquals('[D] [G]', $submission->lines[0]->content);
         $this->assertEquals('Updated line 2', $submission->lines[1]->content);

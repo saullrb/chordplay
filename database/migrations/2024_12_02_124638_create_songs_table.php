@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug');
             $table->foreignId('artist_id')->constrained()->cascadeOnDelete();
-            $table->enum('key', array_column(SongKeyEnum::cases(), 'value'))->nullable();
+            $table->enum('key', SongKeyEnum::values());
             $table->unsignedBigInteger('views')->default(0);
             $table->timestamps();
 

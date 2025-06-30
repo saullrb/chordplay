@@ -28,4 +28,25 @@ enum SongKeyEnum: string
     case G_MINOR = 'Gm';
     case A_FLAT = 'Ab';
     case A_FLAT_MINOR = 'Abm';
+
+    /**
+     * @return array<string>
+     */
+    public static function values(): array
+    {
+        return array_column(self::cases(), 'value');
+    }
+
+    /**
+     * @return array<string>
+     */
+    public static function sameModeAs(self $key): array
+    {
+        $isMinor = str_ends_with($key->value, 'm');
+
+        return array_values(array_filter(
+            self::values(),
+            fn (string $value): bool => str_ends_with($value, 'm') === $isMinor
+        ));
+    }
 }
