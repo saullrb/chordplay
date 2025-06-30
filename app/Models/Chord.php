@@ -19,14 +19,6 @@ class Chord extends Model
 {
     protected $fillable = ['name', 'variation'];
 
-    /**
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'name' => 'string',
-        'variation' => 'string',
-    ];
-
     public const VARIATIONS = [
         'major' => '',
         'minor' => 'm',
@@ -62,5 +54,16 @@ class Chord extends Model
         return self::get()
             ->groupBy('variation')
             ->map(fn ($chords) => $chords->pluck('name'));
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'name' => 'string',
+            'variation' => 'string',
+        ];
     }
 }

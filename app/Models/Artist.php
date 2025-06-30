@@ -36,10 +36,6 @@ class Artist extends Model
         'pivot',
     ];
 
-    protected $casts = [
-        'is_favorited' => 'boolean',
-    ];
-
     /**
      * @return HasMany<Song, Artist>
      */
@@ -49,12 +45,14 @@ class Artist extends Model
         return $this->hasMany(Song::class);
     }
 
-    public function scopeSearchByName(Builder $query, string $search): Builder
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function searchByName(Builder $query, string $search): Builder
     {
         return $query->whereRaw('LOWER(name) LIKE ?', ['%'.strtolower($search).'%']);
     }
 
-    public function scopeWithFavoriteStatus(Builder $query, ?int $user_id): Builder
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function withFavoriteStatus(Builder $query, ?int $user_id): Builder
     {
         return $query
             ->leftJoin('favorite_artists', function ($join) use ($user_id): void {
@@ -68,7 +66,8 @@ class Artist extends Model
             );
     }
 
-    public function scopeOrderByFavoritesAndViews(Builder $query): Builder
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function orderByFavoritesAndViews(Builder $query): Builder
     {
         return $query
             ->orderByRaw('CASE WHEN favorite_artists.artist_id IS NOT NULL THEN 0 ELSE 1 END')
@@ -107,5 +106,12 @@ class Artist extends Model
         }
 
         return $slug;
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'is_favorited' => 'boolean',
+        ];
     }
 }

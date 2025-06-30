@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Enums\SongLineContentType;
 use App\Models\Song;
 use Illuminate\Database\Migrations\Migration;

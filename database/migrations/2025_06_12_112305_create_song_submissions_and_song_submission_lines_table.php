@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Enums\SongKeyEnum;
 use App\Enums\SongLineContentType;
 use App\Models\Artist;

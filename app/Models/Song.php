@@ -43,11 +43,6 @@ class Song extends Model
         'pivot',
     ];
 
-    protected $casts = [
-        'is_favorited' => 'boolean',
-        'key' => SongKeyEnum::class,
-    ];
-
     /**
      * @return BelongsTo<Artist, Song>
      */
@@ -66,12 +61,14 @@ class Song extends Model
         return $this->hasMany(SongLine::class)->orderBy('line_number');
     }
 
-    public function scopeSearchByName(Builder $query, string $search): Builder
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function searchByName(Builder $query, string $search): Builder
     {
         return $query->whereRaw('LOWER(name) LIKE ?', ['%'.strtolower($search).'%']);
     }
 
-    public function scopeWithFavoriteStatus(Builder $query, ?int $user_id): Builder
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function withFavoriteStatus(Builder $query, ?int $user_id): Builder
     {
         return $query
             ->leftJoin('favorite_songs', function ($join) use ($user_id): void {
@@ -87,7 +84,8 @@ class Song extends Model
             );
     }
 
-    public function scopeOrderByFavoritesAndViews(Builder $query): Builder
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function orderByFavoritesAndViews(Builder $query): Builder
     {
         return $query->orderByRaw('CASE WHEN favorite_songs.song_id IS NOT NULL THEN 0 ELSE 1 END')
             ->orderBy('views', 'desc');
@@ -125,5 +123,13 @@ class Song extends Model
         }
 
         return $slug;
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'is_favorited' => 'boolean',
+            'key' => SongKeyEnum::class,
+        ];
     }
 }

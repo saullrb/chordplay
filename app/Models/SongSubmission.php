@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Enums\SongKeyEnum;
@@ -34,10 +36,6 @@ class SongSubmission extends Model
         'key',
     ];
 
-    protected $casts = [
-        'key' => SongKeyEnum::class,
-    ];
-
     /**
      * @return BelongsTo<Artist, SongSubmission>
      */
@@ -63,5 +61,12 @@ class SongSubmission extends Model
     {
         /** @var HasMany<SongSubmissionLine, SongSubmission> */
         return $this->hasMany(SongSubmissionLine::class)->orderBy('line_number');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'key' => SongKeyEnum::class,
+        ];
     }
 }
