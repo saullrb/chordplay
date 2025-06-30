@@ -1,5 +1,6 @@
 <script setup>
 import PageHeader from '@/Components/UI/PageHeader.vue';
+import Panel from '@/Components/UI/Panel.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import DeleteUserForm from './Partials/DeleteUserForm.vue';
@@ -16,13 +17,13 @@ import UpdateProfileInformationForm from './Partials/UpdateProfileInformationFor
 
         <div class="overflow-hidden sm:rounded-lg">
             <div class="mt-6 space-y-6">
-                <div class="bg-base-200 p-4 shadow-sm sm:rounded-lg sm:p-8">
+                <Panel class="sm:p-8">
                     <UpdateProfileInformationForm class="max-w-xl" />
-                </div>
+                </Panel>
 
-                <div class="bg-base-200 p-4 shadow-sm sm:rounded-lg sm:p-8">
+                <Panel class="sm:p-8">
                     <DeleteUserForm class="max-w-xl" />
-                </div>
+                </Panel>
             </div>
         </div>
     </AppLayout>

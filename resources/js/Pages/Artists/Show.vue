@@ -4,6 +4,7 @@ import { PlusIconSolid } from '@/Components/UI/Icons';
 import ItemList from '@/Components/UI/ItemList.vue';
 import LoadingButton from '@/Components/UI/LoadingButton.vue';
 import PageHeader from '@/Components/UI/PageHeader.vue';
+import Panel from '@/Components/UI/Panel.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
@@ -42,13 +43,13 @@ function handleFavorite() {
 }
 
 const loadMoreSongs = async () => {
-    if (!props.songs.nextPageUrl) return;
+    if (!props.songs.next_page_url) return;
 
     loading.value = true;
 
     router.reload({
         only: ['songs'],
-        data: { page: props.songs.currentPage + 1 },
+        data: { page: props.songs.current_page + 1 },
         preserveUrl: true,
         showProgress: true,
         onFinish: () => {
@@ -83,20 +84,22 @@ const loadMoreSongs = async () => {
                 </Link>
             </div>
         </template>
-        <ItemList
-            :items="songs.data"
-            :parent="{ slug: artist.slug }"
-            show-route-name="artists.songs.show"
-            class="mt-6"
-        />
-        <div class="my-6 flex justify-center">
-            <LoadingButton
-                v-if="songs.nextPageUrl"
-                :on-load-more="loadMoreSongs"
-                :loading="loading"
-            >
-                Load More
-            </LoadingButton>
-        </div>
+
+        <Panel>
+            <ItemList
+                :items="songs.data"
+                :parent="{ slug: artist.slug }"
+                show-route-name="artists.songs.show"
+            />
+            <div class="flex justify-center">
+                <LoadingButton
+                    v-if="songs.next_page_url"
+                    :on-load-more="loadMoreSongs"
+                    :loading="loading"
+                >
+                    Load More
+                </LoadingButton>
+            </div>
+        </Panel>
     </AppLayout>
 </template>

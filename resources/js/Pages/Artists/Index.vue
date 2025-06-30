@@ -3,6 +3,7 @@ import { PlusIconSolid } from '@/Components/UI/Icons';
 import ItemList from '@/Components/UI/ItemList.vue';
 import LoadingButton from '@/Components/UI/LoadingButton.vue';
 import PageHeader from '@/Components/UI/PageHeader.vue';
+import Panel from '@/Components/UI/Panel.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
@@ -26,13 +27,13 @@ const props = defineProps({
 const loading = ref(false);
 
 const loadMoreArtists = async () => {
-    if (!props.artists.nextPageUrl) return;
+    if (!props.artists.next_page_url) return;
 
     loading.value = true;
 
     router.reload({
         only: ['artists'],
-        data: { page: props.artists.currentPage + 1 },
+        data: { page: props.artists.current_page + 1 },
         preserveUrl: true,
         showProgress: true,
         onFinish: () => {
@@ -60,21 +61,18 @@ const loadMoreArtists = async () => {
                 </Link>
             </div>
         </template>
+        <Panel>
+            <ItemList show-route-name="artists.show" :items="artists.data" />
 
-        <ItemList
-            show-route-name="artists.show"
-            :items="artists.data"
-            class="mt-6"
-        />
-
-        <div class="my-6 flex justify-center">
-            <LoadingButton
-                v-if="artists.nextPageUrl"
-                :on-load-more="loadMoreArtists"
-                :loading="loading"
-            >
-                Load More
-            </LoadingButton>
-        </div>
+            <div class="flex justify-center">
+                <LoadingButton
+                    v-if="artists.next_page_url"
+                    :on-load-more="loadMoreArtists"
+                    :loading="loading"
+                >
+                    Load More
+                </LoadingButton>
+            </div>
+        </Panel>
     </AppLayout>
 </template>

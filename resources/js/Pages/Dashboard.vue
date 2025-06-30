@@ -2,6 +2,7 @@
 import { ArrowRightIcon } from '@/Components/UI/Icons';
 import LoadingButton from '@/Components/UI/LoadingButton.vue';
 import PageHeader from '@/Components/UI/PageHeader.vue';
+import Panel from '@/Components/UI/Panel.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import SongSubmissionTable from '@/Pages/SongSubmissions/partials/SongSubmissionTable.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
@@ -73,9 +74,7 @@ const loadMoreSongs = async () => {
             <PageHeader title="Dashboard" />
         </template>
 
-        <div
-            class="border-base-content/10 mt-6 overflow-x-auto rounded border p-4"
-        >
+        <Panel>
             <div class="mb-4 flex items-center justify-between">
                 <Link
                     href="/song-submissions"
@@ -86,10 +85,9 @@ const loadMoreSongs = async () => {
                 </Link>
             </div>
             <SongSubmissionTable :submissions="submissions" class="max-h-80" />
-        </div>
-        <div
-            class="border-base-content/10 mt-6 grid grid-cols-1 gap-6 rounded border p-4 sm:grid-cols-2"
-        >
+        </Panel>
+
+        <Panel class="grid grid-cols-1 lg:grid-cols-2">
             <div>
                 <h2 class="mb-4 px-3 py-2 text-xl font-semibold">
                     Favorite Songs
@@ -153,6 +151,6 @@ const loadMoreSongs = async () => {
                     :loading="loading"
                 />
             </div>
-        </div>
+        </Panel>
     </AppLayout>
 </template>
