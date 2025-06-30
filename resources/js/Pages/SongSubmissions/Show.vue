@@ -1,22 +1,42 @@
 <script setup>
-import PageHeader from '@/Components/PageHeader.vue';
-import TextLink from '@/Components/TextLink.vue';
-import { ref } from 'vue';
-import SongSubmissionContent from './partials/SongSubmissionContent.vue';
-import { useForm, usePage } from '@inertiajs/vue3';
-import IconLink from '@/Components/IconLink.vue';
-import FormButtonIcon from './partials/FormButtonIcon.vue';
-import Modal from '@/Components/Modal.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
-import DangerButton from '@/Components/DangerButton.vue';
+import SongContent from '@/Components/Domain/Song/SongContent.vue';
+import SongControls from '@/Components/Domain/Song/SongControls.vue';
+import ConfirmationDialog from '@/Components/UI/dialog/ConfirmationDialog.vue';
+import {
+    CheckIconSolid,
+    PencilSquareIconSolid,
+    TrashIconSolid,
+} from '@/Components/UI/Icons';
+import PageHeader from '@/Components/UI/PageHeader.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { Link, router } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 const props = defineProps({
-    song_submission: Object,
+    song: {
+        type: Object,
+        required: true,
+    },
+    artist: {
+        type: Object,
+        required: true,
+    },
+    availableKeys: {
+        type: Array,
+        required: true,
+    },
+    validChords: {
+        type: Object,
+        required: true,
+    },
     can: {
         type: Object,
         default: () => ({
-            create_artist: {
+            approveSubmission: {
+                type: Boolean,
+                default: false,
+            },
+            updateSubmission: {
                 type: Boolean,
                 default: false,
             },
@@ -24,133 +44,89 @@ const props = defineProps({
     },
 });
 
-const page = usePage();
-const user = page.props.auth.user;
-const song_key = ref(props.song_submission.key);
-const is_dual_column = ref(false);
+const songControlsRef = ref(null);
+const confirmDialog = ref();
 
-const approve_form = useForm();
-const reject_form = useForm();
-
-const confirmingRejection = ref(false);
-
-const confirmSubmissionRejection = () => {
-    confirmingRejection.value = true;
-};
-
-const closeModal = () => {
-    confirmingRejection.value = false;
-};
-
-function approve() {
-    approve_form.post(
-        route('song_submissions.approve', { id: props.song_submission.id }),
-    );
-}
-
-function reject() {
-    reject_form.delete(
-        route('song_submissions.destroy', { id: props.song_submission.id }),
-    );
+function handleConfirmation() {
+    router.delete(route('song-submissions.destroy', { id: props.song.id }));
 }
 </script>
 
 <template>
-    <Head
-        :title="`[Preview] ${song_submission.name} - ${song_submission.artist.name}`"
-    />
+    <Head :title="`[Preview] ${song.name} - ${song.artist.name}`" />
 
     <AppLayout>
         <template #header>
             <div
                 dusk="preview-notice"
-                class="mb-4 rounded bg-yellow-100 px-4 py-2 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                class="bg-warning text-warning-content mb-4 rounded px-4 py-2"
             >
-                <strong>Preview:</strong> This is a preview of the song
-                submission. It will look like this if approved.
+                <strong>Preview:</strong> This is a preview of what the page
+                will look like if approved.
             </div>
             <div class="flex items-center gap-2">
-                <PageHeader :title="song_submission.name" />
-                <FormButtonIcon
+                <PageHeader :title="song.name" />
+                <Link
+                    v-if="can.approveSubmission"
+                    class="btn btn-success btn-sm btn-circle btn-ghost"
                     dusk="approve-song-button"
-                    v-if="can.approve_submission"
-                    :handleSubmit="approve"
+                    :href="
+                        route('song-submissions.approve', {
+                            id: props.song.id,
+                        })
+                    "
+                    method="post"
                 >
-                    <i class="fa-solid fa-check"></i>
-                </FormButtonIcon>
-                <IconLink
+                    <CheckIconSolid class="size-5" />
+                </Link>
+                <Link
+                    v-if="can.updateSubmission"
                     dusk="edit-song-link"
-                    v-if="user"
-                    :href="route('song_submissions.edit', { song_submission })"
+                    class="btn btn-info btn-sm btn-circle btn-ghost"
+                    :href="
+                        route('song-submissions.edit', {
+                            id: song.id,
+                        })
+                    "
                 >
-                    <i class="fa-solid fa-pencil"></i>
-                </IconLink>
-                <FormButtonIcon
+                    <PencilSquareIconSolid class="size-5" />
+                </Link>
+                <button
+                    class="btn btn-error btn-sm btn-circle btn-ghost"
                     dusk="reject-song-button"
-                    :handleSubmit="confirmSubmissionRejection"
+                    @click="confirmDialog.show()"
                 >
-                    <i class="fa-solid fa-trash"></i>
-                </FormButtonIcon>
+                    <TrashIconSolid class="size-5" />
+                </button>
             </div>
-            <TextLink :href="route('artists.show', song_submission.artist)">
-                {{ song_submission.artist.name }}
-            </TextLink>
-            <div class="my-6 flex flex-col gap-2">
-                <div
-                    class="flex items-center justify-start gap-2 text-sm dark:text-white"
-                >
-                    <span>Key: </span>
-                    <span dusk="song-key" class="text-yellow-600">
-                        {{ song_key }}
-                    </span>
-                </div>
-            </div>
-            <button
-                @click="is_dual_column = !is_dual_column"
-                class="cursor-pointer rounded-md border border-gray-300 bg-transparent px-3 py-1.5 text-sm text-gray-700 transition-colors duration-200 hover:bg-gray-300 hover:text-gray-900 sm:block dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white"
-                :class="{
-                    'border-gray-400 bg-yellow-600 text-white hover:bg-yellow-600 hover:text-white hover:brightness-105 dark:border-gray-600 dark:bg-yellow-600 dark:text-white dark:hover:bg-yellow-600 dark:hover:brightness-110':
-                        is_dual_column,
-                }"
+            <Link
+                :href="route('artists.show', song.artist)"
+                class="text-base-content/70 hover:text-base-content/90"
             >
-                <i class="fa-solid fa-table-columns mr-1"></i>
-                Dual Column
-            </button>
+                {{ song.artist.name }}
+            </Link>
+            <SongControls ref="songControlsRef" :song-key="song.key" />
         </template>
-        <main
+        <div
             class="py-6 dark:text-white"
             :class="{
-                'columns-2 gap-8': is_dual_column,
+                'columns-2 gap-8': songControlsRef?.multiColumn ?? false,
             }"
         >
-            <SongSubmissionContent
-                :original_key="song_submission.key"
-                :content="song_submission.lines"
+            <SongContent
+                :original-key="song.key"
+                :key-offset="songControlsRef?.keyOffset ?? 0"
+                :available-keys="availableKeys"
+                :content="song.lines"
+                :valid-chords="validChords"
             />
-        </main>
+        </div>
 
-        <Modal :show="confirmingRejection" @close="closeModal">
-            <div class="p-6">
-                <h2
-                    class="text-lg font-medium text-gray-900 dark:text-gray-100"
-                >
-                    Are you sure you want to reject this submission?
-                </h2>
-            </div>
-
-            <div class="mt-6 flex justify-end">
-                <SecondaryButton @click="closeModal">Cancel</SecondaryButton>
-
-                <DangerButton
-                    dusk="confirm-modal-button"
-                    class="ms-3"
-                    :class="{ 'opacity-25': reject_form.processing }"
-                    :disabled="reject_form.processing"
-                    @click="reject"
-                >
-                    Reject Submission
-                </DangerButton>
-            </div>
-        </Modal>
+        <ConfirmationDialog
+            ref="confirmDialog"
+            title="Delete?"
+            message="Are you sure you want to reject this submission"
+            @confirm="handleConfirmation"
+        />
     </AppLayout>
 </template>

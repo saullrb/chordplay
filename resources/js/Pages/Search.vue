@@ -1,27 +1,39 @@
 <script setup>
-import InputError from '@/Components/InputError.vue';
-import LoadMoreButton from '@/Components/LoadMoreButton.vue';
-import PageHeader from '@/Components/PageHeader.vue';
+import { SearchIcon, StarIconSolid } from '@/Components/UI/Icons';
+import InputError from '@/Components/UI/InputError.vue';
+import LoadingButton from '@/Components/UI/LoadingButton.vue';
+import PageHeader from '@/Components/UI/PageHeader.vue';
+import Panel from '@/Components/UI/Panel.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, router, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const props = defineProps({
-    songs: Object,
-    artists: Object,
-    query: String,
+    songs: {
+        type: Object,
+        required: true,
+    },
+    artists: {
+        type: Object,
+        required: true,
+    },
+    query: {
+        type: String,
+        required: true,
+    },
 });
 
-const loading = ref(false);
+const loadingSongs = ref(false);
+const loadingArtists = ref(false);
 const songs = ref(props.songs.data);
-const songs_next_page = ref(props.songs.next_page_url);
+const songsNextPage = ref(props.songs.next_page_url);
 const artists = ref(props.artists.data);
-const artists_next_page = ref(props.artists.next_page_url);
+const artistsNextPage = ref(props.artists.next_page_url);
 
 const loadMoreSongs = async () => {
-    if (!songs_next_page.value) return;
+    if (!songsNextPage.value) return;
 
-    loading.value = true;
+    loadingSongs.value = true;
 
     router.reload({
         only: ['songs'],
@@ -30,16 +42,16 @@ const loadMoreSongs = async () => {
         showProgress: true,
         onSuccess: (page) => {
             songs.value.push(...page.props.songs.data);
-            songs_next_page.value = page.props.songs.next_page_url;
+            songsNextPage.value = page.props.songs.next_page_url;
         },
-        onFinish: () => (loading.value = false),
+        onFinish: () => (loadingSongs.value = false),
     });
 };
 
 const loadMoreArtists = async () => {
-    if (!artists_next_page.value) return;
+    if (!artistsNextPage.value) return;
 
-    loading.value = true;
+    loadingArtists.value = true;
 
     router.reload({
         only: ['artists'],
@@ -48,9 +60,9 @@ const loadMoreArtists = async () => {
         showProgress: true,
         onSuccess: (page) => {
             artists.value.push(...page.props.artists.data);
-            artists_next_page.value = page.props.artists.next_page_url;
+            artistsNextPage.value = page.props.artists.next_page_url;
         },
-        onFinish: () => (loading.value = false),
+        onFinish: () => (loadingArtists.value = false),
     });
 };
 
@@ -63,9 +75,9 @@ function handleSubmit() {
         preserveState: true,
         onSuccess: (page) => {
             songs.value = page.props.songs.data;
-            songs_next_page.value = page.props.songs.next_page_url;
+            songsNextPage.value = page.props.songs.next_page_url;
             artists.value = page.props.artists.data;
-            artists_next_page.value = page.props.artists.next_page_url;
+            artistsNextPage.value = page.props.artists.next_page_url;
         },
     });
 }
@@ -79,108 +91,99 @@ function handleSubmit() {
             <PageHeader :title="'Search: ' + query" />
         </template>
 
-        <form @submit.prevent="handleSubmit" class="flex justify-center">
-            <input
-                v-model="form.query"
-                type="text"
-                class="z-10 w-full rounded-l border-black dark:border-gray-400 dark:bg-gray-800 dark:text-white"
-                placeholder="Search songs or artists..."
-            />
-            <button
-                type="submit"
-                :disabled="form.processing"
-                class="cursor-pointer rounded-r border border-l-0 border-black bg-white px-4 transition-colors hover:bg-gray-100 disabled:cursor-wait dark:border-gray-400 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
-            >
-                <i class="fa-solid fa-search"></i>
-            </button>
-            <InputError :message="form.errors.name" />
+        <form class="w-full" @submit.prevent="handleSubmit">
+            <label class="input input-primary validator w-full">
+                <SearchIcon class="h-[1em] opacity-50" />
+                <input
+                    v-model="form.query"
+                    dusk="search-input"
+                    type="search"
+                    placeholder="Search"
+                    maxlength="100"
+                    required
+                    @input="form.errors.query = null"
+                />
+            </label>
+            <InputError class="mt-1" :message="form.errors.query" />
         </form>
-        <p v-if="form.errors.query" class="mt-1 text-sm text-red-500">
-            {{ form.errors.query }}
-        </p>
-        <div
-            class="mt-6 grid grid-cols-1 gap-6 border border-gray-700 p-4 sm:grid-cols-2 sm:rounded-lg"
-        >
-            <div class="">
-                <h2
-                    class="mb-4 px-3 py-2 text-xl font-semibold dark:text-white"
+
+        <Panel>
+            <h2 class="px-3 py-2 text-xl font-semibold">Songs</h2>
+            <ul v-if="songs.length" role="list" class="list">
+                <li
+                    v-for="song in songs"
+                    :key="song.id"
+                    class="list-row hover:bg-primary/8"
                 >
-                    Songs
-                </h2>
-                <ul
-                    v-if="songs.length"
-                    class="divide-y-1 divide-gray-400 dark:divide-gray-700"
-                >
-                    <li
-                        class="flex justify-between gap-x-6 rounded px-3 py-2 transition-colors duration-150 *:text-gray-900 hover:bg-gray-300 dark:*:text-white dark:hover:bg-gray-700"
-                        v-for="song in songs"
-                        :key="song.id"
+                    <Link
+                        :href="
+                            route('artists.songs.show', [
+                                song.artist,
+                                song.slug,
+                            ])
+                        "
+                        class="list-col-grow flex items-center gap-2"
                     >
-                        <Link
-                            class="flex grow items-center gap-2"
-                            :href="
-                                route('artists.songs.show', [
-                                    song.artist,
-                                    song.slug,
-                                ])
-                            "
-                        >
-                            <i
-                                v-if="song.is_favorited"
-                                class="fa-solid fa-star text-sm text-yellow-600"
-                            ></i>
-                            {{ song.name }} <span>-</span>
-                            <span class="text-sm text-gray-500">{{
-                                song.artist.name
-                            }}</span>
-                        </Link>
-                    </li>
-                </ul>
-                <p v-else class="px-3 py-2 dark:text-white">
-                    No results found.
-                </p>
-                <LoadMoreButton
-                    v-if="songs_next_page"
-                    :onLoadMore="loadMoreSongs"
-                    :loading="loading"
-                />
+                        <StarIconSolid
+                            class="invisible size-5"
+                            :class="{
+                                'visible text-yellow-500': song.is_favorited,
+                            }"
+                        />
+
+                        <b>{{ song.name }}</b> <span>-</span>
+                        <span class="text-base-content/70 text-sm">{{
+                            song.artist.name
+                        }}</span>
+                    </Link>
+                </li>
+            </ul>
+            <p v-else class="px-3 py-2">No results found.</p>
+            <div class="flex justify-center">
+                <LoadingButton
+                    v-if="songsNextPage"
+                    :on-load-more="loadMoreSongs"
+                    :loading="loadingSongs"
+                >
+                    Load More
+                </LoadingButton>
             </div>
-            <div>
-                <h2
-                    class="mb-4 px-3 py-2 text-xl font-semibold dark:text-white"
+        </Panel>
+
+        <Panel>
+            <h2 class="px-3 py-2 text-xl font-semibold">Artists</h2>
+            <ul v-if="artists.length" role="list" class="list">
+                <li
+                    v-for="artist in artists"
+                    :key="artist.id"
+                    class="list-row hover:bg-primary/8"
                 >
-                    Artists
-                </h2>
-                <ul
-                    v-if="artists.length"
-                    class="divide-y-1 divide-gray-400 dark:divide-gray-700"
-                >
-                    <li
-                        class="flex justify-between gap-x-6 rounded px-3 py-2 transition-colors duration-150 *:text-gray-900 hover:bg-gray-300 dark:*:text-white dark:hover:bg-gray-700"
-                        v-for="artist in artists"
-                        :key="artist.id"
+                    <Link
+                        :href="route('artists.show', artist)"
+                        class="list-col-grow flex items-center gap-2"
                     >
-                        <Link
-                            class="flex grow items-center gap-2"
-                            :href="route('artists.show', artist)"
-                        >
-                            <i
-                                v-if="artist.is_favorited"
-                                class="fa-solid fa-star text-sm text-yellow-600"
-                            ></i>
+                        <StarIconSolid
+                            class="invisible size-5"
+                            :class="{
+                                'visible text-yellow-500': artist.is_favorited,
+                            }"
+                        />
+                        <b>
                             {{ artist.name }}
-                        </Link>
-                    </li>
-                </ul>
-                <p v-else class="px-3 py-2 dark:text-white">
-                    No results found.
-                </p>
-                <LoadMoreButton
-                    v-if="artists_next_page"
-                    :onLoadMore="loadMoreArtists"
-                    :loading="loading"
-                />
+                        </b>
+                    </Link>
+                </li>
+            </ul>
+            <p v-else class="px-3 py-2">No results found.</p>
+            <div class="flex justify-center">
+                <LoadingButton
+                    v-if="artistsNextPage"
+                    :on-load-more="loadMoreArtists"
+                    :loading="loadingArtists"
+                >
+                    Load More
+                </LoadingButton>
             </div>
-        </div>
+        </Panel>
     </AppLayout>
 </template>

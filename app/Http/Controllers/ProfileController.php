@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
-use App\Models\User;
 use App\Services\UserService;
 use App\Traits\FlashesMessages;
 use Illuminate\Http\RedirectResponse;
@@ -18,7 +17,7 @@ class ProfileController extends Controller
 {
     use FlashesMessages;
 
-    public function __construct(private UserService $user_service) {}
+    public function __construct(private UserService $userService) {}
 
     /**
      * Display the user's profile form.
@@ -36,17 +35,17 @@ class ProfileController extends Controller
         $validated = $request->validated();
 
         try {
-            $this->user_service->update($request->user(), $validated);
+            $this->userService->update($request->user(), $validated);
 
-            return Redirect::route('profile.edit')
-                ->with([
-                    'flash_message' => 'Name updated successfully.',
-                    'flash_type' => 'success',
-                ]);
+            $this->flashSuccess('Name updated successfully.');
+
+            return Redirect::route('profile.edit');
         } catch (\Throwable $e) {
             Log::error('Failed to update user', ['name' => $validated['name'], 'error' => $e->getMessage()]);
 
-            return Redirect::route('profile.edit')->with($this->flashError('Failed to update user.'));
+            $this->flashError('Failed to update user.');
+
+            return Redirect::route('profile.edit');
         }
     }
 
@@ -60,19 +59,20 @@ class ProfileController extends Controller
         Auth::logout();
 
         try {
-            $this->user_service->destroy($user);
+            $this->userService->destroy($user);
 
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            return Redirect::to('/')->with([
-                'flash_message' => 'Account deleted successfully.',
-                'flash_type' => 'success',
-            ]);
+            $this->flashSuccess('Account deleted successfully.');
+
+            return Redirect::to('/');
         } catch (\Throwable $e) {
             Log::error('Failed to delete user', ['name' => $user->name, 'error' => $e->getMessage()]);
 
-            return Redirect::route('profile.edit')->with($this->flashError('Failed to delete user.'));
+            $this->flashError('Failed to delete user.');
+
+            return Redirect::route('profile.edit');
         }
     }
 }

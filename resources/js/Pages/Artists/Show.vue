@@ -1,38 +1,62 @@
 <script setup>
-import FavoriteButton from '@/Components/FavoriteButton.vue';
-import IconLink from '@/Components/IconLink.vue';
-import ItemList from '@/Components/ItemList.vue';
-import PageHeader from '@/Components/PageHeader.vue';
+import FavoriteButton from '@/Components/UI/FavoriteButton.vue';
+import { PlusIconSolid } from '@/Components/UI/Icons';
+import ItemList from '@/Components/UI/ItemList.vue';
+import LoadingButton from '@/Components/UI/LoadingButton.vue';
+import PageHeader from '@/Components/UI/PageHeader.vue';
+import Panel from '@/Components/UI/Panel.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { router, usePage } from '@inertiajs/vue3';
+import { Link, router, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const props = defineProps({
-    artist: Object,
-    is_favorited: Boolean,
+    artist: {
+        type: Object,
+        required: true,
+    },
+    songs: {
+        type: Object,
+        required: true,
+    },
+    isFavorited: Boolean,
 });
 
-const page = usePage();
-const user = page.props.auth.user;
-const is_loading = ref(false);
+const user = usePage().props.auth.user;
+const loading = ref(false);
 
 function handleFavorite() {
-    is_loading.value = true;
+    loading.value = true;
 
-    const method = props.is_favorited ? 'delete' : 'post';
+    const method = props.isFavorited ? 'delete' : 'post';
 
     router.visit(route('artists.favorite', props.artist), {
         method,
-        only: ['is_favorited'],
+        only: ['isFavorited'],
         preserveState: true,
         onFinish: () => {
-            is_loading.value = false;
+            loading.value = false;
         },
         onError: () => {
-            is_loading.value = false;
+            loading.value = false;
         },
     });
 }
+
+const loadMoreSongs = async () => {
+    if (!props.songs.next_page_url) return;
+
+    loading.value = true;
+
+    router.reload({
+        only: ['songs'],
+        data: { page: props.songs.current_page + 1 },
+        preserveUrl: true,
+        showProgress: true,
+        onFinish: () => {
+            loading.value = false;
+        },
+    });
+};
 </script>
 
 <template>
@@ -40,28 +64,42 @@ function handleFavorite() {
 
     <AppLayout>
         <template #header>
-            <div class="flex justify-between">
+            <div class="flex w-full justify-between">
                 <div class="flex items-center gap-4">
                     <PageHeader :title="artist.name" />
                     <FavoriteButton
+                        :favorited="isFavorited"
+                        :loading="loading"
                         @favorite="handleFavorite"
-                        :is_favorited="is_favorited"
-                        :disabled="is_loading"
                     />
                 </div>
-
-                <IconLink
-                    dusk="add-song-link"
+                <Link
                     v-if="user"
                     :href="route('artists.songs.create', artist)"
-                    ><i class="fa-solid fa-plus"></i>
-                </IconLink>
+                    class="btn btn-primary btn-sm"
+                    dusk="add-song-link"
+                >
+                    <PlusIconSolid class="size-5" />
+                    Add Song
+                </Link>
             </div>
         </template>
-        <ItemList
-            :items="artist.songs"
-            :parent="{ slug: artist.slug }"
-            showRouteName="artists.songs.show"
-        />
+
+        <Panel>
+            <ItemList
+                :items="songs.data"
+                :parent="{ slug: artist.slug }"
+                show-route-name="artists.songs.show"
+            />
+            <div class="flex justify-center">
+                <LoadingButton
+                    v-if="songs.next_page_url"
+                    :on-load-more="loadMoreSongs"
+                    :loading="loading"
+                >
+                    Load More
+                </LoadingButton>
+            </div>
+        </Panel>
     </AppLayout>
 </template>

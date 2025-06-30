@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Role;
 use App\Models\User;
+use App\Traits\FlashesMessages;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -12,6 +13,13 @@ use Laravel\Socialite\Facades\Socialite;
 
 class SocialAuthController extends Controller
 {
+    use FlashesMessages;
+
+    public function googleRedirect()
+    {
+        return Socialite::driver('google')->redirect();
+    }
+
     public function googleCallback()
     {
         return $this->handleSocialCallback('google');
@@ -23,13 +31,13 @@ class SocialAuthController extends Controller
             $socialUser = Socialite::driver($provider)->user();
 
             if (! $socialUser->getEmail()) {
-                return redirect()->route('login')->with([
-                    'flash_message' => 'Email required for registration',
-                    'flash_type' => 'error',
-                ]);
+                $this->flashError('Email required for registration');
+
+                return redirect()->route('login');
             }
 
             $user = User::where('email', $socialUser->getEmail())->first();
+            $flash_message = 'Login successful';
 
             if (! $user) {
                 $user = User::create([
@@ -37,19 +45,20 @@ class SocialAuthController extends Controller
                     'name' => $socialUser->getName() ?? 'Unnamed',
                     'role_id' => Role::USER,
                 ]);
+                $flash_message = 'Welcome to '.config('APP_NAME').'!';
             }
 
             Auth::login($user);
 
-            return redirect()->intended(route('dashboard'));
+            $this->flashSuccess($flash_message, 2000);
 
+            return redirect()->intended(route('dashboard'));
         } catch (Exception $e) {
             Log::error("{$provider} auth failed", ['error' => $e->getMessage()]);
 
-            return redirect()->route('login')->with([
-                'flash_message' => 'Failed to authenticate with '.$provider,
-                'flash_type' => 'error',
-            ]);
+            $this->flashError('Failed to authenticate with'.$provider);
+
+            return redirect()->route('login');
         }
     }
 }

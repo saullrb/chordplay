@@ -3,7 +3,6 @@
 namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Artist;
-use App\Models\Song;
 use App\Models\User;
 use App\Services\ArtistService;
 use App\Services\UserService;
@@ -16,13 +15,13 @@ class ArtistControllerTest extends TestCase
 
     protected User $admin;
 
-    protected User $regular_user;
+    protected User $regularUser;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->admin = User::factory()->admin()->create();
-        $this->regular_user = User::factory()->create();
+        $this->regularUser = User::factory()->create();
     }
 
     public function test_anyone_can_view_artists_index(): void
@@ -45,7 +44,7 @@ class ArtistControllerTest extends TestCase
 
     public function test_only_admin_can_access_create_page(): void
     {
-        $this->actingAs($this->regular_user)
+        $this->actingAs($this->regularUser)
             ->get(route('artists.create'))
             ->assertForbidden();
 
@@ -67,33 +66,32 @@ class ArtistControllerTest extends TestCase
 
     public function test_artist_show_page_includes_songs(): void
     {
-        $artist = Artist::factory()->create();
-        Song::factory()->count(3)->create(['artist_id' => $artist->id]);
+        $artist = Artist::factory()->withSongs(3)->create();
 
         $response = $this->get(route('artists.show', $artist));
 
         $response->assertInertia(fn ($page) => $page
             ->component('Artists/Show')
-            ->has('artist.songs', 3)
+            ->has('songs.data', 3)
         );
     }
 
     public function test_artist_show_page_includes_favorite_status(): void
     {
         $artist = Artist::factory()->create();
-        $this->regular_user->favoriteArtists()->attach($artist);
+        $this->regularUser->favoriteArtists()->attach($artist);
 
-        $response = $this->actingAs($this->regular_user)
+        $response = $this->actingAs($this->regularUser)
             ->get(route('artists.show', $artist));
 
         $response->assertInertia(fn ($page) => $page
-            ->where('is_favorited', true)
+            ->where('isFavorited', true)
         );
     }
 
     public function test_regular_users_cannot_store_artist(): void
     {
-        $response = $this->actingAs($this->regular_user)
+        $response = $this->actingAs($this->regularUser)
             ->post(route('artists.store'), [
                 'name' => 'New Artist',
             ]);
@@ -118,8 +116,8 @@ class ArtistControllerTest extends TestCase
             'name' => 'New Artist',
         ])
             ->assertRedirect()
-            ->assertSessionHas('flash_message')
-            ->assertSessionHas('flash_type', 'success');
+            ->assertSessionHas('flash.message')
+            ->assertSessionHas('flash.type', 'success');
 
         $this->assertDatabaseHas('artists', ['name' => 'New Artist']);
     }
@@ -136,8 +134,8 @@ class ArtistControllerTest extends TestCase
 
         $this->actingAs($this->admin)->post(route('artists.store'), $data)
             ->assertRedirect()
-            ->assertSessionHas('flash_message')
-            ->assertSessionHas('flash_type', 'error');
+            ->assertSessionHas('flash.message')
+            ->assertSessionHas('flash.type', 'error');
     }
 
     public function test_guests_cannot_favorite_artists(): void
@@ -153,12 +151,12 @@ class ArtistControllerTest extends TestCase
     {
         $artist = Artist::factory()->create();
 
-        $response = $this->actingAs($this->regular_user)
+        $response = $this->actingAs($this->regularUser)
             ->post(route('artists.favorite', $artist));
 
         $response->assertRedirect();
         $this->assertDatabaseHas('favorite_artists', [
-            'user_id' => $this->regular_user->id,
+            'user_id' => $this->regularUser->id,
             'artist_id' => $artist->id,
         ]);
     }
@@ -173,12 +171,12 @@ class ArtistControllerTest extends TestCase
                 ->andThrows(new \Exception('Database error'));
         });
 
-        $this->actingAs($this->regular_user);
+        $this->actingAs($this->regularUser);
 
         $this->post(route('artists.favorite', $artist))
             ->assertRedirect()
-            ->assertSessionHas('flash_message')
-            ->assertSessionHas('flash_type', 'error');
+            ->assertSessionHas('flash.message')
+            ->assertSessionHas('flash.type', 'error');
     }
 
     public function test_unfavorite_handles_exceptions(): void
@@ -191,25 +189,25 @@ class ArtistControllerTest extends TestCase
                 ->andThrows(new \Exception('Database error'));
         });
 
-        $this->actingAs($this->regular_user);
+        $this->actingAs($this->regularUser);
 
         $this->delete(route('artists.favorite', $artist))
             ->assertRedirect()
-            ->assertSessionHas('flash_message')
-            ->assertSessionHas('flash_type', 'error');
+            ->assertSessionHas('flash.message')
+            ->assertSessionHas('flash.type', 'error');
     }
 
     public function test_users_can_unfavorite_artists(): void
     {
         $artist = Artist::factory()->create();
-        $this->regular_user->favoriteArtists()->attach($artist);
+        $this->regularUser->favoriteArtists()->attach($artist);
 
-        $response = $this->actingAs($this->regular_user)
+        $response = $this->actingAs($this->regularUser)
             ->delete(route('artists.favorite', $artist));
 
         $response->assertRedirect();
         $this->assertDatabaseMissing('favorite_artists', [
-            'user_id' => $this->regular_user->id,
+            'user_id' => $this->regularUser->id,
             'artist_id' => $artist->id,
         ]);
     }

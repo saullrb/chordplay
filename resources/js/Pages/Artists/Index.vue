@@ -1,18 +1,22 @@
 <script setup>
-import IconLink from '@/Components/IconLink.vue';
-import ItemList from '@/Components/ItemList.vue';
-import LoadMoreButton from '@/Components/LoadMoreButton.vue';
-import PageHeader from '@/Components/PageHeader.vue';
+import { PlusIconSolid } from '@/Components/UI/Icons';
+import ItemList from '@/Components/UI/ItemList.vue';
+import LoadingButton from '@/Components/UI/LoadingButton.vue';
+import PageHeader from '@/Components/UI/PageHeader.vue';
+import Panel from '@/Components/UI/Panel.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { Link, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import { router } from '@inertiajs/vue3';
 
 const props = defineProps({
-    artists: Object,
+    artists: {
+        type: Object,
+        required: true,
+    },
     can: {
         type: Object,
         default: () => ({
-            create_artist: {
+            createArtist: {
                 type: Boolean,
                 default: false,
             },
@@ -32,9 +36,10 @@ const loadMoreArtists = async () => {
         data: { page: props.artists.current_page + 1 },
         preserveUrl: true,
         showProgress: true,
+        onFinish: () => {
+            loading.value = false;
+        },
     });
-
-    loading.value = false;
 };
 </script>
 
@@ -43,25 +48,31 @@ const loadMoreArtists = async () => {
 
     <AppLayout>
         <template #header>
-            <div class="flex justify-between">
+            <div class="flex w-full justify-between">
                 <PageHeader title="All Artists" />
 
-                <IconLink
-                    v-if="can.create_artist"
+                <Link
+                    v-if="can.createArtist"
                     :href="route('artists.create')"
-                    ><i class="fa-solid fa-plus"></i>
-                </IconLink>
+                    class="btn btn-primary btn-sm"
+                >
+                    <PlusIconSolid class="size-5" />
+                    Add Artist
+                </Link>
             </div>
         </template>
+        <Panel>
+            <ItemList show-route-name="artists.show" :items="artists.data" />
 
-        <ItemList showRouteName="artists.show" :items="artists.data" />
-
-        <div class="my-6 flex justify-center">
-            <LoadMoreButton
-                v-if="artists.next_page_url"
-                :onLoadMore="loadMoreArtists"
-                :loading="loading"
-            />
-        </div>
+            <div class="flex justify-center">
+                <LoadingButton
+                    v-if="artists.next_page_url"
+                    :on-load-more="loadMoreArtists"
+                    :loading="loading"
+                >
+                    Load More
+                </LoadingButton>
+            </div>
+        </Panel>
     </AppLayout>
 </template>

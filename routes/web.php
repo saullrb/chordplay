@@ -33,15 +33,15 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/artists/{artist:slug}/{song:slug}/favorite', [SongController::class,  'favorite'])->name('songs.favorite');
     Route::delete('/artists/{artist:slug}/{song:slug}/favorite', [SongController::class,  'unfavorite'])->name('songs.unfavorite');
 
-    Route::get('/song-submissions', [SongSubmissionController::class, 'index'])->name('song_submissions.index');
-    Route::get('/song-submissions/{song_submission}', [SongSubmissionController::class, 'show'])->name('song_submissions.show');
-    Route::post('/artists/{artist:slug}/song-submissions', [SongSubmissionController::class, 'store'])->name('song_submissions.store');
+    Route::get('/song-submissions', [SongSubmissionController::class, 'index'])->name('song-submissions.index');
+    Route::get('/song-submissions/{songSubmission}', [SongSubmissionController::class, 'show'])->name('song-submissions.show');
+    Route::post('/artists/{artist:slug}/song-submissions', [SongSubmissionController::class, 'store'])->name('song-submissions.store');
     Route::get('/artists/{artist:slug}/songs/create', [SongSubmissionController::class, 'create'])->name('artists.songs.create');
-    Route::get('/song-submissions/{song_submission}/edit', [SongSubmissionController::class, 'edit'])->name('song_submissions.edit');
-    Route::patch('/song-submissions/{song_submission}', [SongSubmissionController::class, 'update'])->name('song_submissions.update');
+    Route::get('/song-submissions/{songSubmission}/edit', [SongSubmissionController::class, 'edit'])->name('song-submissions.edit');
+    Route::patch('/song-submissions/{songSubmission}', [SongSubmissionController::class, 'update'])->name('song-submissions.update');
 
-    Route::post('/song-submissions/{song_submission}/approve', [SongSubmissionController::class, 'approve'])->name('song_submissions.approve');
-    Route::delete('/song-submissions/{song_submission}', [SongSubmissionController::class, 'destroy'])->name('song_submissions.destroy');
+    Route::post('/song-submissions/{songSubmission}/approve', [SongSubmissionController::class, 'approve'])->name('song-submissions.approve');
+    Route::delete('/song-submissions/{songSubmission}', [SongSubmissionController::class, 'destroy'])->name('song-submissions.destroy');
 });
 
 Route::get('/artists/{artist:slug}', [ArtistController::class, 'show'])->name('artists.show');

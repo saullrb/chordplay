@@ -32,8 +32,8 @@ class DashboardController extends Controller
 
         return Inertia::render('Dashboard', [
             'submissions' => $query->limit(10)->get(),
-            'favorite_artists' => $user->favoriteArtists()->simplePaginate(10),
-            'favorite_songs' => $user->favoriteSongs()->simplePaginate(10),
+            'favoriteArtists' => $user->favoriteArtists()->simplePaginate(10),
+            'favoriteSongs' => $user->favoriteSongs()->simplePaginate(10),
         ]);
     }
 }

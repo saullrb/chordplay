@@ -68,19 +68,31 @@
             "Composer\\Config::disableProcessTimeout",
             "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite"
         ],
-        "lint": "pint",
-        "rector": "rector",
+        "lint:php": "pint",
+        "lint:js": "npx eslint resources/js --fix",
+        "lint": [
+            "@lint:php",
+            "@lint:js"
+        ],
+        "fix": [
+            "rector",
+            "@lint"
+        ],
         "test:rector": "rector --dry-run",
-        "test:lint": "pint --test",
+        "test:lint": [
+            "pint --test",
+            "npx eslint resources/js"
+        ],
         "test:types": "phpstan analyse",
         "test:run": "pest --colors=always --parallel",
-        "test:coverage": "pest --colors=always --parallel --coverage",
         "test:e2e": "artisan dusk",
+        "test:coverage": "pest --colors=always --parallel --coverage",
         "test": [
             "@test:rector",
             "@test:lint",
             "@test:types",
-            "@test:run"
+            "@test:run",
+            "@test:e2e"
         ]
     },
     "extra": {

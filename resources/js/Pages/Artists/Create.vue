@@ -1,8 +1,6 @@
 <script setup>
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PageHeader from '@/Components/PageHeader.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
+import InputError from '@/Components/UI/InputError.vue';
+import PageHeader from '@/Components/UI/PageHeader.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { useForm } from '@inertiajs/vue3';
 
@@ -24,20 +22,29 @@ function submit() {
         </template>
         <div class="mt-12 flex items-center justify-center">
             <form
-                @submit.prevent="submit"
                 class="flex w-full max-w-md flex-col"
+                @submit.prevent="submit"
             >
-                <InputLabel for="name" value="Name" />
-                <input type="text" v-model="form.name" id="name" />
-                <InputError :message="form.errors.name" />
+                <fieldset
+                    class="fieldset bg-base-200 rounded-box p-4 shadow-sm"
+                >
+                    <legend class="fieldset-legend">Artist's Name</legend>
+                    <input
+                        id="name"
+                        v-model="form.name"
+                        type="text"
+                        class="input validator w-full"
+                        placeholder="Name"
+                        maxlength="100"
+                        required
+                        @input="form.errors.name = null"
+                    />
+                    <InputError :message="form.errors.name" />
+                </fieldset>
                 <div class="mt-4 flex justify-end">
-                    <PrimaryButton
-                        class="w-20"
-                        :disabled="form.processing"
-                        type="submit"
-                    >
+                    <button class="btn btn-primary" type="submit">
                         Submit
-                    </PrimaryButton>
+                    </button>
                 </div>
             </form>
         </div>

@@ -29,8 +29,8 @@ class ProfileControllerTest extends TestCase
             ->patch(route('profile.update'), [
                 'name' => 'John Doe',
             ])->assertRedirect(route('profile.edit'))
-            ->assertSessionHas('flash_message')
-            ->assertSessionHas('flash_type', 'success');
+            ->assertSessionHas('flash.message')
+            ->assertSessionHas('flash.type', 'success');
 
         $this->assertDatabaseHas('users', [
             'id' => $user->id,
@@ -69,8 +69,8 @@ class ProfileControllerTest extends TestCase
             'name' => 'New Name',
         ])
             ->assertRedirect(route('profile.edit'))
-            ->assertSessionHas('flash_message')
-            ->assertSessionHas('flash_type', 'error');
+            ->assertSessionHas('flash.message')
+            ->assertSessionHas('flash.type', 'error');
     }
 
     public function test_user_can_delete_their_account(): void
@@ -99,7 +99,7 @@ class ProfileControllerTest extends TestCase
 
         $this->actingAs($user)->delete(route('profile.destroy'))
             ->assertRedirect(route('profile.edit'))
-            ->assertSessionHas('flash_message')
-            ->assertSessionHas('flash_type', 'error');
+            ->assertSessionHas('flash.message')
+            ->assertSessionHas('flash.type', 'error');
     }
 }

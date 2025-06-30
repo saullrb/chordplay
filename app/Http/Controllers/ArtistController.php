@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreArtistRequest;
 use App\Models\Artist;
+use App\Models\Song;
 use App\Services\ArtistService;
 use App\Services\UserService;
 use App\Traits\FlashesMessages;
@@ -27,30 +28,34 @@ class ArtistController extends Controller
         return Inertia::render('Artists/Index', [
             'artists' => Inertia::deepMerge($artists),
             'can' => [
-                'create_artist' => Auth::user()?->can('create', Artist::class) ?? false,
+                'createArtist' => Auth::user()?->can('create', Artist::class) ?? false,
             ],
         ]);
     }
 
     public function show(string $slug): Response
     {
-        $artist = Artist::with(['songs' => function ($query): void {
-            $query->orderBy('name', 'asc');
-        }])->where('slug', $slug)->firstOrFail();
+        $artist = Artist::where('slug', $slug)->firstOrFail();
 
         $artist->increment('views');
+
+        $songs = Song::query()
+            ->whereArtistId($artist->id)
+            ->withFavoriteStatus(Auth::user()?->id)
+            ->orderByFavoritesAndViews()->paginate(20);
 
         $is_favorited = Auth::user()?->favoriteArtists()->where('artist_id', $artist->id)->exists() ?? false;
 
         return Inertia::render('Artists/Show', [
             'artist' => $artist,
-            'is_favorited' => $is_favorited,
+            'songs' => Inertia::deepMerge($songs),
+            'isFavorited' => $is_favorited,
         ]);
     }
 
     public function create()
     {
-        $this->authorize('store', Artist::class);
+        $this->authorize('create', Artist::class);
 
         return Inertia::render('Artists/Create');
     }
@@ -62,16 +67,18 @@ class ArtistController extends Controller
         try {
             $artist = $this->artist_service->store($validated);
 
-            return redirect()
-                ->route('artists.show', $artist)
-                ->with($this->flashSuccess('Artist created successfully'));
+            $this->flashSuccess('Artist created successfully');
+
+            return redirect()->route('artists.show', $artist);
+
         } catch (\Throwable $e) {
             Log::error('Failed to create artist', ['name' => $validated['name'], 'error' => $e->getMessage()]);
 
+            $this->flashError('Failed to create artist.');
+
             return redirect()
                 ->back()
-                ->withInput()
-                ->with($this->flashError('Failed to create artist.'));
+                ->withInput();
         }
     }
 
@@ -83,12 +90,14 @@ class ArtistController extends Controller
             return back()->with('is_favorited', true);
         } catch (\Throwable $e) {
             Log::error('Failed to favorite artist', [
-                'user_id' => Auth::id(),
-                'artist_id' => $artist->id,
+                'userId' => Auth::id(),
+                'artistId' => $artist->id,
                 'error' => $e->getMessage(),
             ]);
 
-            return back()->withInput()->with($this->flashError('Unable to favorite artist. Please try again.'));
+            $this->flashError('Unable to favorite artist. Please try again.');
+
+            return back()->withInput();
         }
     }
 
@@ -100,12 +109,14 @@ class ArtistController extends Controller
             return back()->with('is_favorited', false);
         } catch (\Throwable $e) {
             Log::error('Failed to unfavorite artist', [
-                'user_id' => Auth::id(),
-                'artist_id' => $artist->id,
+                'userId' => Auth::id(),
+                'artistId' => $artist->id,
                 'error' => $e->getMessage(),
             ]);
 
-            return back()->withInput()->with($this->flashError('Unable to unfavorite artist. Please try again.'));
+            $this->flashError('Unable to unfavorite artist. Please try again.');
+
+            return back()->withInput();
         }
     }
 }

@@ -1,15 +1,23 @@
 <script setup>
-import PageHeader from '@/Components/PageHeader.vue';
-import TextLink from '@/Components/TextLink.vue';
-import SongForm from './partials/SongForm.vue';
-import { useForm } from '@inertiajs/vue3';
-import SongPreview from './partials/SongPreview.vue';
+import SongForm from '@/Components/Domain/Song/SongForm.vue';
+import SongPreview from '@/Components/Domain/Song/SongPreview.vue';
+import PageHeader from '@/Components/UI/PageHeader.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { Link, useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
-    artist: Object,
-    available_keys: Array,
-    song: Object,
+    song: {
+        type: Object,
+        required: true,
+    },
+    artist: {
+        type: Object,
+        required: true,
+    },
+    availableKeys: {
+        type: Array,
+        required: true,
+    },
 });
 
 const form = useForm({
@@ -20,7 +28,7 @@ const form = useForm({
 
 function submitForm() {
     form.post(
-        route('song_submissions.store', {
+        route('song-submissions.store', {
             artist: props.artist,
             song: props.song,
         }),
@@ -35,16 +43,16 @@ function submitForm() {
         <template #header>
             <PageHeader title="Edit song" />
 
-            <TextLink :href="route('artists.show', artist)">
+            <Link :href="route('artists.show', artist)">
                 {{ artist.name }}
-            </TextLink>
+            </Link>
         </template>
 
         <div class="mt-6 grid grid-cols-2 justify-between gap-12 py-6">
             <SongForm
-                :available_keys="available_keys"
-                :initial_data="form"
-                submit_label="Update"
+                :available-keys="availableKeys"
+                :initial-data="form"
+                submit-label="Update"
                 @submit="submitForm"
             />
 

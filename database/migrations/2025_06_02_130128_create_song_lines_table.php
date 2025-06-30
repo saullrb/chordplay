@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('song_lines', function (Blueprint $table): void {
             $table->id();
-            $table->foreignIdFor(Song::class)->constrained()->onDelete('cascade');
+            $table->foreignIdFor(Song::class)->constrained()->cascadeOnDelete();
             $table->integer('line_number');
             $table->enum('content_type', array_column(SongLineContentType::cases(), 'value'));
             $table->text('content');

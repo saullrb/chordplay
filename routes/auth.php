@@ -10,5 +10,5 @@ Route::middleware('auth')->group(function (): void {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
 });
-Route::get('/auth/google/redirect', fn () => Socialite::driver('google')->redirect())->name('google.redirect');
+Route::get('/auth/google/redirect', [SocialAuthController::class, 'googleRedirect'])->name('google.redirect');
 Route::get('/auth/google/callback', [SocialAuthController::class, 'googleCallback'])->name('google.callback');
