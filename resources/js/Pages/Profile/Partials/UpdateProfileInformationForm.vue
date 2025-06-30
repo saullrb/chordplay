@@ -1,6 +1,5 @@
 <script setup>
 import InputError from '@/Components/UI/InputError.vue';
-import PrimaryButton from '@/Components/UI/button/PrimaryButton.vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 
 const user = usePage().props.auth.user;
@@ -41,9 +40,9 @@ const form = useForm({
             </div>
 
             <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">
+                <button class="btn btn-primary" :disabled="form.processing">
                     Save
-                </PrimaryButton>
+                </button>
 
                 <Transition
                     enter-active-class="transition ease-in-out"

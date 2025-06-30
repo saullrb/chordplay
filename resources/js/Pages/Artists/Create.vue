@@ -1,6 +1,5 @@
 <script setup>
 import PageHeader from '@/Components/PageHeader.vue';
-import PrimaryButton from '@/Components/UI/button/PrimaryButton.vue';
 import InputError from '@/Components/UI/InputError.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { useForm } from '@inertiajs/vue3';
@@ -43,7 +42,9 @@ function submit() {
                     <InputError :message="form.errors.name" />
                 </fieldset>
                 <div class="mt-4 flex justify-end">
-                    <PrimaryButton type="submit"> Submit </PrimaryButton>
+                    <button class="btn btn-primary" type="submit">
+                        Submit
+                    </button>
                 </div>
             </form>
         </div>

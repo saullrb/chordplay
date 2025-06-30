@@ -1,6 +1,5 @@
 <script setup>
 import InputError from '@/Components/UI/InputError.vue';
-import PrimaryButton from '@/Components/UI/button/PrimaryButton.vue';
 import { reactive } from 'vue';
 
 const props = defineProps({
@@ -82,13 +81,14 @@ function handleSubmit() {
         </div>
         <InputError dusk="content-errors" :message="form.errors?.content" />
         <div class="mt-4 flex justify-end gap-2">
-            <PrimaryButton
+            <button
+                class="btn btn-primary"
                 dusk="submit-button"
                 :disabled="form.processing"
                 type="submit"
             >
                 {{ submitLabel }}
-            </PrimaryButton>
+            </button>
         </div>
     </form>
 </template>

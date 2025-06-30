@@ -1,5 +1,4 @@
 <script setup>
-import DangerButton from '@/Components/UI/button/DangerButton.vue';
 import ConfirmationDialog from '@/Components/UI/dialog/ConfirmationDialog.vue';
 import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
@@ -19,9 +18,9 @@ const handleConfirmation = () => {
             <h2 class="text-lg font-medium">Delete Account</h2>
         </header>
 
-        <DangerButton @click="confirmDialog.show()">
+        <button class="btn btn-error" @click="confirmDialog.show()">
             Delete Account
-        </DangerButton>
+        </button>
 
         <ConfirmationDialog
             ref="confirmDialog"
