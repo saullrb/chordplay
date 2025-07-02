@@ -43,7 +43,7 @@ watch(capoPosition, (newPosition, oldPosition) => {
     }
 });
 
-function selectCapoPostion(position) {
+function selectCapoPosition(position) {
     capoPosition.value = position;
 }
 
@@ -114,7 +114,7 @@ function setSongKey() {
                     <li
                         v-for="(_, n) in 12"
                         :key="n"
-                        @click="() => selectCapoPostion(n)"
+                        @click="() => selectCapoPosition(n)"
                     >
                         <button
                             class="btn btn-xs btn-accent btn-ghost"
