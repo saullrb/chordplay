@@ -28,7 +28,7 @@ export function useChordTransposer() {
             'Bb',
             'B',
         ];
-        const flatKeys = ['F', 'Bb', 'Eb', 'Ab', 'Db', 'Gb', 'Cb'];
+        const flatKeys = ['Bb', 'Eb', 'Ab', 'Db', 'Gb', 'Cb'];
 
         const useFlats = flatKeys.includes(chord);
 

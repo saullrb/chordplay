@@ -63,15 +63,27 @@ class SongPageFlowTest extends DuskTestCase
             $browser
                 ->click('@transpose-up-button')
                 ->waitForTextIn('@song-key', 'C#')
-                ->click('@transpose-up-button')
-                ->pause(500)
-                ->click('@transpose-up-button')
-                ->waitForTextIn('@song-key', 'D#')
                 ->click('@transpose-down-button')
-                ->waitForTextIn('@song-key', 'D');
+                ->waitForTextIn('@song-key', 'C')
+                // Clicking 12 times should get you back to the original key
+                ->click('@transpose-up-button')
+                ->click('@transpose-up-button')
+                ->click('@transpose-up-button')
+                ->click('@transpose-up-button')
+                ->click('@transpose-up-button')
+                ->click('@transpose-up-button')
+                ->click('@transpose-up-button')
+                ->click('@transpose-up-button')
+                ->click('@transpose-up-button')
+                ->click('@transpose-up-button')
+                ->click('@transpose-up-button')
+                ->click('@transpose-up-button')
+                ->waitForTextIn('@song-key', 'C')
+                ->click('@transpose-down-button')
+                ->waitForTextIn('@song-key', 'B');
 
             $transposed_chords = $browser->text('[dusk="chord-line"]:first-of-type');
-            $expected_chords = 'F#        Dm          E           B7';
+            $expected_chords = 'D#        Bm          C#           G#7';
 
             $this->assertEquals($expected_chords, $transposed_chords);
 
@@ -81,7 +93,7 @@ class SongPageFlowTest extends DuskTestCase
                 ->click('@capo-3');
 
             $transposed_chords = $browser->text('[dusk="chord-line"]:first-of-type');
-            $expected_chords = 'D#        Bm          C#           G#7';
+            $expected_chords = 'C        G#m          A#           F7';
 
             $this->assertEquals($expected_chords, $transposed_chords);
 
