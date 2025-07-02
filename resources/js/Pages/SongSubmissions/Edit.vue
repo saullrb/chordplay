@@ -38,7 +38,7 @@ function submitForm() {
 <template>
     <Head :title="`${artist.name} - ${song.name} - Edit`" />
 
-    <AppLayout>
+    <AppLayout dusk="song-submissions-edit-page">
         <template #header>
             <PageHeader title="Edit song submission" />
 

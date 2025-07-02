@@ -4,7 +4,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 
 <template>
     <Head title="Login" />
-    <AppLayout>
+    <AppLayout dusk="login-page">
         <div
             class="flex h-full flex-col items-center justify-start gap-6 pt-40"
         >

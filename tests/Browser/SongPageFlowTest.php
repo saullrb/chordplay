@@ -41,7 +41,7 @@ class SongPageFlowTest extends DuskTestCase
             $browser->visit(route('home'))
                 ->typeSlowly('@search-input', 'test')
                 ->keys('@search-input', '{enter}')
-                ->pause(500);
+                ->waitForLocation(route('search'), 3);
 
             $this->assertGuest();
 
@@ -62,16 +62,13 @@ class SongPageFlowTest extends DuskTestCase
             // Transpose song
             $browser
                 ->click('@transpose-up-button')
-                ->pause(500)
-                ->assertSeeIn('@song-key', 'C#')
+                ->waitForTextIn('@song-key', 'C#')
                 ->click('@transpose-up-button')
                 ->pause(500)
                 ->click('@transpose-up-button')
-                ->pause(500)
-                ->assertSeeIn('@song-key', 'D#')
+                ->waitForTextIn('@song-key', 'D#')
                 ->click('@transpose-down-button')
-                ->pause(500)
-                ->assertSeeIn('@song-key', 'D');
+                ->waitForTextIn('@song-key', 'D');
 
             $transposed_chords = $browser->text('[dusk="chord-line"]:first-of-type');
             $expected_chords = 'F#        Dm          E           B7';
@@ -92,7 +89,6 @@ class SongPageFlowTest extends DuskTestCase
             $browser
                 ->click('@favorite-button')
                 ->waitForLocation(route('login'))
-
                 ->assertSee('Login with Google');
 
             $browser->visit(route('test.oauth.callback', $this->user->id).'?intended='.urlencode($song_url));

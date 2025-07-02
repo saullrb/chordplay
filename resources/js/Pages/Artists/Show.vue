@@ -62,7 +62,7 @@ const loadMoreSongs = async () => {
 <template>
     <Head :title="artist.name" />
 
-    <AppLayout>
+    <AppLayout dusk="artists-show-page">
         <template #header>
             <div class="flex w-full justify-between">
                 <div class="flex items-center gap-4">

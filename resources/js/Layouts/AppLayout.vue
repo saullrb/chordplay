@@ -4,7 +4,7 @@ import FlashMessage from '@/Components/UI/FlashMessage.vue';
 </script>
 
 <template>
-    <div class="flex min-h-screen flex-col">
+    <div dusk="page" class="flex min-h-screen flex-col">
         <NavBar />
         <FlashMessage />
         <div

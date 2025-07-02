@@ -33,7 +33,7 @@ class SongSubmissionFlowTest extends DuskTestCase
             // Visit artist page as guest user
             $browser
                 ->visit(route('artists.show', $this->artist))
-                ->pause(500)
+                ->waitForLocation(route('artists.show', $this->artist), 3)
                 ->assertSee($this->artist->name)
                 ->assertGuest()
                 ->assertNotPresent('@add-song-link');
@@ -42,11 +42,10 @@ class SongSubmissionFlowTest extends DuskTestCase
             $browser
                 ->loginAs($this->user)
                 ->refresh()
-                ->pause(500)
+                ->waitForLocation(route('artists.show', $this->artist), 3)
                 ->assertAuthenticatedAs($this->user)
                 ->click('@add-song-link')
-                ->pause(500)
-                ->assertRouteIs('artists.songs.create', $this->artist);
+                ->waitForLocation(route('artists.songs.create', $this->artist), 3);
 
             // Test chords validation
             $browser
@@ -68,13 +67,13 @@ class SongSubmissionFlowTest extends DuskTestCase
             $browser
                 ->type('#content', $song_content)
                 ->click('@submit-button')
-                ->pause(500);
+                ->waitForText('New Song', 3);
 
             $songSubmission = SongSubmission::firstWhere('name', 'New Song');
 
             // SongSubmission show page
             $browser
-                ->waitForTextIn('@song-key', $songSubmission->key->value, 3)
+                ->assertSeeIn('@song-key', $songSubmission->key->value)
                 ->assertRouteIs('song-submissions.show', $songSubmission)
                 ->assertPresent('@preview-notice')
                 ->assertPresent('@flash-message')
@@ -87,7 +86,7 @@ class SongSubmissionFlowTest extends DuskTestCase
             // Edit song submission
             $browser
                 ->click('@edit-song-link')
-                ->pause(500)
+                ->waitForLocation(route('song-submissions.edit', $songSubmission), 3)
                 ->assertInputValue('@song-name-input', $songSubmission->name)
                 ->assertSelected('@song-key-select', $songSubmission->key->value)
                 ->assertInputValue('@song-content-textarea', $song_content)
@@ -108,8 +107,7 @@ class SongSubmissionFlowTest extends DuskTestCase
                 ->click('@reject-song-button')
                 ->waitFor('@confirm-modal-button')
                 ->click('@confirm-modal-button')
-                ->waitFor('@song-submissions-index')
-                ->assertRouteIs('song-submissions.index');
+                ->waitForLocation(route('song-submissions.index'), 3);
         });
     }
 }

@@ -30,7 +30,7 @@ function submitForm() {
 <template>
     <Head :title="`${artist.name} - Add Song`" />
 
-    <AppLayout>
+    <AppLayout dusk="song-submissions-create-page">
         <template #header>
             <PageHeader title="Add song" />
 

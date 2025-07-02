@@ -86,7 +86,7 @@ function handleSubmit() {
 <template>
     <Head :title="'Search: ' + query" />
 
-    <AppLayout>
+    <AppLayout dusk="search-page">
         <template #header>
             <PageHeader :title="'Search: ' + query" />
         </template>
