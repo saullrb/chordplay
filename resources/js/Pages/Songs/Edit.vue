@@ -27,7 +27,6 @@ const form = useForm({
 });
 
 function submitForm() {
-    console.log(props.song);
     form.post(
         route('song-submissions.store', {
             artist: props.artist,
