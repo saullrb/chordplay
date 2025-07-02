@@ -10,10 +10,10 @@ use Illuminate\Support\Facades\DB;
 
 class SongSubmissionService
 {
-    public function store(array $songSubmission, int $artist_id, ?int $song_id, int $user_id): SongSubmission
+    public function store(array $songSubmission, int $artist_id, int $user_id): SongSubmission
     {
         $submission = SongSubmission::create([
-            'song_id' => $song_id,
+            'song_id' => $songSubmission['songId'] ?? null,
             'artist_id' => $artist_id,
             'user_id' => $user_id,
             'name' => $songSubmission['name'],

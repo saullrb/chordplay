@@ -63,12 +63,12 @@ class SongPageFlowTest extends DuskTestCase
             $browser
                 ->click('@transpose-up-button')
                 ->pause(500)
-                ->assertSeeIn('@song-key', 'Db')
+                ->assertSeeIn('@song-key', 'C#')
                 ->click('@transpose-up-button')
                 ->pause(500)
                 ->click('@transpose-up-button')
                 ->pause(500)
-                ->assertSeeIn('@song-key', 'Eb')
+                ->assertSeeIn('@song-key', 'D#')
                 ->click('@transpose-down-button')
                 ->pause(500)
                 ->assertSeeIn('@song-key', 'D');

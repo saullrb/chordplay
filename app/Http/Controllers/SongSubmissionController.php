@@ -7,7 +7,6 @@ namespace App\Http\Controllers;
 use App\Enums\SongKeyEnum;
 use App\Http\Requests\StoreSongSubmissionRequest;
 use App\Models\Artist;
-use App\Models\Chord;
 use App\Models\SongSubmission;
 use App\Services\SongSubmissionService;
 use App\Traits\FlashesMessages;
@@ -47,13 +46,9 @@ class SongSubmissionController extends Controller
             'lines' => fn ($query) => $query->orderBy('line_number'),
         ]);
 
-        $available_keys = SongKeyEnum::sameModeAs($songSubmission->key);
-
         return Inertia::render('SongSubmissions/Show', [
             'song' => $songSubmission,
             'artist' => $songSubmission->artist,
-            'validChords' => Chord::getGroupedChords(),
-            'availableKeys' => $available_keys,
             'can' => [
                 'approveSubmission' => Auth::user()?->can('approve', SongSubmission::class) ?? false,
                 'updateSubmission' => Auth::user()?->can('update', $songSubmission) ?? false,
@@ -68,7 +63,6 @@ class SongSubmissionController extends Controller
         return Inertia::render('SongSubmissions/Create', [
             'availableKeys' => SongKeyEnum::values(),
             'artist' => $artist,
-            'validChords' => Chord::getGroupedChords(),
         ]);
     }
 
@@ -80,7 +74,6 @@ class SongSubmissionController extends Controller
             $submission = $this->songSubmissionService->store(
                 $validated,
                 $artist->id,
-                $request->song['id'] ?? null,
                 Auth::id());
 
             $this->flashSuccess('Your song was submited for review.');

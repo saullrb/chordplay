@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('artists', function (Blueprint $table): void {
             $table->id();
-            $table->string('name');
+            $table->string('name')->unique();
             $table->string('slug')->unique();
             $table->unsignedBigInteger('views')->default(0);
             $table->timestamps();

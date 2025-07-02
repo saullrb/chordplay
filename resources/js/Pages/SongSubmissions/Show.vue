@@ -21,14 +21,6 @@ const props = defineProps({
         type: Object,
         required: true,
     },
-    availableKeys: {
-        type: Array,
-        required: true,
-    },
-    validChords: {
-        type: Object,
-        required: true,
-    },
     can: {
         type: Object,
         default: () => ({
@@ -114,11 +106,8 @@ function handleConfirmation() {
             }"
         >
             <SongContent
-                :original-key="song.key"
-                :key-offset="songControlsRef?.keyOffset ?? 0"
-                :available-keys="availableKeys"
                 :content="song.lines"
-                :valid-chords="validChords"
+                :key-offset="songControlsRef?.keyOffset ?? 0"
             />
         </div>
 

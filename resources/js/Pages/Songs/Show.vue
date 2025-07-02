@@ -21,10 +21,6 @@ const props = defineProps({
         type: Array,
         required: true,
     },
-    validChords: {
-        type: Object,
-        required: true,
-    },
     isFavorited: Boolean,
 });
 
@@ -101,11 +97,8 @@ function handleFavorite() {
             }"
         >
             <SongContent
-                :original-key="song.key"
-                :key-offset="songControlsRef?.keyOffset ?? 0"
-                :available-keys="availableKeys"
                 :content="song.lines"
-                :valid-chords="validChords"
+                :key-offset="songControlsRef?.keyOffset ?? 0"
             />
         </div>
     </AppLayout>

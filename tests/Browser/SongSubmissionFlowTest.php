@@ -7,6 +7,7 @@ namespace Tests\Browser;
 use App\Models\Artist;
 use App\Models\SongSubmission;
 use App\Models\User;
+use Database\Seeders\ChordSeeder;
 use Laravel\Dusk\Browser;
 use Tests\DuskTestCase;
 
@@ -22,6 +23,8 @@ class SongSubmissionFlowTest extends DuskTestCase
 
         $this->artist = Artist::factory()->create(['name' => 'Test Artist']);
         $this->user = User::factory()->create();
+
+        $this->seed(ChordSeeder::class);
     }
 
     public function test_song_submission_flow(): void
@@ -105,7 +108,7 @@ class SongSubmissionFlowTest extends DuskTestCase
                 ->click('@reject-song-button')
                 ->waitFor('@confirm-modal-button')
                 ->click('@confirm-modal-button')
-                ->pause(1000)
+                ->waitFor('@song-submissions-index')
                 ->assertRouteIs('song-submissions.index');
         });
     }
