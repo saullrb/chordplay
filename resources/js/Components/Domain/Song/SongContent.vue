@@ -1,49 +1,12 @@
 <script setup>
+import { useChordTransposer } from '@/Composables/useChordTransposer';
+
 const props = defineProps({
     content: { type: Array, required: true },
-    availableKeys: { type: Array, required: true },
-    validChords: { type: Object, required: true },
-    originalKey: { type: String, required: true },
     keyOffset: { type: Number, required: true },
 });
 
-function getChordType(chord) {
-    for (const [type, chords] of Object.entries(props.validChords)) {
-        if (chords.includes(chord)) {
-            return type;
-        }
-    }
-
-    return null;
-}
-
-function findNoteIndex(note) {
-    return props.availableKeys.findIndex((n) => n === note);
-}
-
-function transposeChord(chord) {
-    if (!chord) return chord;
-
-    const chordType = getChordType(chord);
-
-    if (chordType === null) {
-        return ' ';
-    }
-
-    const originalIndex = findNoteIndex(props.originalKey);
-    const targetIndex = originalIndex + props.keyOffset;
-    const semitones = targetIndex - originalIndex;
-
-    const chordArray = props.validChords[chordType];
-    const currentIndex = chordArray.findIndex((c) => c === chord);
-
-    let newIndex = (currentIndex + semitones) % chordArray.length;
-    if (newIndex < 0) {
-        newIndex += chordArray.length;
-    }
-
-    return chordArray[newIndex];
-}
+const { transposeChord } = useChordTransposer();
 
 function extractBrackets(line) {
     let newLine = '';
@@ -54,7 +17,7 @@ function extractBrackets(line) {
             bracketContent = '';
         } else if (char === ']' && bracketContent) {
             const chord = bracketContent.trim();
-            const transposedChord = transposeChord(chord);
+            const transposedChord = transposeChord(chord, props.keyOffset);
 
             if (transposedChord) {
                 newLine += transposedChord;

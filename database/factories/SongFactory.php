@@ -69,7 +69,10 @@ class SongFactory extends Factory
 
     private function generateChords(): string
     {
-        $chords = fake()->randomElements(Chord::allChords(), fake()->numberBetween(3, 5));
+        $chords = Chord::inRandomOrder()
+            ->limit(fake()->numberBetween(3, 5))
+            ->get()
+            ->pluck('name');
 
         if (empty($chords)) {
             $chords = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];

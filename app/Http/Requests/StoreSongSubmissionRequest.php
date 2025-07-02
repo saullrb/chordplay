@@ -12,23 +12,26 @@ use Illuminate\Validation\Rules\Enum;
 
 class StoreSongSubmissionRequest extends FormRequest
 {
-    private array $processed_lines = [];
+    private array $processedLines = [];
 
     public function rules(): array
     {
         return [
+            'songId' => ['integer'],
             'name' => ['required', 'string', 'max:100'],
             'key' => ['required', new Enum(SongKeyEnum::class)],
             'content' => ['required', 'string', function ($attribute, $value, $fail): void {
                 $parser = new SongContentParser;
                 [$processed, $chords] = $parser->parse($value);
-                $this->processed_lines = $processed;
+                $this->processedLines = $processed;
 
                 $valid = Chord::whereIn('name', $chords)->pluck('name')->toArray();
                 $invalid = array_diff($chords, $valid);
 
                 if ($invalid !== []) {
-                    $fail('These chords are invalid: '.implode(', ', $invalid));
+                    $invalidChords = implode(', ', $invalid);
+
+                    $fail('These chords are invalid: '.$invalidChords);
                 }
             }],
         ];
@@ -38,7 +41,7 @@ class StoreSongSubmissionRequest extends FormRequest
     {
         $validated = parent::validated($key, $default);
         unset($validated['content']);
-        $validated['lines'] = $this->processed_lines;
+        $validated['lines'] = $this->processedLines;
 
         return $validated;
     }

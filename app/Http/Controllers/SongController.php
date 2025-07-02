@@ -6,7 +6,6 @@ namespace App\Http\Controllers;
 
 use App\Enums\SongKeyEnum;
 use App\Models\Artist;
-use App\Models\Chord;
 use App\Models\Song;
 use App\Services\UserService;
 use App\Traits\FlashesMessages;
@@ -29,15 +28,14 @@ class SongController extends Controller
             $query->orderBy('line_number');
         }]);
 
-        $available_keys = SongKeyEnum::sameModeAs($song->key);
+        $available_keys = SongKeyEnum::getKeysInSameNotation($song->key);
 
         $is_favorited = Auth::user()?->favoriteSongs()->where('song_id', $song->id)->exists() ?? false;
 
         return Inertia::render('Songs/Show', [
             'song' => $song,
-            'isFavorited' => $is_favorited,
             'artist' => $artist,
-            'validChords' => Chord::getGroupedChords(),
+            'isFavorited' => $is_favorited,
             'availableKeys' => $available_keys,
         ]);
     }

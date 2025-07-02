@@ -11,6 +11,7 @@ use App\Models\Song;
 use App\Models\SongSubmission;
 use App\Models\User;
 use App\Services\SongSubmissionService;
+use Database\Seeders\ChordSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -30,6 +31,8 @@ class SongSubmissionControllerTest extends TestCase
         $this->admin = User::factory()->admin()->create();
         $this->author = User::factory()->create();
         $this->regularUser = User::factory()->create();
+
+        $this->seed(ChordSeeder::class);
     }
 
     public function test_guest_user_cannot_visit_submissions_page(): void
@@ -142,7 +145,6 @@ class SongSubmissionControllerTest extends TestCase
                 ->component('SongSubmissions/Create')
                 ->where('artist.id', $artist->id)
                 ->has('availableKeys')
-                ->has('validChords')
             );
     }
 
@@ -157,7 +159,7 @@ class SongSubmissionControllerTest extends TestCase
             ->post(route('song-submissions.store', $artist), [
                 'name' => 'Test Song',
                 'key' => 'C',
-                'content' => '[Am] Test',
+                'content' => "[Am] \nContent",
             ]);
 
         $songSubmission = SongSubmission::where('name', 'Test Song')->first();

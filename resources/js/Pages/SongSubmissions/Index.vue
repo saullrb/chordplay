@@ -20,7 +20,7 @@ defineProps({
             <PageHeader title="Song Submissions" />
         </template>
 
-        <div class="mt-6 mb-6">
+        <div dusk="song-submissions-index" class="my-6">
             <SongSubmissionTable :submissions="submissions.data" />
             <SimplePagination :pagination="submissions" />
         </div>
