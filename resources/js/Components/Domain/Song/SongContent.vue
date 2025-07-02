@@ -9,29 +9,25 @@ const props = defineProps({
 const { transposeChord } = useChordTransposer();
 
 function extractBrackets(line) {
-    let newLine = '';
-    let bracketContent = null;
+    let result = '';
+    let token = '';
+    let inside = false;
 
-    line.split('').forEach((char) => {
+    for (const char of line) {
         if (char === '[') {
-            bracketContent = '';
-        } else if (char === ']' && bracketContent) {
-            const chord = bracketContent.trim();
-            const transposedChord = transposeChord(chord, props.keyOffset);
-
-            if (transposedChord) {
-                newLine += transposedChord;
-            }
-
-            bracketContent = null;
-        } else if (bracketContent !== null) {
-            bracketContent += char;
-        } else {
-            newLine += ' ';
+            inside = true;
+            token = '';
+        } else if (char === ']' && inside) {
+            result += transposeChord(token, props.keyOffset);
+            inside = false;
+            token = '';
+        } else if (inside && char !== ' ') {
+            token += char;
+        } else if (!inside && char === ' ') {
+            result += char;
         }
-    });
-
-    return newLine;
+    }
+    return result;
 }
 </script>
 

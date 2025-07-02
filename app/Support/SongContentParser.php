@@ -8,22 +8,27 @@ use App\Enums\SongLineContentType;
 
 class SongContentParser
 {
+    private const CHORD_START = '[';
+
+    private const CHORD_END = ']';
+
     public function parse(string $content): array
     {
         $lines = explode(PHP_EOL, trim($content));
         $processed = [];
-        $chord_lines = [];
+        $allChords = [];
 
         foreach ($lines as $i => $line) {
             $trimmed = trim($line);
 
-            if (str_starts_with($trimmed, '[')) {
+            if (str_starts_with($trimmed, self::CHORD_START)) {
+                $result = $this->processChordLine($line);
                 $processed[] = [
                     'line_number' => $i,
                     'content_type' => SongLineContentType::CHORDS,
-                    'content' => $this->sanitizeChordsLine($line),
+                    'content' => $result['sanitized'],
                 ];
-                $chord_lines[] = $line;
+                $allChords += array_fill_keys($result['chords'], true);
             } else {
                 $processed[] = [
                     'line_number' => $i,
@@ -35,52 +40,41 @@ class SongContentParser
             }
         }
 
-        return [$processed, $this->extractChords($chord_lines)];
+        return [$processed, array_keys($allChords)];
     }
 
-    private function sanitizeChordsLine(string $line): string
+    private function processChordLine(string $line): array
     {
         $inside = false;
-        $out = '';
-
-        foreach (str_split($line) as $char) {
-            if ($char === '[') {
-                $inside = true;
-                $out .= $char;
-            } elseif ($char === ']') {
-                $inside = false;
-                $out .= $char;
-            } elseif ($inside || $char === ' ') {
-                $out .= $char;
-            }
-        }
-
-        return $out;
-    }
-
-    private function extractChords(array $lines): array
-    {
+        $token = '';
+        $sanitized = '';
         $chords = [];
 
-        foreach ($lines as $line) {
-            $inside = false;
-            $token = '';
-
-            for ($i = 0; $i < strlen((string) $line); $i++) {
-                $char = $line[$i];
-
-                if ($char === '[') {
-                    $inside = true;
-                    $token = '';
-                } elseif ($char === ']') {
-                    $inside = false;
-                    $chords[$token] = true;
-                } elseif ($inside) {
-                    $token .= $char;
+        foreach (str_split($line) as $char) {
+            if ($char === self::CHORD_START) {
+                if ($inside) {
+                    $sanitized = '';
                 }
+                $inside = true;
+                $token = '';
+                $sanitized .= $char;
+            } elseif ($char === self::CHORD_END && $inside) {
+                $inside = false;
+                $chords[] = $token;
+                $sanitized .= $char;
+            } elseif ($inside) {
+                if ($char !== ' ') {
+                    $token .= $char;
+                    $sanitized .= $char;
+                }
+            } elseif ($char === ' ') {
+                $sanitized .= $char;
             }
         }
 
-        return array_keys($chords);
+        return [
+            'sanitized' => $sanitized,
+            'chords' => $chords,
+        ];
     }
 }

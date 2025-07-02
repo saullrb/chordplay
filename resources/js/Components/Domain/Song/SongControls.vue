@@ -40,7 +40,8 @@ function selectCapoPostion(position) {
     capoPosition.value = position;
 }
 
-function transpose(direction, halfSteps, shouldChangeKey = true) {
+function transpose(direction, halfSteps) {
+    // Find the index of the current key in the available keys array
     let keyIndex = props.availableKeys.findIndex(
         (key) => key === songKey.value,
     );
@@ -49,15 +50,15 @@ function transpose(direction, halfSteps, shouldChangeKey = true) {
         keyIndex =
             (keyIndex - halfSteps + props.availableKeys.length) %
             props.availableKeys.length;
-        keyOffset.value -= halfSteps;
+        keyOffset.value = (keyOffset.value - halfSteps) % 12;
     } else {
         keyIndex = (keyIndex + halfSteps) % props.availableKeys.length;
-        keyOffset.value += halfSteps;
+        keyOffset.value = (keyOffset.value + halfSteps) % 12;
     }
 
-    if (shouldChangeKey) {
-        songKey.value = props.availableKeys[keyIndex];
-    }
+    console.log('keyOffset', keyOffset.value);
+
+    songKey.value = props.availableKeys[keyIndex];
 }
 </script>
 

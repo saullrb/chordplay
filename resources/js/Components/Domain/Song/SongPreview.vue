@@ -19,26 +19,25 @@ function separateLines() {
 }
 
 function extractBrackets(line) {
-    let newLine = '';
-    let bracketContent = null;
+    let result = '';
+    let token = '';
+    let inside = false;
 
-    line.split('').forEach((char) => {
+    for (const char of line) {
         if (char === '[') {
-            bracketContent = '';
-        } else if (char === ']' && bracketContent) {
-            const chord = bracketContent.trim();
-
-            newLine += chord;
-
-            bracketContent = null;
-        } else if (bracketContent !== null) {
-            bracketContent += char;
-        } else {
-            newLine += ' ';
+            inside = true;
+            token = '';
+        } else if (char === ']' && inside) {
+            result += token;
+            inside = false;
+            token = '';
+        } else if (inside && char !== ' ') {
+            token += char;
+        } else if (!inside && char === ' ') {
+            result += char;
         }
-    });
-
-    return newLine;
+    }
+    return result;
 }
 </script>
 
