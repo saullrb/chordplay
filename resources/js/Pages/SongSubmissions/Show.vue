@@ -97,7 +97,7 @@ function handleConfirmation() {
             >
                 {{ song.artist.name }}
             </Link>
-            <SongControls ref="songControlsRef" :song-key="song.key" />
+            <SongControls ref="songControlsRef" :original-song-key="song.key" />
         </template>
         <div
             class="py-6 dark:text-white"

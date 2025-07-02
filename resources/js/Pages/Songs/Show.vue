@@ -84,7 +84,7 @@ function handleFavorite() {
             </Link>
             <SongControls
                 ref="songControlsRef"
-                :song-key="song.key"
+                :original-song-key="song.key"
                 :available-keys="availableKeys"
                 :show-capo-options="true"
                 :show-key-change-buttons="true"

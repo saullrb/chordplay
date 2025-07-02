@@ -7,8 +7,10 @@ import {
 } from '@/Components/UI/Icons';
 import { ref, watch } from 'vue';
 
+const NUM_KEYS = 12;
+
 const props = defineProps({
-    songKey: {
+    originalSongKey: {
         type: String,
         required: true,
     },
@@ -20,10 +22,13 @@ const props = defineProps({
     showKeyChangeButtons: Boolean,
 });
 
-const songKey = ref(props.songKey);
+const originalKeyIndex = props.availableKeys.findIndex(
+    (key) => key === props.originalSongKey,
+);
+const currentSongKey = ref(props.originalSongKey);
 const capoPosition = ref(0);
-const multiColumn = ref(false);
 const keyOffset = ref(0);
+const multiColumn = ref(false);
 
 defineExpose({
     keyOffset: keyOffset,
@@ -31,34 +36,32 @@ defineExpose({
 });
 
 watch(capoPosition, (newPosition, oldPosition) => {
-    newPosition - oldPosition > 0
-        ? transpose('down', newPosition - oldPosition, false)
-        : transpose('up', Math.abs(newPosition - oldPosition), false);
+    if (newPosition > oldPosition) {
+        transposeDown(newPosition - oldPosition);
+    } else {
+        transposeUp(oldPosition - newPosition);
+    }
 });
 
 function selectCapoPostion(position) {
     capoPosition.value = position;
 }
 
-function transpose(direction, halfSteps) {
-    // Find the index of the current key in the available keys array
-    let keyIndex = props.availableKeys.findIndex(
-        (key) => key === songKey.value,
-    );
+function transposeUp(halfSteps = 1) {
+    keyOffset.value = (keyOffset.value + halfSteps) % NUM_KEYS;
+    setSongKey();
+}
 
-    if (direction === 'down') {
-        keyIndex =
-            (keyIndex - halfSteps + props.availableKeys.length) %
-            props.availableKeys.length;
-        keyOffset.value = (keyOffset.value - halfSteps) % 12;
-    } else {
-        keyIndex = (keyIndex + halfSteps) % props.availableKeys.length;
-        keyOffset.value = (keyOffset.value + halfSteps) % 12;
-    }
+function transposeDown(halfSteps = 1) {
+    keyOffset.value = (keyOffset.value - halfSteps) % NUM_KEYS;
+    setSongKey();
+}
 
-    console.log('keyOffset', keyOffset.value);
+function setSongKey() {
+    let currentKeyIndex =
+        (originalKeyIndex + keyOffset.value + NUM_KEYS) % NUM_KEYS;
 
-    songKey.value = props.availableKeys[keyIndex];
+    currentSongKey.value = props.availableKeys[currentKeyIndex];
 }
 </script>
 
@@ -73,19 +76,19 @@ function transpose(direction, halfSteps) {
                         dusk="transpose-down-button"
                         class="btn btn-xs btn-circle btn-soft"
                         aria-label="Transpose down"
-                        @click="() => transpose('down', 1)"
+                        @click="() => transposeDown()"
                     >
                         <MinusIcon class="size-4" />
                     </button>
                     <span dusk="song-key" class="text-accent w-10 text-center">
-                        {{ songKey }}
+                        {{ currentSongKey }}
                     </span>
                     <button
                         v-if="showKeyChangeButtons"
                         dusk="transpose-up-button"
                         class="btn btn-xs btn-circle btn-soft"
                         aria-label="Transpose up"
-                        @click="() => transpose('up', 1)"
+                        @click="() => transposeUp()"
                     >
                         <PlusIconSolid class="size-4" />
                     </button>
