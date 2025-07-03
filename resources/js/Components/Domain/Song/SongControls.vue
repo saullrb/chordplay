@@ -7,8 +7,6 @@ import {
 } from '@/Components/UI/Icons';
 import { ref, watch } from 'vue';
 
-const NUM_KEYS = 12;
-
 const props = defineProps({
     originalSongKey: {
         type: String,
@@ -22,9 +20,7 @@ const props = defineProps({
     showKeyChangeButtons: Boolean,
 });
 
-const originalKeyIndex = props.availableKeys.findIndex(
-    (key) => key === props.originalSongKey,
-);
+const NUM_OF_KEYS = props.availableKeys.length;
 const currentSongKey = ref(props.originalSongKey);
 const capoPosition = ref(0);
 const keyOffset = ref(0);
@@ -37,9 +33,9 @@ defineExpose({
 
 watch(capoPosition, (newPosition, oldPosition) => {
     if (newPosition > oldPosition) {
-        transposeDown(newPosition - oldPosition);
+        transposeDown(newPosition - oldPosition, false);
     } else {
-        transposeUp(oldPosition - newPosition);
+        transposeUp(oldPosition - newPosition, false);
     }
 });
 
@@ -47,21 +43,29 @@ function selectCapoPosition(position) {
     capoPosition.value = position;
 }
 
-function transposeUp(halfSteps = 1) {
-    keyOffset.value = (keyOffset.value + halfSteps) % NUM_KEYS;
-    setSongKey();
+function transposeUp(halfSteps = 1, changeKey = true) {
+    transpose(halfSteps, changeKey);
 }
 
-function transposeDown(halfSteps = 1) {
-    keyOffset.value = (keyOffset.value - halfSteps) % NUM_KEYS;
-    setSongKey();
+function transposeDown(halfSteps = 1, changeKey = true) {
+    transpose(-halfSteps, changeKey);
 }
 
-function setSongKey() {
-    let currentKeyIndex =
-        (originalKeyIndex + keyOffset.value + NUM_KEYS) % NUM_KEYS;
+function transpose(offset, changeKey = true) {
+    if (changeKey) {
+        setSongKey(offset);
+    }
 
-    currentSongKey.value = props.availableKeys[currentKeyIndex];
+    keyOffset.value = (keyOffset.value + offset + NUM_OF_KEYS) % NUM_OF_KEYS;
+}
+
+function setSongKey(offset) {
+    const currentIndex = props.availableKeys.findIndex(
+        (key) => key === currentSongKey.value,
+    );
+
+    const newIndex = (currentIndex + offset + NUM_OF_KEYS) % NUM_OF_KEYS;
+    currentSongKey.value = props.availableKeys[newIndex];
 }
 </script>
 
