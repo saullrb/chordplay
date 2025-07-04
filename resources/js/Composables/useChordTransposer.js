@@ -56,12 +56,14 @@ export function useChordTransposer() {
             return transposeNote(root) + suffix;
         }
 
+        let parsedCord = parseChordPart(chord);
+
         if (chord.includes('/')) {
             const [main, bass] = chord.split('/');
-            return parseChordPart(main) + '/' + transposeNote(bass);
+
+            parsedCord = parseChordPart(main) + '/' + transposeNote(bass);
         }
 
-        const parsedCord = parseChordPart(chord);
         if (!(parsedCord in chords.value)) {
             addMissingChord(parsedCord);
         }
