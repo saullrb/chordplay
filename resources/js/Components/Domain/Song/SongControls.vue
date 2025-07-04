@@ -5,13 +5,11 @@ import {
     MultiColumnIcon,
     PlusIconSolid,
 } from '@/Components/UI/Icons';
+import { useChordTransposer } from '@/Composables/useChordTransposer';
+import { getCapoPositionRef, getCurrentSongKeyRef } from '@/Stores/songStore';
 import { ref, watch } from 'vue';
 
 const props = defineProps({
-    originalSongKey: {
-        type: String,
-        required: true,
-    },
     availableKeys: {
         type: Array,
         default: () => [],
@@ -20,53 +18,19 @@ const props = defineProps({
     showKeyChangeButtons: Boolean,
 });
 
-const NUM_OF_KEYS = props.availableKeys.length;
-const currentSongKey = ref(props.originalSongKey);
-const capoPosition = ref(0);
-const keyOffset = ref(0);
 const multiColumn = ref(false);
+const capoPosition = getCapoPositionRef();
+const currentSongKey = getCurrentSongKeyRef();
+
+const { addCapo, transposeUp, transposeDown } = useChordTransposer();
 
 defineExpose({
-    keyOffset: keyOffset,
     multiColumn: multiColumn,
 });
 
-watch(capoPosition, (newPosition, oldPosition) => {
-    if (newPosition > oldPosition) {
-        transposeDown(newPosition - oldPosition, false);
-    } else {
-        transposeUp(oldPosition - newPosition, false);
-    }
+watch(capoPosition, (currentPosition) => {
+    addCapo(currentPosition);
 });
-
-function selectCapoPosition(position) {
-    capoPosition.value = position;
-}
-
-function transposeUp(halfSteps = 1, changeKey = true) {
-    transpose(halfSteps, changeKey);
-}
-
-function transposeDown(halfSteps = 1, changeKey = true) {
-    transpose(-halfSteps, changeKey);
-}
-
-function transpose(offset, changeKey = true) {
-    if (changeKey) {
-        setSongKey(offset);
-    }
-
-    keyOffset.value = (keyOffset.value + offset + NUM_OF_KEYS) % NUM_OF_KEYS;
-}
-
-function setSongKey(offset) {
-    const currentIndex = props.availableKeys.findIndex(
-        (key) => key === currentSongKey.value,
-    );
-
-    const newIndex = (currentIndex + offset + NUM_OF_KEYS) % NUM_OF_KEYS;
-    currentSongKey.value = props.availableKeys[newIndex];
-}
 </script>
 
 <template>
@@ -80,7 +44,7 @@ function setSongKey(offset) {
                         dusk="transpose-down-button"
                         class="btn btn-xs btn-circle btn-soft"
                         aria-label="Transpose down"
-                        @click="() => transposeDown()"
+                        @click="transposeDown()"
                     >
                         <MinusIcon class="size-4" />
                     </button>
@@ -92,7 +56,7 @@ function setSongKey(offset) {
                         dusk="transpose-up-button"
                         class="btn btn-xs btn-circle btn-soft"
                         aria-label="Transpose up"
-                        @click="() => transposeUp()"
+                        @click="transposeUp()"
                     >
                         <PlusIconSolid class="size-4" />
                     </button>
@@ -115,11 +79,7 @@ function setSongKey(offset) {
                     <template #trigger>
                         {{ capoPosition }}
                     </template>
-                    <li
-                        v-for="(_, n) in 12"
-                        :key="n"
-                        @click="() => selectCapoPosition(n)"
-                    >
+                    <li v-for="(_, n) in 12" :key="n" @click="() => addCapo(n)">
                         <button
                             class="btn btn-xs btn-accent btn-ghost"
                             :class="{

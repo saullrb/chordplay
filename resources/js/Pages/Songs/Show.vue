@@ -5,6 +5,7 @@ import FavoriteButton from '@/Components/UI/FavoriteButton.vue';
 import { PencilSquareIconSolid } from '@/Components/UI/Icons';
 import PageHeader from '@/Components/UI/PageHeader.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { initSongStore } from '@/Stores/songStore';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
@@ -24,6 +25,10 @@ const props = defineProps({
     isFavorited: Boolean,
 });
 
+initSongStore({
+    key: props.song.key,
+    availableKeysArray: props.availableKeys,
+});
 const user = usePage().props.auth.user;
 const songControlsRef = ref(null);
 const loading = ref(false);
@@ -84,7 +89,6 @@ function handleFavorite() {
             </Link>
             <SongControls
                 ref="songControlsRef"
-                :original-song-key="song.key"
                 :available-keys="availableKeys"
                 :show-capo-options="true"
                 :show-key-change-buttons="true"
@@ -96,10 +100,7 @@ function handleFavorite() {
                 'columns-2 gap-8': songControlsRef?.multiColumn ?? false,
             }"
         >
-            <SongContent
-                :content="song.lines"
-                :key-offset="songControlsRef?.keyOffset ?? 0"
-            />
+            <SongContent :content="song.lines" />
         </div>
     </AppLayout>
 </template>

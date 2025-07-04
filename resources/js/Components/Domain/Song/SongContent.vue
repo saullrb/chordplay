@@ -3,13 +3,12 @@ import { useChordTransposer } from '@/Composables/useChordTransposer';
 
 const props = defineProps({
     content: { type: Array, required: true },
-    keyOffset: { type: Number, required: true },
 });
 
 const { transposeChord } = useChordTransposer();
 
-function extractBrackets(line) {
-    let result = '';
+function parseChordLine(line) {
+    let result = [];
     let token = '';
     let inside = false;
 
@@ -18,13 +17,16 @@ function extractBrackets(line) {
             inside = true;
             token = '';
         } else if (char === ']' && inside) {
-            result += transposeChord(token, props.keyOffset);
+            result.push({
+                type: 'chord',
+                value: transposeChord(token),
+            });
             inside = false;
             token = '';
         } else if (inside && char !== ' ') {
             token += char;
         } else if (!inside && char === ' ') {
-            result += char;
+            result.push({ type: 'text', value: char });
         }
     }
     return result;
@@ -46,7 +48,17 @@ function extractBrackets(line) {
             dusk="chord-line"
             class="text-accent font-bold whitespace-pre"
         >
-            {{ extractBrackets(line.content) }}
+            <template
+                v-for="(part, i) in parseChordLine(line.content)"
+                :key="i"
+            >
+                <div
+                    v-if="part.type === 'chord'"
+                >
+                        {{ part.value }}
+                </div>
+                <template v-else>{{ part.value }}</template>
+            </template>
         </p>
         <p v-else-if="line.content_type === 'lyrics'" class="whitespace-pre">
             {{ line.content }}
