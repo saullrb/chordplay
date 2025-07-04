@@ -85,25 +85,26 @@ onUpdated(() => {
             dusk="chord-line"
             class="text-accent font-bold whitespace-pre"
         >
-            <span v-for="(part, i) in parseChordLine(line.content)" :key="i">
+            <template
+                v-for="(part, i) in parseChordLine(line.content)"
+                :key="i"
+            >
                 <template v-if="part.type === 'chord' && showDiagrams">
-                    <div
+                    <span
                         class="dropdown dropdown-hover dropdown-top dropdown-center"
                     >
-                        <div tabindex="0" role="button" class="cursor-pointer">
+                        <span tabindex="0" role="button" class="cursor-pointer">
                             {{ part.value }}
-                        </div>
+                        </span>
                         <ChordDiagram
                             :chord="chords[part.value] ?? {}"
                             :chord-name="part.value"
                             class="dropdown-content bg-base-200 group text-base-content border-base-content/20 relative z-50 inline-block rounded border shadow"
                         />
-                    </div>
+                    </span>
                 </template>
-                <template v-else>
-                    {{ part.value }}
-                </template>
-            </span>
+                <template v-else>{{ part.value }}</template>
+            </template>
         </p>
 
         <p v-else-if="line.content_type === 'lyrics'" class="whitespace-pre">
