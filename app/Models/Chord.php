@@ -26,6 +26,7 @@ class Chord extends Model
         return [
             'name' => 'string',
             'variation' => 'string',
+            'positions' => 'array',
         ];
     }
 }

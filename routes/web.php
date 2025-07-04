@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Api\ChordController;
 use App\Http\Controllers\ArtistController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
@@ -49,6 +50,7 @@ Route::middleware('auth')->group(function (): void {
 Route::get('/artists/{artist:slug}', [ArtistController::class, 'show'])->name('artists.show');
 Route::get('/artists', [ArtistController::class, 'index'])->name('artists.index');
 Route::get('/artists/{artist:slug}/{song:slug}', [SongController::class, 'show'])->name('artists.songs.show');
+Route::get('/api/chords', [ChordController::class, 'findChords'])->name('chords.find');
 
 if (app()->environment(['testing', 'local'])) {
     Route::get('/test/oauth/callback/{user_id}', function ($userId) {

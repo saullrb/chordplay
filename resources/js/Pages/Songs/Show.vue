@@ -22,13 +22,19 @@ const props = defineProps({
         type: Array,
         required: true,
     },
+    chords: {
+        type: Object,
+        required: true,
+    },
     isFavorited: Boolean,
 });
 
 initSongStore({
     key: props.song.key,
+    initialChords: props.chords,
     availableKeysArray: props.availableKeys,
 });
+
 const user = usePage().props.auth.user;
 const songControlsRef = ref(null);
 const loading = ref(false);

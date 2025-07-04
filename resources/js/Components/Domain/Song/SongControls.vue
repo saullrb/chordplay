@@ -9,7 +9,7 @@ import { useChordTransposer } from '@/Composables/useChordTransposer';
 import { getCapoPositionRef, getCurrentSongKeyRef } from '@/Stores/songStore';
 import { ref, watch } from 'vue';
 
-const props = defineProps({
+defineProps({
     availableKeys: {
         type: Array,
         default: () => [],

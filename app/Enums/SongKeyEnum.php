@@ -6,24 +6,12 @@ namespace App\Enums;
 
 enum SongKeyEnum: string
 {
-    case A = 'A';
-    case A_MINOR = 'Am';
-    case A_SHARP = 'A#';
-    case A_SHARP_MINOR = 'A#m';
-    case B_FLAT = 'Bb';
-    case B_FLAT_MINOR = 'Bbm';
-    case B = 'B';
-    case B_MINOR = 'Bm';
     case C = 'C';
     case C_MINOR = 'Cm';
     case C_SHARP = 'C#';
     case C_SHARP_MINOR = 'C#m';
-    case D_FLAT = 'Db';
-    case D_FLAT_MINOR = 'Dbm';
     case D = 'D';
     case D_MINOR = 'Dm';
-    case D_SHARP = 'D#';
-    case D_SHARP_MINOR = 'D#m';
     case E_FLAT = 'Eb';
     case E_FLAT_MINOR = 'Ebm';
     case E = 'E';
@@ -32,14 +20,16 @@ enum SongKeyEnum: string
     case F_MINOR = 'Fm';
     case F_SHARP = 'F#';
     case F_SHARP_MINOR = 'F#m';
-    case G_FLAT = 'Gb';
-    case G_FLAT_MINOR = 'Gbm';
     case G = 'G';
     case G_MINOR = 'Gm';
-    case G_SHARP = 'G#';
-    case G_SHARP_MINOR = 'G#m';
     case A_FLAT = 'Ab';
     case A_FLAT_MINOR = 'Abm';
+    case A = 'A';
+    case A_MINOR = 'Am';
+    case B_FLAT = 'Bb';
+    case B_FLAT_MINOR = 'Bbm';
+    case B = 'B';
+    case B_MINOR = 'Bm';
 
     /**
      *  Get all the values
@@ -76,55 +66,23 @@ enum SongKeyEnum: string
     }
 
     /**
-     * Check if this key uses sharp notation
-     */
-    public function usesSharpNotation(): bool
-    {
-        return str_contains($this->value, '#');
-    }
-
-    /**
-     * Check if this key uses flat notation
-     */
-    public function usesFlatNotation(): bool
-    {
-        return str_contains($this->value, 'b');
-    }
-
-    /**
-     * Get all keys that use the same notation system and mode
+     * Get all keys that use the same mode
      *
      * @return array<string>
      */
-    public static function getKeysInSameNotation(self $key): array
+    public static function getKeysInSameMode(self $key): array
     {
-        $isMinor = $key->isMinor();
-        $usesFlats = $key->usesFlatNotation();
+        $condition = $key->isMinor()
+        ? fn ($case) => $case->isMinor()
+        : fn ($case) => $case->isMajor();
 
-        $baseKeys = $usesFlats ? self::getFlatKeys() : self::getSharpKeys();
+        $keys = [];
+        foreach (self::cases() as $case) {
+            if ($condition($case)) {
+                $keys[] = $case->value;
+            }
+        }
 
-        return $isMinor
-            ? array_map(fn ($k): string => $k.'m', $baseKeys)
-            : $baseKeys;
-    }
-
-    /**
-     * Get keys in sharp notation (chromatic scale)
-     *
-     * @return array<string>
-     */
-    private static function getSharpKeys(): array
-    {
-        return ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
-    }
-
-    /**
-     * Get keys in flat notation (chromatic scale)
-     *
-     * @return array<string>
-     */
-    private static function getFlatKeys(): array
-    {
-        return ['A', 'Bb', 'B', 'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab'];
+        return $keys;
     }
 }

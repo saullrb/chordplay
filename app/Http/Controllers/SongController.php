@@ -6,8 +6,10 @@ namespace App\Http\Controllers;
 
 use App\Enums\SongKeyEnum;
 use App\Models\Artist;
+use App\Models\Chord;
 use App\Models\Song;
 use App\Services\UserService;
+use App\Support\SongContentParser;
 use App\Traits\FlashesMessages;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -28,7 +30,20 @@ class SongController extends Controller
             $query->orderBy('line_number');
         }]);
 
-        $available_keys = SongKeyEnum::getKeysInSameNotation($song->key);
+        $chords = [];
+        $parser = new SongContentParser;
+        foreach ($song->lines as $line) {
+            if ($line->content_type === 'chords') {
+                $parsedChords = $parser->processChordLine($line->content)['chords'];
+                $chords += array_fill_keys($parsedChords, true);
+            }
+        }
+
+        $chords = Chord::whereIn('name', array_keys($chords))
+            ->get()
+            ->mapWithKeys(fn ($chord) => [$chord->name => $chord->positions[0]]);
+
+        $available_keys = SongKeyEnum::getKeysInSameMode($song->key);
 
         $is_favorited = Auth::user()?->favoriteSongs()->where('song_id', $song->id)->exists() ?? false;
 
@@ -37,6 +52,7 @@ class SongController extends Controller
             'artist' => $artist,
             'isFavorited' => $is_favorited,
             'availableKeys' => $available_keys,
+            'chords' => $chords,
         ]);
     }
 

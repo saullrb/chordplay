@@ -43,7 +43,7 @@ class SongContentParser
         return [$processed, array_keys($allChords)];
     }
 
-    private function processChordLine(string $line): array
+    public function processChordLine(string $line): array
     {
         $inside = false;
         $token = '';
