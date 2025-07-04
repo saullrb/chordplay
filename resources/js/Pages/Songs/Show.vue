@@ -106,7 +106,7 @@ function handleFavorite() {
                 'columns-2 gap-8': songControlsRef?.multiColumn ?? false,
             }"
         >
-            <SongContent :content="song.lines" />
+            <SongContent :content="song.lines" :showDiagrams="true" />
         </div>
     </AppLayout>
 </template>
