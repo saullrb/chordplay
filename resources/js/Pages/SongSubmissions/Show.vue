@@ -9,6 +9,7 @@ import {
 } from '@/Components/UI/Icons';
 import PageHeader from '@/Components/UI/PageHeader.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { initSongStore } from '@/Stores/songStore';
 import { Link, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
@@ -34,6 +35,11 @@ const props = defineProps({
             },
         }),
     },
+});
+
+initSongStore({
+    key: props.song.key,
+    initialChords: props.chords,
 });
 
 const songControlsRef = ref(null);
@@ -105,10 +111,7 @@ function handleConfirmation() {
                 'columns-2 gap-8': songControlsRef?.multiColumn ?? false,
             }"
         >
-            <SongContent
-                :content="song.lines"
-                :key-offset="songControlsRef?.keyOffset ?? 0"
-            />
+            <SongContent :content="song.lines" />
         </div>
 
         <ConfirmationDialog

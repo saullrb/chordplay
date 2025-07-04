@@ -94,7 +94,12 @@ onUpdated(debounce(fetchMissingChords, 500));
                     <span
                         class="dropdown dropdown-hover dropdown-top dropdown-center"
                     >
-                        <span tabindex="0" role="button" class="cursor-pointer">
+                        <span
+                            tabindex="0"
+                            role="button"
+                            class="cursor-pointer"
+                            :dusk="`chord-${part.value}`"
+                        >
                             {{ part.value }}
                         </span>
                         <ChordDiagram

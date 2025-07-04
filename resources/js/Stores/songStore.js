@@ -9,7 +9,11 @@ const missingChords = ref(new Set());
 const capoPosition = ref(0);
 const keyOffset = ref(0);
 
-export function initSongStore({ key, initialChords, availableKeysArray }) {
+export function initSongStore({
+    key,
+    initialChords = [],
+    availableKeysArray = [],
+}) {
     originalSongKey.value = key;
     currentSongKey.value = key;
     availableKeys.value = availableKeysArray;

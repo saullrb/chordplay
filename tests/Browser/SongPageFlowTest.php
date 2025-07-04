@@ -59,12 +59,22 @@ class SongPageFlowTest extends DuskTestCase
                 ->assertPresent('@capo-11')
                 ->assertNotPresent('@edit-song-link');
 
+            $expectedChords = ['E', 'Cm', 'D', 'A7'];
+            $transposedChords = [];
+
+            foreach ($expectedChords as $chord) {
+                $transposedChords[] = $browser->text('@chord-'.$chord);
+            }
+
+            $this->assertEquals($expectedChords, $transposedChords);
+
             // Transpose song
             $browser
                 ->click('@transpose-up-button')
                 ->waitForTextIn('@song-key', 'C#')
                 ->click('@transpose-down-button')
                 ->waitForTextIn('@song-key', 'C')
+
                 // Clicking 12 times should get you back to the original key
                 ->click('@transpose-up-button')
                 ->click('@transpose-up-button')
@@ -82,20 +92,28 @@ class SongPageFlowTest extends DuskTestCase
                 ->click('@transpose-down-button')
                 ->waitForTextIn('@song-key', 'B');
 
-            $transposed_chords = $browser->text('[dusk="chord-line"]:first-of-type');
-            $expected_chords = 'D#        Bm          C#           G#7';
+            $expectedChords = ['Eb', 'Bm', 'C#', 'Ab7'];
+            $transposedChords = [];
 
-            $this->assertEquals($expected_chords, $transposed_chords);
+            foreach ($expectedChords as $chord) {
+                $transposedChords[] = $browser->text('@chord-'.$chord);
+            }
+
+            $this->assertEquals($expectedChords, $transposedChords);
 
             // Add capo
             $browser
                 ->click('@capo-dropdown')
                 ->click('@capo-3');
 
-            $transposed_chords = $browser->text('[dusk="chord-line"]:first-of-type');
-            $expected_chords = 'C        G#m          A#           F7';
+            $expectedChords = ['C', 'Abm', 'Bb', 'F7'];
+            $transposedChords = [];
 
-            $this->assertEquals($expected_chords, $transposed_chords);
+            foreach ($expectedChords as $chord) {
+                $transposedChords[] = $browser->text('@chord-'.$chord);
+            }
+
+            $this->assertEquals($expectedChords, $transposedChords);
 
             // Clicking on favorite button as a guest user should redirect to login page
             $browser

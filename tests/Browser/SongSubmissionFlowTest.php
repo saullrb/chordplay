@@ -51,6 +51,7 @@ class SongSubmissionFlowTest extends DuskTestCase
             $browser
                 ->type('#name', 'New Song')
                 ->select('#key', 'C')
+                ->assertSelected('#key', 'C')
                 ->type('#content', '[C]  [D]   [Em]   [T]')
                 ->click('@submit-button')
                 ->waitFor('@content-errors', 2)
@@ -73,6 +74,7 @@ class SongSubmissionFlowTest extends DuskTestCase
 
             // SongSubmission show page
             $browser
+                ->assertPresent('@song-key')
                 ->assertSeeIn('@song-key', $songSubmission->key->value)
                 ->assertRouteIs('song-submissions.show', $songSubmission)
                 ->assertPresent('@preview-notice')
