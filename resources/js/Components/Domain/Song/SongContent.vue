@@ -6,6 +6,7 @@ import {
     getChordsRef,
     getMissingChordsRef,
 } from '@/Stores/songStore';
+import { debounce } from '@/utils/debounce';
 import axios from 'axios';
 import { onUpdated } from 'vue';
 import ChordDiagram from './ChordDiagram.vue';
@@ -47,26 +48,26 @@ function parseChordLine(line) {
     return result;
 }
 
-onUpdated(() => {
-    if (missingChords.value.size > 0) {
-        try {
-            // TODO: add a debounce here
-            axios
-                .get('/api/chords', {
-                    params: {
-                        chords: Array.from(missingChords.value),
-                    },
-                })
-                .then((response) => {
-                    addChords(response.data);
-                });
-
-            clearMissingChords();
-        } catch (error) {
-            console.log('error loading chord diagrams', error);
-        }
+function fetchMissingChords() {
+    if (missingChords.value.size === 0) {
+        return;
     }
-});
+
+    try {
+        axios
+            .get('/api/chords', {
+                params: { chords: Array.from(missingChords.value) },
+            })
+            .then(function (res) {
+                addChords(res.data);
+                clearMissingChords();
+            });
+    } catch (err) {
+        console.log('error loading chord diagrams', err);
+    }
+}
+
+onUpdated(debounce(fetchMissingChords, 500));
 </script>
 
 <template>
