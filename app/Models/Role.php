@@ -15,9 +15,9 @@ use Illuminate\Support\Carbon;
  */
 class Role extends Model
 {
-    const ADMIN = 1;
+    public const ADMIN = 1;
 
-    const USER = 2;
+    public const USER = 2;
 
     protected $fillable = ['name'];
 }
