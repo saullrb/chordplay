@@ -9,24 +9,24 @@ defineProps({
     loading: Boolean,
 });
 
-const emit = defineEmits(['favorite']);
+defineEmits(['favorite']);
 </script>
 
 <template>
-    <label
-        class="swap swap-rotate"
+    <button
+        class="swap swap-rotate disabled:opacity-50"
         :class="{
-            'cursor-wait': loading,
+            'swap-active': favorited,
         }"
+        aria-label="Favorite"
         dusk="favorite-button"
+        :disabled="loading"
+        @click="$emit('favorite')"
     >
-        <input
-            type="checkbox"
-            :checked="favorited"
-            aria-label="Favorite"
-            @change="emit('favorite')"
+        <StarIcon dusk="empty-star" class="swap-off size-6" />
+        <StarIconSolid
+            dusk="filled-star"
+            class="swap-on size-6 text-yellow-500"
         />
-        <StarIcon class="swap-off size-6" />
-        <StarIconSolid class="swap-on size-6 text-yellow-500" />
-    </label>
+    </button>
 </template>

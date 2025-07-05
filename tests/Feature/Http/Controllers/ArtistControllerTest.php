@@ -156,7 +156,7 @@ class ArtistControllerTest extends TestCase
         $response = $this->actingAs($this->regularUser)
             ->post(route('artists.favorite', $artist));
 
-        $response->assertRedirect();
+        $response->assertOk();
         $this->assertDatabaseHas('favorite_artists', [
             'user_id' => $this->regularUser->id,
             'artist_id' => $artist->id,
@@ -176,9 +176,7 @@ class ArtistControllerTest extends TestCase
         $this->actingAs($this->regularUser);
 
         $this->post(route('artists.favorite', $artist))
-            ->assertRedirect()
-            ->assertSessionHas('flash.message')
-            ->assertSessionHas('flash.type', 'error');
+            ->assertServerError();
     }
 
     public function test_unfavorite_handles_exceptions(): void
@@ -194,9 +192,7 @@ class ArtistControllerTest extends TestCase
         $this->actingAs($this->regularUser);
 
         $this->delete(route('artists.favorite', $artist))
-            ->assertRedirect()
-            ->assertSessionHas('flash.message')
-            ->assertSessionHas('flash.type', 'error');
+            ->assertServerError();
     }
 
     public function test_users_can_unfavorite_artists(): void
@@ -207,7 +203,7 @@ class ArtistControllerTest extends TestCase
         $response = $this->actingAs($this->regularUser)
             ->delete(route('artists.favorite', $artist));
 
-        $response->assertRedirect();
+        $response->assertOk();
         $this->assertDatabaseMissing('favorite_artists', [
             'user_id' => $this->regularUser->id,
             'artist_id' => $artist->id,

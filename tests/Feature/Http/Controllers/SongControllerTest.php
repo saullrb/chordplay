@@ -15,12 +15,12 @@ class SongControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected User $regularUser;
+    protected User $regular_user;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->regularUser = User::factory()->create();
+        $this->regular_user = User::factory()->create();
     }
 
     public function test_viewing_song_increments_view_count(): void
@@ -41,9 +41,9 @@ class SongControllerTest extends TestCase
     {
         $song = Song::factory()->create();
 
-        $this->regularUser->addFavoriteSong($song);
+        $this->regular_user->addFavoriteSong($song);
 
-        $response = $this->actingAs($this->regularUser)
+        $response = $this->actingAs($this->regular_user)
             ->get(route('artists.songs.show', [$song->artist, $song]));
 
         $response->assertInertia(fn ($assert) => $assert
@@ -59,7 +59,7 @@ class SongControllerTest extends TestCase
         $this->get(route('artists.songs.edit', [$song->artist, $song]))
             ->assertRedirect(route('login'));
 
-        $response = $this->actingAs($this->regularUser)
+        $response = $this->actingAs($this->regular_user)
             ->get(route('artists.songs.edit', [$song->artist, $song]));
 
         $response->assertOk();
@@ -78,12 +78,12 @@ class SongControllerTest extends TestCase
     {
         $song = Song::factory()->create();
 
-        $response = $this->actingAs($this->regularUser)
+        $response = $this->actingAs($this->regular_user)
             ->post(route('songs.favorite', [$song->artist, $song]));
 
-        $response->assertRedirect();
+        $response->assertOk();
         $this->assertDatabaseHas('favorite_songs', [
-            'user_id' => $this->regularUser->id,
+            'user_id' => $this->regular_user->id,
             'song_id' => $song->id,
         ]);
     }
@@ -91,14 +91,14 @@ class SongControllerTest extends TestCase
     public function test_users_can_unfavorite_songs(): void
     {
         $song = Song::factory()->create();
-        $this->regularUser->addFavoriteSong($song);
+        $this->regular_user->addFavoriteSong($song);
 
-        $response = $this->actingAs($this->regularUser)
+        $response = $this->actingAs($this->regular_user)
             ->delete(route('songs.favorite', [$song->artist, $song]));
 
-        $response->assertRedirect();
+        $response->assertOk();
         $this->assertDatabaseMissing('favorite_songs', [
-            'user_id' => $this->regularUser->id,
+            'user_id' => $this->regular_user->id,
             'song_id' => $song->id,
         ]);
     }
@@ -113,12 +113,10 @@ class SongControllerTest extends TestCase
                 ->andThrows(new \Exception('Database error'));
         });
 
-        $this->actingAs($this->regularUser);
+        $this->actingAs($this->regular_user);
 
         $this->post(route('songs.favorite', [$song->artist, $song]))
-            ->assertRedirect()
-            ->assertSessionHas('flash.message')
-            ->assertSessionHas('flash.type', 'error');
+            ->assertServerError();
     }
 
     public function test_unfavorite_handles_exceptions(): void
@@ -131,11 +129,9 @@ class SongControllerTest extends TestCase
                 ->andThrows(new \Exception('Database error'));
         });
 
-        $this->actingAs($this->regularUser);
+        $this->actingAs($this->regular_user);
 
         $this->delete(route('songs.favorite', [$song->artist, $song]))
-            ->assertRedirect()
-            ->assertSessionHas('flash.message')
-            ->assertSessionHas('flash.type', 'error');
+            ->assertServerError();
     }
 }

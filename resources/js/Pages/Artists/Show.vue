@@ -23,23 +23,27 @@ const props = defineProps({
 
 const user = usePage().props.auth.user;
 const loading = ref(false);
+const isFavorited = ref(props.isFavorited);
 
 function handleFavorite() {
     loading.value = true;
 
-    const method = props.isFavorited ? 'delete' : 'post';
+async function handleFavorite() {
+    loading.value = true;
+    const method = isFavorited.value ? 'delete' : 'post';
+    const routeName = isFavorited.value
+        ? 'artists.unfavorite'
+        : 'artists.favorite';
+    const url = route(routeName, props.artist);
 
-    router.visit(route('artists.favorite', props.artist), {
-        method,
-        only: ['isFavorited'],
-        preserveState: true,
-        onFinish: () => {
-            loading.value = false;
-        },
-        onError: () => {
-            loading.value = false;
-        },
-    });
+    try {
+        await axios({ method, url });
+        isFavorited.value = !isFavorited.value;
+    } catch (e) {
+        console.error(e);
+    } finally {
+        loading.value = false;
+    }
 }
 
 const loadMoreSongs = async () => {
@@ -68,6 +72,7 @@ const loadMoreSongs = async () => {
                 <div class="flex items-center gap-4">
                     <PageHeader :title="artist.name" />
                     <FavoriteButton
+                        v-if="user"
                         :favorited="isFavorited"
                         :loading="loading"
                         @favorite="handleFavorite"

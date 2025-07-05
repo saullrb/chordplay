@@ -41,7 +41,7 @@ class SongPageFlowTest extends DuskTestCase
             $browser->visit(route('home'))
                 ->typeSlowly('@search-input', 'test')
                 ->keys('@search-input', '{enter}')
-                ->waitForLocation(route('search'), 3);
+                ->waitForRoute('search');
 
             $this->assertGuest();
 
@@ -57,7 +57,8 @@ class SongPageFlowTest extends DuskTestCase
                 ->assertPresent('@capo-3')
                 ->assertPresent('@capo-10')
                 ->assertPresent('@capo-11')
-                ->assertNotPresent('@edit-song-link');
+                ->assertNotPresent('@edit-song-link')
+                ->assertNotPresent('@favorite-button');
 
             $expectedChords = ['E', 'Cm', 'D', 'A7'];
             $transposedChords = [];
@@ -115,12 +116,7 @@ class SongPageFlowTest extends DuskTestCase
 
             $this->assertEquals($expectedChords, $transposedChords);
 
-            // Clicking on favorite button as a guest user should redirect to login page
-            $browser
-                ->click('@favorite-button')
-                ->waitForLocation(route('login'))
-                ->assertSee('Login with Google');
-
+            // Login to be able to favorite song
             $browser->visit(route('test.oauth.callback', $this->user->id).'?intended='.urlencode($song_url));
 
             // Favorite song
@@ -128,16 +124,16 @@ class SongPageFlowTest extends DuskTestCase
                 ->assertAuthenticated()
                 ->waitFor('@favorite-button')
                 ->assertPresent('@edit-song-link')
-                ->assertNotChecked('@favorite-button input')
+                ->assertPresent('@favorite-button @empty-star')
                 ->click('@favorite-button')
                 ->pause(1000)
-                ->assertChecked('@favorite-button input');
+                ->assertPresent('@favorite-button @filled-star');
 
             // Unfavorite song
             $browser
                 ->click('@favorite-button')
                 ->pause(1000)
-                ->assertNotChecked('@favorite-button input');
+                ->assertPresent('@favorite-button @empty-star');
         });
     }
 }

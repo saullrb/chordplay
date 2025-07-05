@@ -11,6 +11,7 @@ use App\Services\ArtistService;
 use App\Services\UserService;
 use App\Traits\FlashesMessages;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -86,12 +87,12 @@ class ArtistController extends Controller
         }
     }
 
-    public function favorite(Artist $artist)
+    public function favorite(Artist $artist): JsonResponse
     {
         try {
             $this->userService->favoriteArtist(Auth::user(), $artist);
 
-            return back()->with('is_favorited', true);
+            return response()->json();
         } catch (\Throwable $e) {
             Log::error('Failed to favorite artist', [
                 'userId' => Auth::id(),
@@ -101,7 +102,7 @@ class ArtistController extends Controller
 
             $this->flashError('Unable to favorite artist. Please try again.');
 
-            return back()->withInput();
+            return response()->json([], 500);
         }
     }
 
@@ -110,7 +111,7 @@ class ArtistController extends Controller
         try {
             $this->userService->unfavoriteArtist(Auth::user(), $artist);
 
-            return back()->with('is_favorited', false);
+            return response()->json();
         } catch (\Throwable $e) {
             Log::error('Failed to unfavorite artist', [
                 'userId' => Auth::id(),
@@ -120,7 +121,7 @@ class ArtistController extends Controller
 
             $this->flashError('Unable to unfavorite artist. Please try again.');
 
-            return back()->withInput();
+            return response()->json([], 500);
         }
     }
 }

@@ -6,7 +6,7 @@ import { PencilSquareIconSolid } from '@/Components/UI/Icons';
 import PageHeader from '@/Components/UI/PageHeader.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { initSongStore } from '@/Stores/songStore';
-import { Link, router, usePage } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const props = defineProps({
@@ -39,25 +39,23 @@ const user = usePage().props.auth.user;
 const songControlsRef = ref(null);
 const loading = ref(false);
 
-function handleFavorite() {
+const isFavorited = ref(props.isFavorited);
+
+
+async function handleFavorite() {
     loading.value = true;
+    const method = isFavorited.value ? 'delete' : 'post';
+    const routeName = isFavorited.value ? 'songs.unfavorite' : 'songs.favorite';
+    const url = route(routeName, { artist: props.artist, song: props.song });
 
-    const method = props.isFavorited ? 'delete' : 'post';
-
-    router.visit(
-        route('songs.favorite', { artist: props.artist, song: props.song }),
-        {
-            method,
-            only: ['isFavorited'],
-            preserveState: true,
-            onFinish: () => {
-                loading.value = false;
-            },
-            onError: () => {
-                loading.value = false;
-            },
-        },
-    );
+    try {
+        await axios({ method, url });
+        isFavorited.value = !isFavorited.value;
+    } catch (e) {
+        console.error(e);
+    } finally {
+        loading.value = false;
+    }
 }
 </script>
 
@@ -69,6 +67,7 @@ function handleFavorite() {
             <div class="flex items-center gap-2">
                 <PageHeader :title="song.name" />
                 <FavoriteButton
+                    v-if="user"
                     :favorited="isFavorited"
                     :loading="loading"
                     @favorite="handleFavorite"

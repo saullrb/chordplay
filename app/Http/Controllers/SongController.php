@@ -11,6 +11,7 @@ use App\Models\Song;
 use App\Services\UserService;
 use App\Support\SongContentParser;
 use App\Traits\FlashesMessages;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -75,12 +76,12 @@ class SongController extends Controller
         ]);
     }
 
-    public function favorite(Artist $artist, Song $song)
+    public function favorite(Artist $artist, Song $song): JsonResponse
     {
         try {
             $this->userService->favoriteSong(Auth::user(), $song);
 
-            return back()->with('isFavorited', true);
+            return response()->json();
         } catch (\Throwable $e) {
             Log::error('Failed to favorite song', [
                 'userId' => Auth::id(),
@@ -89,18 +90,16 @@ class SongController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            $this->flashError('Unable to favorite song. Please try again later.');
-
-            return back()->withInput();
+            return response()->json([], 500);
         }
     }
 
-    public function unfavorite(Artist $artist, Song $song)
+    public function unfavorite(Artist $artist, Song $song): JsonResponse
     {
         try {
             $this->userService->unfavoriteSong(Auth::user(), $song);
 
-            return back()->with('isFavorited', false);
+            return response()->json();
         } catch (\Throwable $e) {
             Log::error('Failed to unfavorite song', [
                 'userId' => Auth::id(),
@@ -109,9 +108,7 @@ class SongController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            $this->flashError('Unable to unfavorite song. Please try again later.');
-
-            return back()->withInput();
+            return response()->json([], 500);
         }
     }
 }
