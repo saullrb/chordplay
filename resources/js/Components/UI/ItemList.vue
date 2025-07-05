@@ -27,7 +27,7 @@ defineProps({
             <Link
                 :href="route(showRouteName, parent ? [parent, item] : item)"
                 class="list-col-grow flex justify-between"
-                :prefetch="i < 5"
+                :prefetch="i < 5 ? 'mount' : 'click'"
             >
                 {{ item.name }}
                 <span class="text-base-content/70 text-xs lg:text-sm"
