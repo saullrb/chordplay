@@ -27,7 +27,7 @@ class SongController extends Controller
 
     public function show(Artist $artist, Song $song): Response
     {
-        defer(function () use ($song, $artist) {
+        defer(function () use ($song, $artist): void {
             $song->increment('views');
             $artist->increment('views');
         });

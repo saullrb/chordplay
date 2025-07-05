@@ -40,7 +40,7 @@ class ArtistController extends Controller
     {
         $artist = Artist::where('slug', $slug)->firstOrFail();
 
-        defer(function () use ($artist) {
+        defer(function () use ($artist): void {
             $artist->increment('views');
         });
 

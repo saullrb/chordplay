@@ -38,6 +38,7 @@ class SongSubmissionController extends Controller
         $submissions = $query->paginate(10);
 
         $submissions->getCollection()->transform(function ($submission) {
+            /** @phpstan-ignore-next-line */
             $submission->updated_at_human = $submission->updated_at->diffForHumans();
 
             return $submission;
