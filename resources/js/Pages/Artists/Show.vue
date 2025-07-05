@@ -83,6 +83,7 @@ const loadMoreSongs = async () => {
                     :href="route('artists.songs.create', artist)"
                     class="btn btn-primary btn-sm"
                     dusk="add-song-link"
+                    prefetch
                 >
                     <PlusIconSolid class="size-5" />
                     Add Song

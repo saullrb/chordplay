@@ -55,6 +55,7 @@ const loadMoreArtists = async () => {
                     v-if="can.createArtist"
                     :href="route('artists.create')"
                     class="btn btn-primary btn-sm"
+                    prefetch
                 >
                     <PlusIconSolid class="size-5" />
                     Add Artist

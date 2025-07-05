@@ -20,13 +20,14 @@ defineProps({
 <template>
     <ul role="list" class="list">
         <li
-            v-for="item in items"
+            v-for="(item, i) in items"
             :key="item"
             class="list-row hover:bg-primary/8"
         >
             <Link
                 :href="route(showRouteName, parent ? [parent, item] : item)"
                 class="list-col-grow flex justify-between"
+                :prefetch="i < 5"
             >
                 {{ item.name }}
                 <span class="text-base-content/70 text-xs lg:text-sm"

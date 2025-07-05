@@ -76,6 +76,7 @@ async function handleFavorite() {
                     v-if="user"
                     dusk="edit-song-link"
                     class="btn btn-info btn-sm btn-circle btn-ghost"
+                    prefetch
                     :href="
                         route('artists.songs.edit', {
                             artist,
@@ -89,6 +90,7 @@ async function handleFavorite() {
             <Link
                 class="text-base-content/70 hover:text-base-content/90"
                 :href="route('artists.show', artist)"
+                prefetch
             >
                 {{ artist.name }}
             </Link>
