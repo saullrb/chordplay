@@ -5,6 +5,8 @@ import ItemList from '@/Components/UI/ItemList.vue';
 import LoadingButton from '@/Components/UI/LoadingButton.vue';
 import PageHeader from '@/Components/UI/PageHeader.vue';
 import Panel from '@/Components/UI/Panel.vue';
+import ToastMessage from '@/Components/UI/ToastMessage.vue';
+import { useToast } from '@/Composables/useToast';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
@@ -25,8 +27,8 @@ const user = usePage().props.auth.user;
 const loading = ref(false);
 const isFavorited = ref(props.isFavorited);
 
-function handleFavorite() {
-    loading.value = true;
+const { toastShow, toastMessage, toastType, toastDuration, showToast } =
+    useToast();
 
 async function handleFavorite() {
     loading.value = true;
@@ -41,11 +43,11 @@ async function handleFavorite() {
         isFavorited.value = !isFavorited.value;
     } catch (e) {
         console.error(e);
+        showToast('Failed to update favorite status', 'error');
     } finally {
         loading.value = false;
     }
 }
-
 const loadMoreSongs = async () => {
     if (!props.songs.next_page_url) return;
 
@@ -108,4 +110,10 @@ const loadMoreSongs = async () => {
             </div>
         </Panel>
     </AppLayout>
+    <ToastMessage
+        v-model:show="toastShow"
+        :message="toastMessage"
+        :type="toastType"
+        :duration="toastDuration"
+    />
 </template>

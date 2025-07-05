@@ -4,6 +4,8 @@ import SongControls from '@/Components/Domain/Song/SongControls.vue';
 import FavoriteButton from '@/Components/UI/FavoriteButton.vue';
 import { PencilSquareIconSolid } from '@/Components/UI/Icons';
 import PageHeader from '@/Components/UI/PageHeader.vue';
+import ToastMessage from '@/Components/UI/ToastMessage.vue';
+import { useToast } from '@/Composables/useToast';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { initSongStore } from '@/Stores/songStore';
 import { Link, usePage } from '@inertiajs/vue3';
@@ -41,6 +43,8 @@ const loading = ref(false);
 
 const isFavorited = ref(props.isFavorited);
 
+const { toastShow, toastMessage, toastType, toastDuration, showToast } =
+    useToast();
 
 async function handleFavorite() {
     loading.value = true;
@@ -53,6 +57,7 @@ async function handleFavorite() {
         isFavorited.value = !isFavorited.value;
     } catch (e) {
         console.error(e);
+        showToast('Failed to update favorite status', 'error');
     } finally {
         loading.value = false;
     }
@@ -110,4 +115,10 @@ async function handleFavorite() {
             <SongContent :content="song.lines" :show-diagrams="true" />
         </div>
     </AppLayout>
+    <ToastMessage
+        v-model:show="toastShow"
+        :message="toastMessage"
+        :type="toastType"
+        :duration="toastDuration"
+    />
 </template>
