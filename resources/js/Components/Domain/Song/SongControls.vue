@@ -94,7 +94,7 @@ watch(capoPosition, (currentPosition) => {
             </div>
         </div>
         <button
-            class="btn btn-sm hidden lg:flex"
+            class="btn btn-sm hidden xl:flex"
             :class="{
                 'btn-success': multiColumn,
             }"

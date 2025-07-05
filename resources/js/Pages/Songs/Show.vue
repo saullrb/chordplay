@@ -103,7 +103,7 @@ function handleFavorite() {
         <div
             class="py-6 dark:text-white"
             :class="{
-                'columns-2 gap-8': songControlsRef?.multiColumn ?? false,
+                'gap-8 xl:columns-2': songControlsRef?.multiColumn ?? false,
             }"
         >
             <SongContent :content="song.lines" :show-diagrams="true" />
