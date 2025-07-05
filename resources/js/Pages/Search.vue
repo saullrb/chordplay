@@ -1,4 +1,5 @@
 <script setup>
+import FavoriteIndicator from '@/Components/UI/FavoriteIndicator.vue';
 import { SearchIcon, StarIconSolid } from '@/Components/UI/Icons';
 import InputError from '@/Components/UI/InputError.vue';
 import LoadingButton from '@/Components/UI/LoadingButton.vue';
@@ -162,11 +163,8 @@ function handleSubmit() {
                         :href="route('artists.show', artist)"
                         class="list-col-grow flex items-center gap-2"
                     >
-                        <StarIconSolid
-                            class="invisible size-5"
-                            :class="{
-                                'visible text-yellow-500': artist.is_favorited,
-                            }"
+                        <FavoriteIndicator
+                            :is-favorited="artist.is_favorited"
                         />
                         <b>
                             {{ artist.name }}

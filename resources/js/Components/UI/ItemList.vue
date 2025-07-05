@@ -1,5 +1,6 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
+import FavoriteIndicator from './FavoriteIndicator.vue';
 
 defineProps({
     items: {
@@ -29,7 +30,12 @@ defineProps({
                 class="list-col-grow flex justify-between"
                 :prefetch="i < 5 ? 'mount' : 'click'"
             >
-                {{ item.name }}
+                <div class="flex items-center gap-2">
+                    <FavoriteIndicator :is-favorited="item.is_favorited" />
+                    <b>
+                        {{ item.name }}
+                    </b>
+                </div>
                 <span class="text-base-content/70 text-xs lg:text-sm"
                     >{{ item.views }} views</span
                 >

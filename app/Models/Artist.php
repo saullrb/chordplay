@@ -62,6 +62,7 @@ class Artist extends Model
             })->select(
                 'artists.name',
                 'artists.slug',
+                'artists.views',
                 \DB::raw('CASE WHEN favorite_artists.artist_id IS NOT NULL THEN 1 ELSE 0 END as is_favorited')
             );
     }

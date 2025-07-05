@@ -26,7 +26,12 @@ class ArtistController extends Controller
 
     public function index()
     {
-        $artists = Artist::query()->orderBy('name')->simplePaginate(20);
+        $userId = Auth::id();
+
+        $artists = Artist::query()
+            ->withFavoriteStatus($userId)
+            ->orderByFavoritesAndViews()
+            ->simplePaginate(20);
 
         return Inertia::render('Artists/Index', [
             'artists' => Inertia::deepMerge($artists),
