@@ -39,7 +39,9 @@ class ArtistController extends Controller
     {
         $artist = Artist::where('slug', $slug)->firstOrFail();
 
-        $artist->increment('views');
+        defer(function () use ($artist) {
+            $artist->increment('views');
+        });
 
         $songs = Song::query()
             ->whereArtistId($artist->id)

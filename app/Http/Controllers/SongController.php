@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
+use function Illuminate\Support\defer;
+
 class SongController extends Controller
 {
     use FlashesMessages;
@@ -24,8 +26,11 @@ class SongController extends Controller
 
     public function show(Artist $artist, Song $song): Response
     {
-        $song->increment('views');
-        $artist->increment('views');
+        defer(function () use ($song, $artist) {
+            $song->increment('views');
+            $artist->increment('views');
+        });
+
         $song->load(['lines' => function ($query): void {
             $query->orderBy('line_number');
         }]);
