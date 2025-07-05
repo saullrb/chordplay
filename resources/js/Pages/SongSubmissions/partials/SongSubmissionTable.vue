@@ -7,6 +7,10 @@ defineProps({
         type: Array,
         required: true,
     },
+    showUpdated: {
+        type: Boolean,
+        default: false,
+    },
 });
 </script>
 
@@ -18,6 +22,7 @@ defineProps({
                     <th>Name</th>
                     <th>Artist</th>
                     <th>User</th>
+                    <th v-if="showUpdated">Updated At</th>
                     <th />
                 </tr>
             </thead>
@@ -37,6 +42,10 @@ defineProps({
                     <td>
                         {{ submission.user.name }}
                     </td>
+                    <td v-if="showUpdated">
+                        {{ submission.updated_at_human }}
+                    </td>
+
                     <td>
                         <Link
                             class="btn btn-sm btn-soft btn-secondary btn-circle"

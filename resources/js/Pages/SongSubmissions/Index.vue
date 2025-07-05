@@ -21,7 +21,10 @@ defineProps({
         </template>
 
         <div dusk="song-submissions-index" class="my-6">
-            <SongSubmissionTable :submissions="submissions.data" />
+            <SongSubmissionTable
+                :submissions="submissions.data"
+                :show-updated="true"
+            />
             <SimplePagination :pagination="submissions" />
         </div>
     </AppLayout>

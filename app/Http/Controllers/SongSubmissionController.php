@@ -35,7 +35,16 @@ class SongSubmissionController extends Controller
             $query->where('user_id', $user->id);
         }
 
-        return Inertia::render('SongSubmissions/Index', ['submissions' => $query->paginate(10)]);
+        $submissions = $query->paginate(10);
+
+        $submissions->getCollection()->transform(function ($submission) {
+            $submission->updated_at_human = $submission->updated_at->diffForHumans();
+
+            return $submission;
+        });
+
+        return Inertia::render('SongSubmissions/Index', ['submissions' => $submissions]);
+
     }
 
     public function show(SongSubmission $songSubmission): Response
