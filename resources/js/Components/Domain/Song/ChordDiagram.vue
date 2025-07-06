@@ -5,9 +5,9 @@ import { useSoundfont } from '@/Composables/useSoundfont';
 import { computed } from 'vue';
 
 const props = defineProps({
-    chord: {
+    chordPosition: {
         type: Object,
-        required: true,
+        default: () => {},
     },
     chordName: {
         type: String,
@@ -45,22 +45,22 @@ const frets = computed(() =>
         y1: PADDING.top + i * FRET_SPACING,
         x2: PADDING.left + FRETBOARD_WIDTH,
         y2: PADDING.top + i * FRET_SPACING,
-        isNut: i === 0 && props.chord.baseFret === 1,
+        isNut: i === 0 && props.chordPosition.baseFret === 1,
     })),
 );
 
 const dots = computed(() => {
-    if (!props.chord?.frets) return [];
+    if (!props.chordPosition?.frets) return [];
 
-    return props.chord.frets
+    return props.chordPosition.frets
         .map((fretPos, stringIndex) => {
             // No dot for open or muted strings
             if (fretPos <= 0) return null;
 
-            const finger = props.chord.fingers[stringIndex];
+            const finger = props.chordPosition.fingers[stringIndex];
             // Check if the current finger position is part of a barre
             const isCoveredByBarre =
-                props.chord.barres?.includes(fretPos) && finger === 1;
+                props.chordPosition.barres?.includes(fretPos) && finger === 1;
 
             // Do not render a dot if it is covered by the barre
             if (isCoveredByBarre) return null;
@@ -75,8 +75,8 @@ const dots = computed(() => {
 });
 
 const openMutedStrings = computed(() => {
-    if (!props.chord?.frets) return [];
-    return props.chord.frets
+    if (!props.chordPosition?.frets) return [];
+    return props.chordPosition.frets
         .map((fretPos, stringIndex) => ({
             x: PADDING.left + stringIndex * STRING_SPACING,
             y: PADDING.top - 10,
@@ -86,14 +86,15 @@ const openMutedStrings = computed(() => {
 });
 
 const barrePositions = computed(() => {
-    if (!props.chord?.barres?.length) return [];
+    if (!props.chordPosition?.barres?.length) return [];
 
-    return props.chord.barres
+    return props.chordPosition.barres
         .map((barreFret) => {
             const fingerToFind = 1;
-            const firstStringIndex = props.chord.fingers.indexOf(fingerToFind);
+            const firstStringIndex =
+                props.chordPosition.fingers.indexOf(fingerToFind);
             const lastStringIndex =
-                props.chord.fingers.lastIndexOf(fingerToFind);
+                props.chordPosition.fingers.lastIndexOf(fingerToFind);
 
             if (firstStringIndex === -1) return null;
 
@@ -122,25 +123,25 @@ const barrePositions = computed(() => {
 
 <template>
     <div
-        class="bg-base-200 group text-base-content border-base-content/20 relative inline-block rounded border shadow"
+        class="bg-base-300 group text-base-content border-base-content/20 relative inline-block rounded border shadow"
     >
         <PlayIcon
-            v-if="chord?.midi?.length"
+            v-if="chordPosition?.midi?.length"
             class="hover:border-base-content/70 bg-base-300 border-base-content/20 absolute top-3/5 left-1/2 z-50 size-10 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer rounded-full border p-2 opacity-0 shadow group-hover:opacity-100 hover:border"
-            @click="() => playChord(chord.midi)"
+            @click="() => playChord(chordPosition.midi)"
         />
         <h3 class="text-md text-center font-sans font-bold">
             {{ chordName }}
         </h3>
         <svg
-            v-if="chord?.baseFret"
+            v-if="chordPosition?.baseFret"
             :viewBox="`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`"
             class="h-28 w-24 font-mono"
             :aria-label="`Guitar chord diagram for ${chordName}`"
         >
             <!-- Base Fret Indicator -->
             <text
-                v-if="chord.baseFret > 1"
+                v-if="chordPosition.baseFret > 1"
                 :x="PADDING.left - 20"
                 :y="PADDING.top + FRET_SPACING / 2"
                 font-family="monospace"
@@ -149,7 +150,7 @@ const barrePositions = computed(() => {
                 dominant-baseline="middle"
                 class="text-2xl"
             >
-                {{ chord.baseFret }}
+                {{ chordPosition.baseFret }}
             </text>
 
             <!-- Strings -->

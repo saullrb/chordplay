@@ -47,7 +47,7 @@ class SongController extends Controller
 
         $chords = Chord::whereIn('name', array_keys($chords))
             ->get()
-            ->mapWithKeys(fn ($chord) => [$chord->name => $chord->positions[0]]);
+            ->mapWithKeys(fn ($chord) => [$chord->name => $chord->positions]);
 
         $available_keys = SongKeyEnum::getKeysInSameMode($song->key);
 

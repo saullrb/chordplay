@@ -17,7 +17,7 @@ class ChordController extends Controller
             'chords' => 'required|array',
         ]);
 
-        $chords = Chord::whereIn('name', $validated['chords'])->get()->mapWithKeys(fn ($chord) => [$chord->name => $chord->positions[0]]);
+        $chords = Chord::whereIn('name', $validated['chords'])->get()->mapWithKeys(fn ($chord) => [$chord->name => $chord->positions]);
 
         return response()->json($chords);
     }

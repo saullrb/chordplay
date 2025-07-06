@@ -9,7 +9,7 @@ import {
 import { debounce } from '@/utils/debounce';
 import axios from 'axios';
 import { onUpdated } from 'vue';
-import ChordDiagram from './ChordDiagram.vue';
+import ChordDiagramCarousel from './ChordDiagramCarousel.vue';
 
 defineProps({
     content: { type: Array, required: true },
@@ -102,11 +102,14 @@ onUpdated(debounce(fetchMissingChords, 500));
                         >
                             {{ part.value }}
                         </span>
-                        <ChordDiagram
-                            :chord="chords[part.value] ?? {}"
-                            :chord-name="part.value"
-                            class="dropdown-content bg-base-200 group text-base-content border-base-content/20 relative z-50 inline-block rounded border shadow"
-                        />
+                        <div
+                            class="dropdown-content bg-base-200 text-base-content border-base-content/20 relative z-50 flex items-center gap-2 rounded border p-2 shadow"
+                        >
+                            <ChordDiagramCarousel
+                                :chord-positions="chords[part.value] ?? []"
+                                :chord-name="part.value"
+                            />
+                        </div>
                     </span>
                 </template>
                 <template v-else>{{ part.value }}</template>
