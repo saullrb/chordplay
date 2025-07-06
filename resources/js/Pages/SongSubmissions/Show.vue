@@ -59,8 +59,8 @@ function handleConfirmation() {
                 dusk="preview-notice"
                 class="bg-warning text-warning-content mb-4 rounded px-4 py-2"
             >
-                <strong>Preview:</strong> This is a preview of what the page
-                will look like if approved.
+                <strong>Preview Mode:</strong> Some features are only accessible
+                for approved songs.
             </div>
             <div class="flex items-center gap-2">
                 <PageHeader :title="song.name" />
