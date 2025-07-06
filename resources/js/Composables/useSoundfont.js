@@ -1,10 +1,10 @@
 import { Reverb, Soundfont } from 'smplr';
 
-export function useSoundfont() {
-    let context = null;
-    let instrument = null;
-    let reverb = null;
+let context = null;
+let instrument = null;
+let reverb = null;
 
+export function useSoundfont() {
     async function init() {
         if (!context) {
             context = new AudioContext();
