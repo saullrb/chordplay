@@ -1,5 +1,16 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { ref } from 'vue';
+
+const isLoading = ref(false);
+
+function redirectToGoogle() {
+    if (isLoading.value) return;
+
+    isLoading.value = true;
+
+    window.location.href = route('google.redirect');
+}
 </script>
 
 <template>
@@ -19,9 +30,10 @@ import AppLayout from '@/Layouts/AppLayout.vue';
                         Access your favorite songs and artists
                     </p>
                 </div>
-                <a
-                    :href="route('google.redirect')"
-                    class="btn btn-lg w-full border-gray-100 bg-white text-black hover:bg-gray-100"
+                <button
+                    @click="redirectToGoogle"
+                    :disabled="isLoading"
+                    class="btn btn-lg flex w-full items-center justify-center gap-2 border-gray-100 bg-white text-black transition-opacity hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-white disabled:opacity-50"
                 >
                     <svg
                         class="size-6"
@@ -46,8 +58,9 @@ import AppLayout from '@/Layouts/AppLayout.vue';
                             fill="#ea4335"
                         />
                     </svg>
-                    Login with Google
-                </a>
+                    <span> Login with Google </span>
+                    <span class="loading loading-spinner" v-if="isLoading" />
+                </button>
             </div>
         </div>
     </AppLayout>
