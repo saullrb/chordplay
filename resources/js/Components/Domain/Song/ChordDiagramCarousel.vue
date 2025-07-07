@@ -3,43 +3,65 @@ import {
     ChevronLeftIconSolid,
     ChevronRightIconSolid,
 } from '@/Components/UI/Icons';
-import { ref } from 'vue';
+import { useSongStore } from '@/Stores/songStore';
+import { computed } from 'vue';
 import ChordDiagram from './ChordDiagram.vue';
 
 const props = defineProps({
-    chordPositions: {
-        type: Array,
-        default: () => [],
-    },
     chordName: {
         type: String,
         required: true,
     },
 });
 
-const currentChordIndex = ref(0);
+const songStore = useSongStore();
+
+const currentShapeIndex = computed({
+    get() {
+        const chord = songStore.chords[props.chordName];
+        if (!chord || !chord.shapes?.length) return 0;
+
+        const index = chord.shapes.findIndex(
+            (s) => s.id === chord.defaultShapeId,
+        );
+        return index !== -1 ? index : 0;
+    },
+    set(index) {
+        const chord = songStore.chords[props.chordName];
+        if (!chord || !chord.shapes?.length) return;
+
+        const shape = chord.shapes[index];
+        if (shape) {
+            chord.defaultShapeId = shape.id;
+        }
+    },
+});
 
 function prev() {
-    currentChordIndex.value =
-        (currentChordIndex.value - 1 + props.chordPositions.length) %
-        props.chordPositions.length;
+    const len = songStore.chords[props.chordName].shapes.length;
+    currentShapeIndex.value = (currentShapeIndex.value - 1 + len) % len;
 }
+
 function next() {
-    currentChordIndex.value =
-        (currentChordIndex.value + 1 + props.chordPositions.length) %
-        props.chordPositions.length;
+    const len = songStore.chords[props.chordName].shapes.length;
+    currentShapeIndex.value = (currentShapeIndex.value + 1) % len;
 }
 </script>
+
 <template>
-    <!-- TODO: sync same chords -->
-    <button class="btn btn-ghost" @click="prev">
+    <button
+        class="btn btn-ghost"
+        :disabled="!songStore.chords[props.chordName]?.shapes?.length"
+        @click="prev"
+    >
         <ChevronLeftIconSolid class="size-3" />
     </button>
-    <ChordDiagram
-        :chord-position="chordPositions[currentChordIndex]"
-        :chord-name="chordName"
-    />
-    <button class="btn btn-ghost" @click="next">
+    <ChordDiagram :chord-name="chordName" />
+    <button
+        class="btn btn-ghost"
+        :disabled="!songStore.chords[props.chordName]?.shapes?.length"
+        @click="next"
+    >
         <ChevronRightIconSolid class="size-3" />
     </button>
 </template>

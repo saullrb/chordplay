@@ -5,18 +5,12 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/**
- * @property int $id
- * @property string $name
- * @property string $variation
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- */
 class Chord extends Model
 {
-    protected $fillable = ['name', 'key', 'suffix', 'positions'];
+    protected $fillable = ['name', 'key', 'suffix', 'default_shape_id'];
 
     /**
      * @return array<string, string>
@@ -24,9 +18,31 @@ class Chord extends Model
     protected function casts(): array
     {
         return [
-            'name' => 'string',
-            'variation' => 'string',
-            'positions' => 'array',
+            'suffix' => 'string',
         ];
+    }
+
+    public function shapes(): HasMany
+    {
+        return $this->hasMany(ChordShape::class);
+
+    }
+
+    public function defaultShape(): BelongsTo
+    {
+        return $this->belongsTo(ChordShape::class);
+    }
+
+    public static function shapesByChordName(array $names): array
+    {
+        return self::whereIn('name', $names)
+            ->get()
+            ->mapWithKeys(fn ($chord) => [
+                $chord->name => [
+                    'shapes' => $chord->shapes,
+                    'defaultShapeId' => $chord->default_shape_id,
+                ],
+            ])
+            ->toArray();
     }
 }

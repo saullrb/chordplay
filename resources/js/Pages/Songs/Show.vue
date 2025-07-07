@@ -7,7 +7,7 @@ import PageHeader from '@/Components/UI/PageHeader.vue';
 import ToastMessage from '@/Components/UI/ToastMessage.vue';
 import { useToast } from '@/Composables/useToast';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { initSongStore } from '@/Stores/songStore';
+import { useSongStore } from '@/Stores/songStore';
 import { Link, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
@@ -31,7 +31,8 @@ const props = defineProps({
     isFavorited: Boolean,
 });
 
-initSongStore({
+const songStore = useSongStore();
+songStore.init({
     key: props.song.key,
     initialChords: props.chords,
     availableKeysArray: props.availableKeys,

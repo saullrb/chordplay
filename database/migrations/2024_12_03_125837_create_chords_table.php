@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->string('key');
             $table->string('suffix');
-            $table->json('positions');
+            $table->foreignId('default_shape_id')->nullable()->constrained('chord_shapes')->nullOnDelete();
             $table->timestamps();
         });
     }

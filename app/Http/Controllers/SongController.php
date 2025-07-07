@@ -45,19 +45,17 @@ class SongController extends Controller
             }
         }
 
-        $chords = Chord::whereIn('name', array_keys($chords))
-            ->get()
-            ->mapWithKeys(fn ($chord) => [$chord->name => $chord->positions]);
+        $chords = Chord::shapesByChordName($chords);
 
-        $available_keys = SongKeyEnum::getKeysInSameMode($song->key);
+        $availableKeys = SongKeyEnum::getKeysInSameMode($song->key);
 
-        $is_favorited = Auth::user()?->favoriteSongs()->where('song_id', $song->id)->exists() ?? false;
+        $isFavorited = Auth::user()?->favoriteSongs()->where('song_id', $song->id)->exists() ?? false;
 
         return Inertia::render('Songs/Show', [
             'song' => $song,
             'artist' => $artist,
-            'isFavorited' => $is_favorited,
-            'availableKeys' => $available_keys,
+            'isFavorited' => $isFavorited,
+            'availableKeys' => $availableKeys,
             'chords' => $chords,
         ]);
     }

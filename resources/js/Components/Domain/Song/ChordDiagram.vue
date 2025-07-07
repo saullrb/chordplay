@@ -1,18 +1,24 @@
 <script setup>
 import { PlayIcon } from '@/Components/UI/Icons';
 import { useSoundfont } from '@/Composables/useSoundfont';
+import { useSongStore } from '@/Stores/songStore';
 
 import { computed } from 'vue';
 
 const props = defineProps({
-    chordPosition: {
-        type: Object,
-        default: () => {},
-    },
     chordName: {
         type: String,
         required: true,
     },
+});
+
+const songStore = useSongStore();
+
+const chord = computed(() => songStore.chords[props.chordName]);
+
+const chordShape = computed(() => {
+    if (!chord.value || !chord.value.shapes?.length) return null;
+    return chord.value.shapes.find((s) => s.id === chord.value.defaultShapeId);
 });
 
 // Constants for SVG dimensions
@@ -45,24 +51,22 @@ const frets = computed(() =>
         y1: PADDING.top + i * FRET_SPACING,
         x2: PADDING.left + FRETBOARD_WIDTH,
         y2: PADDING.top + i * FRET_SPACING,
-        isNut: i === 0 && props.chordPosition.baseFret === 1,
+        isNut: i === 0 && chordShape.value.base_fret === 1,
     })),
 );
 
 const dots = computed(() => {
-    if (!props.chordPosition?.frets) return [];
+    if (!chordShape.value?.frets) return [];
 
-    return props.chordPosition.frets
+    return chordShape.value.frets
         .map((fretPos, stringIndex) => {
             // No dot for open or muted strings
             if (fretPos <= 0) return null;
 
-            const finger = props.chordPosition.fingers[stringIndex];
-            // Check if the current finger position is part of a barre
+            const finger = chordShape.value.fingers[stringIndex];
             const isCoveredByBarre =
-                props.chordPosition.barres?.includes(fretPos) && finger === 1;
+                chordShape.value.barres?.includes(fretPos) && finger === 1;
 
-            // Do not render a dot if it is covered by the barre
             if (isCoveredByBarre) return null;
 
             return {
@@ -75,8 +79,8 @@ const dots = computed(() => {
 });
 
 const openMutedStrings = computed(() => {
-    if (!props.chordPosition?.frets) return [];
-    return props.chordPosition.frets
+    if (!chordShape.value?.frets) return [];
+    return chordShape.value.frets
         .map((fretPos, stringIndex) => ({
             x: PADDING.left + stringIndex * STRING_SPACING,
             y: PADDING.top - 10,
@@ -86,15 +90,15 @@ const openMutedStrings = computed(() => {
 });
 
 const barrePositions = computed(() => {
-    if (!props.chordPosition?.barres?.length) return [];
+    if (!chordShape.value?.barres?.length) return [];
 
-    return props.chordPosition.barres
+    return chordShape.value.barres
         .map((barreFret) => {
             const fingerToFind = 1;
             const firstStringIndex =
-                props.chordPosition.fingers.indexOf(fingerToFind);
+                chordShape.value.fingers.indexOf(fingerToFind);
             const lastStringIndex =
-                props.chordPosition.fingers.lastIndexOf(fingerToFind);
+                chordShape.value.fingers.lastIndexOf(fingerToFind);
 
             if (firstStringIndex === -1) return null;
 
@@ -125,99 +129,105 @@ const barrePositions = computed(() => {
     <div
         class="bg-base-300 group text-base-content border-base-content/20 relative inline-block rounded border shadow"
     >
-        <PlayIcon
-            v-if="chordPosition?.midi?.length"
-            class="hover:border-base-content/70 bg-base-300 border-base-content/20 absolute top-3/5 left-1/2 z-50 size-10 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer rounded-full border p-2 opacity-0 shadow group-hover:opacity-100 hover:border"
-            @click="() => playChord(chordPosition.midi)"
-        />
         <h3 class="text-md text-center font-sans font-bold">
             {{ chordName }}
         </h3>
-        <svg
-            v-if="chordPosition?.baseFret"
-            :viewBox="`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`"
-            class="h-28 w-24 font-mono"
-            :aria-label="`Guitar chord diagram for ${chordName}`"
-        >
-            <!-- Base Fret Indicator -->
-            <text
-                v-if="chordPosition.baseFret > 1"
-                :x="PADDING.left - 20"
-                :y="PADDING.top + FRET_SPACING / 2"
-                font-family="monospace"
-                fill="currentColor"
-                text-anchor="middle"
-                dominant-baseline="middle"
-                class="text-2xl"
+        <template v-if="songStore.missingChords.has(chordName)">
+            <span class="flex h-28 w-24 items-center justify-center">
+                <span class="loading loading-spinner loading-xl"></span>
+            </span>
+        </template>
+        <template v-else-if="chordShape">
+            <PlayIcon
+                v-if="chordShape?.midi?.length"
+                class="hover:border-base-content/70 bg-base-300 border-base-content/20 absolute top-3/5 left-1/2 z-50 size-10 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer rounded-full border p-2 opacity-0 shadow group-hover:opacity-100 hover:border"
+                @click="() => playChord(chordShape.midi)"
+            />
+            <svg
+                :viewBox="`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`"
+                class="h-28 w-24 font-mono"
+                :aria-label="`Guitar chord diagram for ${chordName}`"
             >
-                {{ chordPosition.baseFret }}
-            </text>
+                <!-- Base Fret Indicator -->
+                <text
+                    v-if="chordShape.base_fret > 1"
+                    :x="PADDING.left - 20"
+                    :y="PADDING.top + FRET_SPACING / 2"
+                    font-family="monospace"
+                    fill="currentColor"
+                    text-anchor="middle"
+                    dominant-baseline="middle"
+                    class="text-2xl"
+                >
+                    {{ chordShape.base_fret }}
+                </text>
 
-            <!-- Strings -->
-            <line
-                v-for="(s, i) in strings"
-                :key="`string-${i}`"
-                v-bind="s"
-                stroke="currentColor"
-                stroke-width="1.5"
-            />
+                <!-- Strings -->
+                <line
+                    v-for="(s, i) in strings"
+                    :key="`string-${i}`"
+                    v-bind="s"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                />
 
-            <!-- Frets -->
-            <line
-                v-for="(f, i) in frets"
-                :key="`fret-${i}`"
-                v-bind="f"
-                stroke="currentColor"
-                :stroke-width="f.isNut ? '6' : '1.5'"
-            />
+                <!-- Frets -->
+                <line
+                    v-for="(f, i) in frets"
+                    :key="`fret-${i}`"
+                    v-bind="f"
+                    stroke="currentColor"
+                    :stroke-width="f.isNut ? '6' : '1.5'"
+                />
 
-            <!-- Open/Muted String Indicators -->
-            <text
-                v-for="(s, i) in openMutedStrings"
-                :key="`status-${i}`"
-                :x="s.x"
-                :y="s.y"
-                fill="currentColor"
-                text-anchor="middle"
-                class="text-3xl"
-            >
-                {{ s.text }}
-            </text>
+                <!-- Open/Muted String Indicators -->
+                <text
+                    v-for="(s, i) in openMutedStrings"
+                    :key="`status-${i}`"
+                    :x="s.x"
+                    :y="s.y"
+                    fill="currentColor"
+                    text-anchor="middle"
+                    class="text-3xl"
+                >
+                    {{ s.text }}
+                </text>
 
-            <!-- Barre Chord Rectangles -->
-            <rect
-                v-for="(barre, i) in barrePositions"
-                :key="`barre-${i}`"
-                :x="barre.x"
-                :y="barre.y"
-                :width="barre.width"
-                :height="barre.height"
-                :rx="barre.rx"
-                :ry="barre.ry"
-                fill="currentColor"
-            />
-
-            <!-- Fingering Dots -->
-            <g v-for="(dot, i) in dots" :key="`dot-${i}`">
-                <circle
-                    :cx="dot.cx"
-                    :cy="dot.cy"
-                    :r="DOT_RADIUS"
+                <!-- Barre Chord Rectangles -->
+                <rect
+                    v-for="(barre, i) in barrePositions"
+                    :key="`barre-${i}`"
+                    :x="barre.x"
+                    :y="barre.y"
+                    :width="barre.width"
+                    :height="barre.height"
+                    :rx="barre.rx"
+                    :ry="barre.ry"
                     fill="currentColor"
                 />
-                <text
-                    v-if="dot.finger > 0"
-                    :x="dot.cx"
-                    :y="dot.cy"
-                    text-anchor="middle"
-                    dominant-baseline="central"
-                    fill="currentColor"
-                    class="text-base-100 text-2xl font-bold"
-                >
-                    {{ dot.finger }}
-                </text>
-            </g>
-        </svg>
+
+                <!-- Fingering Dots -->
+                <g v-for="(dot, i) in dots" :key="`dot-${i}`">
+                    <circle
+                        :cx="dot.cx"
+                        :cy="dot.cy"
+                        :r="DOT_RADIUS"
+                        fill="currentColor"
+                    />
+                    <text
+                        v-if="dot.finger > 0"
+                        :x="dot.cx"
+                        :y="dot.cy"
+                        text-anchor="middle"
+                        dominant-baseline="central"
+                        fill="currentColor"
+                        class="text-base-100 text-2xl font-bold"
+                    >
+                        {{ dot.finger }}
+                    </text>
+                </g>
+            </svg>
+        </template>
         <span
             v-else
             class="text-base-content/70 flex h-28 w-24 items-center justify-center text-center font-sans text-sm text-balance"

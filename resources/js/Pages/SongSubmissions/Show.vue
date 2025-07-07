@@ -9,7 +9,7 @@ import {
 } from '@/Components/UI/Icons';
 import PageHeader from '@/Components/UI/PageHeader.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { initSongStore } from '@/Stores/songStore';
+import { useSongStore } from '@/Stores/songStore';
 import { Link, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
@@ -37,9 +37,9 @@ const props = defineProps({
     },
 });
 
-initSongStore({
+const songStore = useSongStore();
+songStore.init({
     key: props.song.key,
-    initialChords: props.chords,
 });
 
 const songControlsRef = ref(null);

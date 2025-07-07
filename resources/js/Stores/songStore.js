@@ -1,73 +1,51 @@
-import { ref } from 'vue';
+import { defineStore } from 'pinia';
+import { reactive, ref } from 'vue';
 
-const originalSongKey = ref(null);
-const currentSongKey = ref(null);
-const availableKeys = ref([]);
-const chords = ref({});
-const missingChords = ref(new Set());
+export const useSongStore = defineStore('song', () => {
+    const originalSongKey = ref(null);
+    const currentSongKey = ref(null);
+    const availableKeys = ref([]);
+    const chords = reactive({});
+    const missingChords = ref(new Set());
+    const capoPosition = ref(0);
+    const keyOffset = ref(0);
 
-const capoPosition = ref(0);
-const keyOffset = ref(0);
+    function init({ key, initialChords = [], availableKeysArray = [] }) {
+        originalSongKey.value = key;
+        currentSongKey.value = key;
+        availableKeys.value = availableKeysArray;
+        Object.assign(chords, initialChords);
+        missingChords.value.clear();
+        capoPosition.value = 0;
+        keyOffset.value = 0;
+    }
 
-export function initSongStore({
-    key,
-    initialChords = [],
-    availableKeysArray = [],
-}) {
-    originalSongKey.value = key;
-    currentSongKey.value = key;
-    availableKeys.value = availableKeysArray;
-    chords.value = initialChords;
-}
+    function addChords(newChords) {
+        Object.assign(chords, newChords);
+    }
 
-export function getOriginalSongKeyRef() {
-    return originalSongKey;
-}
+    function clearMissingChords() {
+        missingChords.value.clear();
+    }
 
-export function getCurrentSongKeyRef() {
-    return currentSongKey;
-}
+    function addMissingChord(name) {
+        if (!(name in chords)) {
+            chords[name] = { shapes: [], defaultShapeId: null };
+        }
+        missingChords.value.add(name);
+    }
 
-export function setCurrentSongKey(key) {
-    currentSongKey.value = key;
-}
-
-export function getChordsRef() {
-    return chords;
-}
-
-export function addChords(newChords) {
-    Object.assign(chords.value, newChords);
-}
-
-export function getKeyOffsetRef() {
-    return keyOffset;
-}
-
-export function setKeyOffset(offset) {
-    keyOffset.value = offset;
-}
-
-export function getAvailableKeysRef() {
-    return availableKeys;
-}
-
-export function getCapoPositionRef() {
-    return capoPosition;
-}
-
-export function setCapoPosition(position) {
-    capoPosition.value = position;
-}
-
-export function getMissingChordsRef() {
-    return missingChords;
-}
-
-export function addMissingChord(chord) {
-    missingChords.value.add(chord);
-}
-
-export function clearMissingChords() {
-    missingChords.value.clear();
-}
+    return {
+        originalSongKey,
+        currentSongKey,
+        availableKeys,
+        chords,
+        missingChords,
+        capoPosition,
+        keyOffset,
+        init,
+        addChords,
+        clearMissingChords,
+        addMissingChord,
+    };
+});

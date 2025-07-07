@@ -6,8 +6,8 @@ import {
     PlusIconSolid,
 } from '@/Components/UI/Icons';
 import { useChordTransposer } from '@/Composables/useChordTransposer';
-import { getCapoPositionRef, getCurrentSongKeyRef } from '@/Stores/songStore';
-import { ref, watch } from 'vue';
+import { useSongStore } from '@/Stores/songStore';
+import { computed, ref } from 'vue';
 
 defineProps({
     availableKeys: {
@@ -18,18 +18,20 @@ defineProps({
     showKeyChangeButtons: Boolean,
 });
 
-const multiColumn = ref(false);
-const capoPosition = getCapoPositionRef();
-const currentSongKey = getCurrentSongKeyRef();
-
+const songStore = useSongStore();
 const { addCapo, transposeUp, transposeDown } = useChordTransposer();
 
-defineExpose({
-    multiColumn: multiColumn,
+const capoPosition = computed({
+    get: () => songStore.capoPosition,
+    set: (val) => {
+        songStore.capoPosition = val;
+        addCapo(val);
+    },
 });
 
-watch(capoPosition, (currentPosition) => {
-    addCapo(currentPosition);
+const multiColumn = ref(false);
+defineExpose({
+    multiColumn: multiColumn,
 });
 </script>
 
@@ -49,7 +51,7 @@ watch(capoPosition, (currentPosition) => {
                         <MinusIcon class="size-4" />
                     </button>
                     <span dusk="song-key" class="text-accent w-10 text-center">
-                        {{ currentSongKey }}
+                        {{ songStore.currentSongKey }}
                     </span>
                     <button
                         v-if="showKeyChangeButtons"

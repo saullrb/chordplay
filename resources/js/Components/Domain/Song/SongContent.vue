@@ -1,11 +1,6 @@
 <script setup>
 import { useChordTransposer } from '@/Composables/useChordTransposer';
-import {
-    addChords,
-    clearMissingChords,
-    getChordsRef,
-    getMissingChordsRef,
-} from '@/Stores/songStore';
+import { useSongStore } from '@/Stores/songStore';
 import { debounce } from '@/utils/debounce';
 import axios from 'axios';
 import { onUpdated } from 'vue';
@@ -16,9 +11,8 @@ defineProps({
     showDiagrams: { type: Boolean, default: false },
 });
 
+const songStore = useSongStore();
 const { transposeChord } = useChordTransposer();
-const chords = getChordsRef();
-const missingChords = getMissingChordsRef();
 
 function parseChordLine(line) {
     let result = [];
@@ -34,7 +28,7 @@ function parseChordLine(line) {
             result.push({
                 type: 'chord',
                 value: transposedChord,
-                midi: chords.value[transposedChord]?.midi ?? [],
+                midi: songStore.chords[transposedChord]?.midi ?? [],
             });
             inside = false;
             token = '';
@@ -48,22 +42,21 @@ function parseChordLine(line) {
     return result;
 }
 
-function fetchMissingChords() {
-    if (missingChords.value.size === 0) {
+async function fetchMissingChords() {
+    if (songStore.missingChords.size === 0) {
         return;
     }
 
     try {
-        axios
-            .get('/api/chords', {
-                params: { chords: Array.from(missingChords.value) },
-            })
-            .then(function (res) {
-                addChords(res.data);
-                clearMissingChords();
-            });
+        axios;
+        const response = await axios.get('/api/chords', {
+            params: { chords: Array.from(songStore.missingChords) },
+        });
+        songStore.addChords(response.data);
     } catch (err) {
         console.log('error loading chord diagrams', err);
+    } finally {
+        songStore.clearMissingChords();
     }
 }
 
@@ -105,10 +98,7 @@ onUpdated(debounce(fetchMissingChords, 500));
                         <div
                             class="dropdown-content bg-base-200 text-base-content border-base-content/20 relative z-50 flex items-center gap-2 rounded border p-2 shadow"
                         >
-                            <ChordDiagramCarousel
-                                :chord-positions="chords[part.value] ?? []"
-                                :chord-name="part.value"
-                            />
+                            <ChordDiagramCarousel :chord-name="part.value" />
                         </div>
                     </span>
                 </template>

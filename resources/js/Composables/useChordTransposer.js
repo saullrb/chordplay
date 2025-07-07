@@ -1,25 +1,9 @@
-import {
-    addMissingChord,
-    getAvailableKeysRef,
-    getCapoPositionRef,
-    getChordsRef,
-    getCurrentSongKeyRef,
-    getKeyOffsetRef,
-    getOriginalSongKeyRef,
-    setCapoPosition,
-    setCurrentSongKey,
-    setKeyOffset,
-} from '@/Stores/songStore';
-
-const NUM_OF_KEYS = 12;
-
-const availableKeys = getAvailableKeysRef();
-const keyOffset = getKeyOffsetRef();
-const currentSongKey = getCurrentSongKeyRef();
-const capoPosition = getCapoPositionRef();
-const chords = getChordsRef();
+import { useSongStore } from '@/Stores/songStore';
 
 export function useChordTransposer() {
+    const NUM_OF_KEYS = 12;
+    const songStore = useSongStore();
+
     function transposeChord(chord) {
         const notes = [
             'C',
@@ -39,7 +23,8 @@ export function useChordTransposer() {
         function transposeNote(note) {
             const index = notes.indexOf(note);
             const newIndex =
-                (index + keyOffset.value - capoPosition.value + 12) % 12;
+                (index + songStore.keyOffset - songStore.capoPosition + 12) %
+                12;
 
             return notes[newIndex];
         }
@@ -64,8 +49,9 @@ export function useChordTransposer() {
             parsedCord = parseChordPart(main) + '/' + transposeNote(bass);
         }
 
-        if (!(parsedCord in chords.value)) {
-            addMissingChord(parsedCord);
+        // Only add to missingChords if displaying chord diagrams
+        if (songStore.chords.length && !(parsedCord in songStore.chords)) {
+            songStore.addMissingChord(parsedCord);
         }
 
         return parsedCord;
@@ -80,20 +66,22 @@ export function useChordTransposer() {
     }
 
     function transposeKey(halfSteps) {
-        const currentIndex = availableKeys.value.indexOf(currentSongKey.value);
+        const currentIndex = songStore.availableKeys.indexOf(
+            songStore.currentSongKey,
+        );
         const newIndex = (currentIndex + halfSteps + NUM_OF_KEYS) % NUM_OF_KEYS;
 
-        setCurrentSongKey(availableKeys.value[newIndex]);
+        songStore.currentSongKey = songStore.availableKeys[newIndex];
 
-        const originalSongKeyIndex = availableKeys.value.indexOf(
-            getOriginalSongKeyRef().value,
+        const originalSongKeyIndex = songStore.availableKeys.indexOf(
+            songStore.originalSongKey,
         );
 
-        setKeyOffset(newIndex - originalSongKeyIndex);
+        songStore.keyOffset = newIndex - originalSongKeyIndex;
     }
 
     function addCapo(position) {
-        setCapoPosition(position);
+        songStore.capoPosition = position;
     }
 
     return { transposeChord, transposeUp, transposeDown, addCapo };
