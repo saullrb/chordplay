@@ -22,8 +22,9 @@ defineProps({
 <template>
     <Link
         :href="route(routeName, params)"
-        class="font-semibold"
+        :method="method"
         :prefetch="method === 'get'"
+        class="font-semibold"
         :class="{
             'bg-base-300': route().current(routeName),
         }"

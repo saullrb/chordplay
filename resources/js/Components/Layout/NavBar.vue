@@ -66,7 +66,11 @@ const user = computed(() => page.props.auth.user);
                             </NavLink>
                         </li>
                         <li class="mt-4">
-                            <NavLink route-name="logout" method="post">
+                            <NavLink
+                                route-name="logout"
+                                method="post"
+                                as="button"
+                            >
                                 Log Out
                             </NavLink>
                         </li>
