@@ -51,7 +51,12 @@ const user = computed(() => page.props.auth.user);
                     >
                         <template #trigger>
                             <div class="w-8 rounded-full">
-                                <img alt="Avatar" src="/images/avatar.webp" />
+                                <img
+                                    alt="Avatar"
+                                    :src="
+                                        user.avatar_url ?? '/images/avatar.webp'
+                                    "
+                                />
                             </div>
                         </template>
 

@@ -11,6 +11,7 @@ use App\Traits\FlashesMessages;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Socialite\Facades\Socialite;
 
 class SocialAuthController extends Controller
@@ -42,9 +43,18 @@ class SocialAuthController extends Controller
             $flash_message = 'Login successful';
 
             if (! $user) {
+                $avatarPath = 'avatars/avatar_'.$socialUser->getId();
+                Storage::disk('cloudinary')->put($avatarPath, $socialUser->avatar, [
+                    'visibility' => 'public',
+                    'type' => 'fetch',
+                ]);
+
+                $avatarUrl = Storage::disk('cloudinary')->url($avatarPath);
+
                 $user = User::create([
                     'email' => $socialUser->getEmail(),
                     'name' => $socialUser->getName() ?? 'Unnamed',
+                    'avatar_url' => $avatarUrl,
                     'role_id' => Role::USER,
                 ]);
                 $flash_message = 'Welcome to '.config('app.name').'!';
