@@ -24,19 +24,17 @@ const form = useForm({
             @submit.prevent="form.patch(route('profile.update'))"
         >
             <div>
-                <form>
-                    <label class="input validator">
-                        <span class="label">Name</span>
-                        <input
-                            id="name"
-                            v-model="form.name"
-                            type="text"
-                            required
-                            @input="form.errors.name = null"
-                        />
-                    </label>
-                    <InputError class="mt-1" :message="form.errors.name" />
-                </form>
+                <label class="input validator">
+                    <span class="label">Name</span>
+                    <input
+                        id="name"
+                        v-model="form.name"
+                        type="text"
+                        required
+                        @input="form.errors.name = null"
+                    />
+                </label>
+                <InputError class="mt-1" :message="form.errors.name" />
             </div>
 
             <div class="flex items-center gap-4">
