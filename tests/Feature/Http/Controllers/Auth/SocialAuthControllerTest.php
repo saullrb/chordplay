@@ -42,6 +42,8 @@ class SocialAuthControllerTest extends TestCase
         $socialUser = Mockery::mock(SocialUser::class);
         $socialUser->shouldReceive('getEmail')->andReturn('test@example.com');
         $socialUser->shouldReceive('getName')->andReturn('Test User');
+        $avatarUrl = fake()->imageUrl();
+        $socialUser->shouldReceive('getAvatar')->andReturn($avatarUrl);
 
         Socialite::shouldReceive('driver')->with('google')->andReturnSelf();
         Socialite::shouldReceive('user')->andReturn($socialUser);
@@ -54,6 +56,7 @@ class SocialAuthControllerTest extends TestCase
         $this->assertDatabaseHas('users', [
             'email' => 'test@example.com',
             'name' => 'Test User',
+            'avatar_url' => $avatarUrl,
         ]);
     }
 
