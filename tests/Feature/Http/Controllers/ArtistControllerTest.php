@@ -9,6 +9,8 @@ use App\Models\User;
 use App\Services\ArtistService;
 use App\Services\UserService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ArtistControllerTest extends TestCase
@@ -112,16 +114,39 @@ class ArtistControllerTest extends TestCase
         $response->assertSessionHasErrors(['name']);
     }
 
-    public function test_admin_can_store_new_artist(): void
+    public function test_admin_can_store_new_artist_without_image(): void
     {
         $this->actingAs($this->admin)->post(route('artists.store'), [
             'name' => 'New Artist',
+
         ])
             ->assertRedirect()
             ->assertSessionHas('flash.message')
             ->assertSessionHas('flash.type', 'success');
 
-        $this->assertDatabaseHas('artists', ['name' => 'New Artist']);
+        $this->assertDatabaseHas('artists', ['name' => 'New Artist', 'profile_image_url' => null]);
+    }
+
+    public function test_admin_can_store_new_artist_with_image(): void
+    {
+        $this->actingAs($this->admin)
+            ->post(route('artists.store'), [
+                'name' => 'New Artist with Image',
+                'profile_image' => UploadedFile::fake()->image('profile.jpg', 800, 600)->size(1000),
+            ])
+            ->assertRedirect()
+            ->assertSessionHas('flash.message', 'Artist created successfully')
+            ->assertSessionHas('flash.type', 'success');
+
+        $this->assertDatabaseHas('artists', [
+            'name' => 'New Artist with Image',
+        ]);
+
+        $artist = Artist::where('name', 'New Artist with Image')->first();
+
+        $this->assertNotNull($artist->profile_image_url);
+
+        Storage::assertExists('artists/'.basename($artist->profile_image_url));
     }
 
     public function test_handles_exception_during_artist_creation(): void

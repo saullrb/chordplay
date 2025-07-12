@@ -6,6 +6,7 @@ import { useForm } from '@inertiajs/vue3';
 
 const form = useForm({
     name: null,
+    profile_image: null,
 });
 
 function submit() {
@@ -22,12 +23,10 @@ function submit() {
         </template>
         <div class="mt-12 flex items-center justify-center">
             <form
-                class="flex w-full max-w-md flex-col"
+                class="bg-base-200 rounded-box flex w-full max-w-md flex-col p-2 shadow"
                 @submit.prevent="submit"
             >
-                <fieldset
-                    class="fieldset bg-base-200 rounded-box p-4 shadow-sm"
-                >
+                <fieldset class="fieldset p-4">
                     <legend class="fieldset-legend">Artist's Name</legend>
                     <input
                         id="name"
@@ -41,8 +40,24 @@ function submit() {
                     />
                     <InputError :message="form.errors.name" />
                 </fieldset>
+                <fieldset class="fieldset p-4">
+                    <legend class="fieldset-legend">Profile Image</legend>
+                    <input
+                        type="file"
+                        class="file-input"
+                        @change="
+                            (e) => (form.profile_image = e.target.files[0])
+                        "
+                    />
+                    <label class="label">Max size 2MB</label>
+                    <InputError :message="form.errors.profile_image" />
+                </fieldset>
                 <div class="mt-4 flex justify-end">
-                    <button class="btn btn-primary" type="submit">
+                    <button
+                        class="btn btn-primary"
+                        type="submit"
+                        :disabled="form.processing"
+                    >
                         Submit
                     </button>
                 </div>

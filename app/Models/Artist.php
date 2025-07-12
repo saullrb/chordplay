@@ -16,6 +16,7 @@ use Str;
  * @property int $id
  * @property string $name
  * @property string $slug
+ * @property string $profile_image_url
  * @property int $views
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -30,6 +31,7 @@ class Artist extends Model
     protected $fillable = [
         'name',
         'slug',
+        'profile_image_url',
     ];
 
     protected $hidden = [
@@ -62,6 +64,7 @@ class Artist extends Model
             })->select(
                 'artists.name',
                 'artists.slug',
+                'artists.profile_image_url',
                 'artists.views',
                 \DB::raw('CASE WHEN favorite_artists.artist_id IS NOT NULL THEN 1 ELSE 0 END as is_favorited')
             );

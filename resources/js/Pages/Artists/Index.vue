@@ -63,7 +63,11 @@ const loadMoreArtists = async () => {
             </div>
         </template>
         <Panel>
-            <ItemList show-route-name="artists.show" :items="artists.data" />
+            <ItemList
+                show-route-name="artists.show"
+                :items="artists.data"
+                :has-image="true"
+            />
 
             <div class="flex justify-center">
                 <LoadingButton

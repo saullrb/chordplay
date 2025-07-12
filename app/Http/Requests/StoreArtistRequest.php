@@ -7,6 +7,7 @@ namespace App\Http\Requests;
 use App\Models\Artist;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rules\File;
 
 class StoreArtistRequest extends FormRequest
 {
@@ -26,7 +27,8 @@ class StoreArtistRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|max:100',
+            'name' => ['required', 'max:100'],
+            'profile_image' => ['nullable', File::image()->types(['jpeg', 'png', 'webp'])->max('2mb')],
         ];
     }
 }

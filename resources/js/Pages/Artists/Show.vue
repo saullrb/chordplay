@@ -72,6 +72,15 @@ const loadMoreSongs = async () => {
         <template #header>
             <div class="flex w-full justify-between">
                 <div class="flex items-center gap-4">
+                    <div>
+                        <img
+                            class="rounded-box size-20"
+                            :src="
+                                artist.profile_image_url ??
+                                '/images/artist.webp'
+                            "
+                        />
+                    </div>
                     <PageHeader :title="artist.name" />
                     <FavoriteButton
                         v-if="user"
