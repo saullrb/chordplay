@@ -19,6 +19,7 @@ use Illuminate\Support\Collection;
  * @property int $role_id
  * @property string $name
  * @property string $email
+ * @property string $avatar_url
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Collection<int, Artist> $favoriteArtists

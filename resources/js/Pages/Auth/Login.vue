@@ -31,9 +31,9 @@ function redirectToGoogle() {
                     </p>
                 </div>
                 <button
-                    @click="redirectToGoogle"
                     :disabled="isLoading"
                     class="btn btn-lg flex w-full items-center justify-center gap-2 border-gray-100 bg-white text-black transition-opacity hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-white disabled:opacity-50"
+                    @click="redirectToGoogle"
                 >
                     <svg
                         class="size-6"
@@ -59,7 +59,7 @@ function redirectToGoogle() {
                         />
                     </svg>
                     <span> Login with Google </span>
-                    <span class="loading loading-spinner" v-if="isLoading" />
+                    <span v-if="isLoading" class="loading loading-spinner" />
                 </button>
             </div>
         </div>
