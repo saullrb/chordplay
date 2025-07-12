@@ -42,16 +42,10 @@ class SocialAuthController extends Controller
             $flash_message = 'Login successful';
 
             if (! $user) {
-                $profileImgUrl = $socialUser->avatar;
-
-                $result = cloudinary()->uploadApi()->upload($profileImgUrl, [
-                    'folder' => 'avatars',
-                ]);
-
                 $user = User::create([
                     'email' => $socialUser->getEmail(),
                     'name' => $socialUser->getName() ?? 'Unnamed',
-                    'avatar_url' => $result['secure_url'],
+                    'avatar_url' => $socialUser->getAvatar(),
                     'role_id' => Role::USER,
                 ]);
                 $flash_message = 'Welcome to '.config('app.name').'!';
