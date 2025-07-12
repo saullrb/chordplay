@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('chords', function (Blueprint $table): void {
-            $table->id();
-            $table->string('name')->unique();
-            $table->string('key');
-            $table->string('suffix');
-            $table->timestamps();
+        Schema::table('chords', function (Blueprint $table) {
+            $table->foreignId('default_shape_id')->nullable()->constrained('chord_shapes')->nullOnDelete();
         });
     }
 
@@ -27,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('chords');
+        Schema::table('chords', function (Blueprint $table) {
+            $table->drop('default_shape_id');
+        });
     }
 };
