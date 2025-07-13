@@ -37,8 +37,8 @@ defineProps({
 
             <div>
                 <img
+                    v-if="hasImage"
                     class="rounded-box size-10"
-                    :class="hasImage ? 'block' : 'hidden'"
                     :src="item.profile_image_url ?? '/images/artist.webp'"
                 />
             </div>
