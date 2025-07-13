@@ -45,7 +45,7 @@ class SongController extends Controller
             }
         }
 
-        $chords = Chord::shapesByChordName($chords);
+        $chords = Chord::shapesByChordName(array_keys($chords));
 
         $availableKeys = SongKeyEnum::getKeysInSameMode($song->key);
 
