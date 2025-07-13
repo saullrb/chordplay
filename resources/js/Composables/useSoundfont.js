@@ -21,7 +21,7 @@ export function useSoundfont() {
         const strumDelay = 0.08;
         const now = context.currentTime;
 
-        instrument.output.addEffect('reverb', reverb, 0.5);
+        instrument.output.addEffect('reverb', reverb, 0.1);
 
         notes.forEach((note, index) => {
             const time = now + index * strumDelay;
