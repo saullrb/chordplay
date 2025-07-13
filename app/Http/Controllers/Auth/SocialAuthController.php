@@ -51,7 +51,7 @@ class SocialAuthController extends Controller
                 $flash_message = 'Welcome to '.config('app.name').'!';
             }
 
-            Auth::login($user);
+            Auth::login($user, true);
 
             $this->flashSuccess($flash_message, 2000);
 

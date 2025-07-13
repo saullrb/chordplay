@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('chords', function (Blueprint $table): void {
-            $table->foreignId('default_shape_id')->nullable()->constrained('chord_shapes')->nullOnDelete();
+        Schema::table('users', function (Blueprint $table): void {
+            $table->rememberToken();
         });
     }
 
@@ -23,8 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('chords', function (Blueprint $table): void {
-            $table->drop();
+        Schema::table('users', function (Blueprint $table): void {
+            $table->dropColumn('remember_token');
         });
     }
 };
