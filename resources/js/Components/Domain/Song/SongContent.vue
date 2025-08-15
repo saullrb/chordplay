@@ -48,9 +48,8 @@ async function fetchMissingChords() {
     }
 
     try {
-        axios;
-        const response = await axios.get('/api/chords', {
-            params: { chords: Array.from(songStore.missingChords) },
+        const response = await axios.post('/api/chords', {
+             chords: Array.from(songStore.missingChords)
         });
         songStore.addChords(response.data);
     } catch (err) {

@@ -37,24 +37,24 @@ export function useChordTransposer() {
 
             const root = part.slice(0, i);
             const suffix = part.slice(i);
-
             return transposeNote(root) + suffix;
         }
 
-        let parsedCord = parseChordPart(chord);
+        let parsedChord = parseChordPart(chord);
 
         if (chord.includes('/')) {
             const [main, bass] = chord.split('/');
 
-            parsedCord = parseChordPart(main) + '/' + transposeNote(bass);
+            parsedChord = parseChordPart(main) + '/' + transposeNote(bass);
         }
 
         // Only add to missingChords if displaying chord diagrams
-        if (songStore.chords.length && !(parsedCord in songStore.chords)) {
-            songStore.addMissingChord(parsedCord);
+        if (!(parsedChord in songStore.chords)) {
+            songStore.addMissingChord(parsedChord);
         }
 
-        return parsedCord;
+
+        return parsedChord;
     }
 
     function transposeUp() {
