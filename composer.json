@@ -88,7 +88,7 @@
         ],
         "test:types": "phpstan analyse",
         "test:run": "pest --colors=always --parallel",
-        "test:e2e": "artisan dusk",
+        "test:e2e": "php artisan dusk",
         "test:coverage": "pest --colors=always --parallel --coverage",
         "test": [
             "@test:rector",
